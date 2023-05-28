@@ -1,5 +1,8 @@
+![hexwalk](hexwalk/images/hexwalk64.png)
 # HexWalk - Hex Editor/Viewer/Analyzer
-HexWalk is an Hex editor, viewer, analyzer. 
+ 
+HexWalk is an Hex editor, viewer, analyzer.
+
 Based on opensource projects like qhexedit2,binwalk and QT.
 
 It is cross platform and has plenty of features:
