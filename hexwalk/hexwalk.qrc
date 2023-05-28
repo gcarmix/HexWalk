@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/save.png</file>
+        <file>images/undo.png</file>
+        <file>images/redo.png</file>
+        <file>images/find.png</file>
+        <file>images/hexwalk.ico</file>
+        <file>images/binary.png</file>
+        <file>images/entropy.png</file>
+        <file>images/open.png</file>
+    </qresource>
+</RCC>
