@@ -1,0 +1,6 @@
+Metadata-Version: 2.1
+Name: binwalk
+Version: 2.1.1
+Summary: Firmware analysis tool
+Home-page: https://github.com/devttys0/binwalk
+Author: Craig Heffner
