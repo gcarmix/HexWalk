@@ -578,7 +578,7 @@ void HexWalkMain::readSettings()
     hexEdit->setAsciiFontColor(QColor("#00ff5e"));
     hexEdit->setHexFontColor(QColor("#00ff5e"));
     hexEdit->setHighlightingColor(QColor("#540c00"));
-    hexEdit->setFont(QFont("Courier",11));
+    hexEdit->setFont(QFont("Courier",12));
     hexEdit->setHighlighting(true);
     hexEdit->setOverwriteMode(true);
     /*

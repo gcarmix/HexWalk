@@ -1,6 +1,7 @@
 QT += widgets charts
 CONFIG += static
 RC_ICONS = images/hexwalk.ico
+QMAKE_LFLAGS += -no-pie
 HEADERS = \
     advancedsearchdialog.h \
     binanalysisdialog.h \

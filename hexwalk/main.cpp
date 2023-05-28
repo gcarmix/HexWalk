@@ -13,9 +13,19 @@ int main(int argc, char *argv[])
     // set style
     app.setStyle(QStyleFactory::create("Fusion"));
     // increase font size for better reading
-    QFont defaultFont = QApplication::font();
+    QString fontPath1=":/fonts/Helvetica.ttf";
+    QString fontPath2=":/fonts/Courier.ttf";
+    int fontId = QFontDatabase::addApplicationFont(fontPath1);
+    QFontDatabase::addApplicationFont(fontPath2);
+    if (fontId != -1)
+    {
+        QFont font("Helvetica");
+        font.setPointSize(font.pointSize()-1);
+        app.setFont(font);
+    }
+    /*QFont defaultFont = QApplication::font();
     defaultFont.setPointSize(defaultFont.pointSize()+2);
-    app.setFont(defaultFont);
+    app.setFont(defaultFont);*/
     // modify palette to dark
     QPalette darkPalette;
     darkPalette.setColor(QPalette::Window,QColor(53,53,53));

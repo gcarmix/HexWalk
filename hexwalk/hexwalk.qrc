@@ -8,5 +8,7 @@
         <file>images/binary.png</file>
         <file>images/entropy.png</file>
         <file>images/open.png</file>
+        <file>fonts/Helvetica.ttf</file>
+        <file>fonts/Courier.ttf</file>
     </qresource>
 </RCC>
