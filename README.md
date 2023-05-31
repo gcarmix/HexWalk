@@ -34,7 +34,7 @@ It is cross platform and has plenty of features:
 
 ## Dependencies
 
-HexWalk release executables are statically linked, so are self-contained, you can use as-is.
+HexWalk release executables are self-contained, you can use as-is.
 Binwalk functionalities need Binwalk to be installed on the OS. For Linux OS simply install binwalk with your
 package manager (eg. sudo apt install binwalk)
 
