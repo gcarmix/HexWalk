@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include <QAbstractTableModel>
+#include <QProgressDialog>
 #include "resultType.h"
 #include "../src/qhexedit.h"
 
@@ -41,13 +42,15 @@ public:
     explicit binanalysisdialog(QHexEdit *hexEdit,QWidget *parent = nullptr);
     ~binanalysisdialog();
     void analyze(QString filename);
+
      QHexEdit *_hexEdit;
 
 private slots:
     void on_binwalkTableView_clicked(const QModelIndex &index);
 
     void on_closeBtn_clicked();
-
+    void kill_process();
+    void renderAnalysis(int status_code);
     void on_extractAllBtn_clicked();
 
 private:
@@ -55,6 +58,9 @@ private:
     QList<BinwalkResult_S> resultslist;
     BinTableModel *model = NULL;
     QString curFile;
+    QProgressDialog * progrDialog;
+    QProcess * binwalkProcess;
+    int processType = 0;
 };
 
 #endif // BINANALYSISDIALOG_H

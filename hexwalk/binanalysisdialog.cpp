@@ -90,6 +90,18 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
 {
     ui->setupUi(this);
     _hexEdit = hexEdit;
+    progrDialog = new QProgressDialog(this);
+    progrDialog->setLabelText("Please wait...");
+    progrDialog->setModal(true);
+    progrDialog->setRange(0,0);
+    progrDialog->setMinimumDuration(500);
+    progrDialog->cancel();
+    connect(progrDialog,SIGNAL(canceled()),this,SLOT(kill_process()));
+
+    binwalkProcess = new QProcess();
+
+
+    connect(binwalkProcess,SIGNAL(finished(int)),this,SLOT(renderAnalysis(int)));
 }
 
 binanalysisdialog::~binanalysisdialog()
@@ -97,73 +109,94 @@ binanalysisdialog::~binanalysisdialog()
     delete ui;
 }
 
+void binanalysisdialog::kill_process()
+{
+    binwalkProcess->kill();
+}
+
+void binanalysisdialog::renderAnalysis(int status_code)
+{
+    if(processType == 0)
+    {
+        BinwalkResult_S binwalkResult;
+
+        if(status_code != 0)
+        {
+            qInfo() << status_code;
+            return;
+        }
+        resultslist.clear();
+        QString p_stdout = binwalkProcess->readAll();
+        progrDialog->hide();
+        QStringList lines = p_stdout.split("\n");
+        if(lines.length() < 3)
+        {
+            return;
+        }
+        lines.removeFirst();
+        lines.removeFirst();
+        lines.removeFirst();
+        QString line;
+        foreach(line,lines)
+        {
+            if(line.length()>0){
+                binwalkResult.cursor = line.section(' ',1,1,QString::SectionSkipEmpty).toLong(NULL,16);
+                binwalkResult.datastr = line.section(' ',2,-1,QString::SectionSkipEmpty);
+
+                resultslist.append(binwalkResult);
+            }
+
+
+        }
+
+        if(model)
+        {
+            delete model;
+            model = NULL;
+        }
+        model = new BinTableModel(this);
+
+        model->populateData(resultslist);
+
+        ui->binwalkTableView->setModel(model);
+        ui->binwalkTableView->setColumnWidth(1,750);
+        ui->binwalkTableView->resizeRowsToContents();
+        ui->binwalkTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    }
+    else
+    {
+        progrDialog->hide();
+        if(status_code == 0)
+        {
+            QMessageBox::warning(this, tr("HexWalk"),
+                                 "Extraction complete.");
+
+        }
+    }
+
+}
 
 void binanalysisdialog::analyze(QString filename)
 {
-    QCoreApplication::processEvents();
+    //QCoreApplication::processEvents();
+    processType = 0;
     curFile = filename;
-    BinwalkResult_S binwalkResult;
-    resultslist.clear();
-    QThread::msleep(200);
-    QCoreApplication::processEvents();
-    QProgressDialog progrDialog("Wait while binwalk is processing...","Cancel",0,0,this);
-    progrDialog.setModal(true);
-    progrDialog.setRange(0,0);
-    progrDialog.show();
-
-    progrDialog.setValue(0);
-    QCoreApplication::processEvents();
-    QProcess p;
-    QStringList params;
-
-
-#ifdef Q_OS_WIN
-    params << "binw.py" << filename;
-    p.start("python",params);
-#else
-    params << filename;
-    p.start("binwalk",params);
-#endif
-
-    p.waitForFinished(-1);
-
-    QString p_stdout = p.readAll();
-    progrDialog.cancel();
-    QStringList lines = p_stdout.split("\n");
-    if(lines.length() < 3)
-    {
-        return;
-    }
-    lines.removeFirst();
-    lines.removeFirst();
-    lines.removeFirst();
-    QString line;
-    foreach(line,lines)
-    {
-        if(line.length()>0){
-            binwalkResult.cursor = line.section(' ',1,1,QString::SectionSkipEmpty).toLong(NULL,16);
-            binwalkResult.datastr = line.section(' ',2,-1,QString::SectionSkipEmpty);
-
-            resultslist.append(binwalkResult);
-        }
-
-
-    }
-
-
-
     if(model)
     {
         delete model;
+        model = NULL;
     }
-    model = new BinTableModel(this);
+    progrDialog->show();
 
-    model->populateData(resultslist);
+    QStringList params;
+#ifdef Q_OS_WIN
+    params << "binw.py" << filename;
+    binwalkProcess->start("python",params);
+#else
+    params << filename;
+    binwalkProcess->start("binwalk",params);
+#endif
 
-    ui->binwalkTableView->setModel(model);
-    ui->binwalkTableView->setColumnWidth(1,750);
-ui->binwalkTableView->resizeRowsToContents();
-    ui->binwalkTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
 }
 
@@ -183,25 +216,23 @@ void binanalysisdialog::on_closeBtn_clicked()
 
 void binanalysisdialog::on_extractAllBtn_clicked()
 {
+    processType = 1;
+    qInfo()<<"Extract";
 
-    QProgressDialog progrDialog("Wait while binwalk is extracting data...","Cancel",0,0,this);
-    progrDialog.setModal(true);
-    progrDialog.setRange(0,0);
-    progrDialog.show();
-    QApplication::processEvents();
-    QProcess p;
+
+    progrDialog->show();
+
     QStringList params;
 
 #ifdef Q_OS_WIN
     params << "binw.py"<<"-e" << curFile;
-    p.start("python",params);
+    binwalkProcess->start("python",params);
 #else
-    params << "-e" << curFile;
-    p.start("binwalk",params);
+    QDir d = QFileInfo(curFile).absoluteDir();
+    QString curDir=d.absolutePath();
+    params << "-e" << curFile<<"-C"<<curDir;
+    binwalkProcess->start("binwalk",params);
 #endif
 
-    p.waitForFinished(-1);
-    QString p_stdout = p.readAll();
-    progrDialog.cancel();
 }
 
