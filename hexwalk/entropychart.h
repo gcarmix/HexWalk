@@ -8,7 +8,7 @@ class EntropyChart : public QChartView
 {
 Q_OBJECT
 public:
-    explicit EntropyChart(QChart *chart,QWidget *parent = nullptr);
+    explicit EntropyChart(QWidget *parent = nullptr);
 
 signals:
     void mousePressed(qint64 value);

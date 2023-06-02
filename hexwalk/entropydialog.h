@@ -24,6 +24,8 @@ public slots:
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 
+    void on_entropyChart_mousePressed(qint64 );
+
 private:
     Ui::EntropyDialog *ui;
     QHexEdit * _hexed;

@@ -48,7 +48,7 @@ void EntropyDialog::calculate()
            dataSize = (_hexed->getSize()-cursor);
        }
        QByteArray data = _hexed->dataAt(cursor,dataSize);
-       series->append(double(cursor),blockEntropy(&data));
+       series->append(cursor,blockEntropy(&data));
        cursor+=dataSize;
        progrDialog->setValue(int(100.0*(double(cursor)/double(_hexed->getSize()))));
        QCoreApplication::processEvents();
@@ -70,17 +70,18 @@ void EntropyDialog::calculate()
 
     chart->setBackgroundBrush(QBrush(QColor("black")));
     chart->setTitleBrush(QBrush(QColor("lightgray")));
-    entropyView = new EntropyChart(chart,this);
-    entropyView->setRenderHint(QPainter::Antialiasing);
+    //entropyView = new EntropyChart(chart,this);
+    //entropyView->setRenderHint(QPainter::Antialiasing);
+    ui->entropyChart->setChart(chart);
 
-    QLayoutItem *item;
+    //QLayoutItem *item;
 
-    while((item=ui->verticalLayout->takeAt(0)) != NULL)
+    /*while((item=ui->verticalLayout->takeAt(0)) != NULL)
     {
        delete item;
     }
-    ui->verticalLayout->addWidget(entropyView);
-    connect(entropyView,SIGNAL(mousePressed(qint64)),this,SLOT(mousePressed(qint64)));
+    ui->verticalLayout->addWidget(entropyView);*/
+    connect(ui->entropyChart,SIGNAL(mousePressed(qint64)),this,SLOT(mousePressed(qint64)));
 
 }
 
@@ -98,6 +99,12 @@ EntropyDialog::~EntropyDialog()
 
 
 void EntropyDialog::on_buttonBox_clicked(QAbstractButton *button)
+{
+
+}
+
+
+void EntropyDialog::on_entropyChart_mousePressed(qint64 )
 {
 
 }

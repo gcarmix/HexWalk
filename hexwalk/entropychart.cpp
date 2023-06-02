@@ -1,7 +1,7 @@
 #include "entropychart.h"
 
-EntropyChart::EntropyChart(QChart * chart,QWidget *parent):
-    QChartView(chart,parent)
+EntropyChart::EntropyChart(QWidget *parent):
+    QChartView(parent)
 {
 
 }
