@@ -100,7 +100,7 @@
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>37</y>
+       <y>40</y>
        <width>61</width>
        <height>31</height>
       </rect>
@@ -188,17 +188,6 @@
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>

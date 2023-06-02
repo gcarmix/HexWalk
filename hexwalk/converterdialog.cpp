@@ -21,9 +21,9 @@ ConverterDialog::~ConverterDialog()
 
 void ConverterDialog::on_decTextEdit_textChanged()
 {
-    if(decValue != ui->decTextEdit->toPlainText())
+    if(decValue != ui->decTextEdit->text())
     {
-        QString check = ui->decTextEdit->toPlainText().replace(" ","");
+        QString check = ui->decTextEdit->text().replace(" ","");
         int i;
         bool good = true;
         if(check.length())
@@ -37,9 +37,9 @@ void ConverterDialog::on_decTextEdit_textChanged()
                 }
             }
 
-            if(ui->decTextEdit->toPlainText().length() <= 16 && good == true)
+            if(ui->decTextEdit->text().length() <= 16 && good == true)
             {
-                decValue = ui->decTextEdit->toPlainText();
+                decValue = ui->decTextEdit->text();
                 hexValue = QString("%1").arg(decValue.toLongLong(),1,16);
                 binValue = QString("%1").arg(decValue.toLongLong(),1,2);
                 blockSignals(true);
@@ -63,9 +63,9 @@ void ConverterDialog::on_decTextEdit_textChanged()
 void ConverterDialog::on_hexTextEdit_textChanged()
 {
 
-   if(hexValue != ui->hexTextEdit->toPlainText())
+   if(hexValue != ui->hexTextEdit->text())
     {
-        QString check = ui->hexTextEdit->toPlainText();
+        QString check = ui->hexTextEdit->text();
         int i;
         bool good = true;
         if(check.length()){
@@ -78,9 +78,9 @@ void ConverterDialog::on_hexTextEdit_textChanged()
                 }
             }
 
-            if(ui->hexTextEdit->toPlainText().length() <= 16 && good == true)
+            if(ui->hexTextEdit->text().length() <= 16 && good == true)
             {
-                hexValue = ui->hexTextEdit->toPlainText();
+                hexValue = ui->hexTextEdit->text();
                 decValue = QString("%1").arg(hexValue.toLongLong(NULL,16),1,10);
                 binValue = QString("%1").arg(hexValue.toLongLong(NULL,16),1,2);
                 blockSignals(true);
@@ -102,9 +102,9 @@ void ConverterDialog::on_hexTextEdit_textChanged()
 
 void ConverterDialog::on_binTextEdit_textChanged()
 {
-    if(binValue != ui->binTextEdit->toPlainText())
+    if(binValue != ui->binTextEdit->text())
     {
-        QString check = ui->binTextEdit->toPlainText();
+        QString check = ui->binTextEdit->text();
         int i;
         bool good = true;
         if(check.length()){
@@ -117,9 +117,9 @@ void ConverterDialog::on_binTextEdit_textChanged()
                 }
     }
 
-    if(ui->binTextEdit->toPlainText().length() < 64 && good == true)
+    if(ui->binTextEdit->text().length() < 64 && good == true)
     {
-                binValue = ui->binTextEdit->toPlainText();
+                binValue = ui->binTextEdit->text();
                 decValue = QString("%1").arg(binValue.toLongLong(NULL,2),1,10);
                 hexValue = QString("%1").arg(binValue.toLongLong(NULL,2),1,16);
                 blockSignals(true);

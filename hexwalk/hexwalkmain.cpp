@@ -249,6 +249,17 @@ void HexWalkMain::createToolBars()
     analysisToolBar = addToolBar(tr("Analysis"));
     analysisToolBar->addAction(entropyAct);
     analysisToolBar->addAction(binaryAct);
+    analysisToolBar->addSeparator();
+    gotoLbl = new QLabel();
+    gotoLbl->setText("Go To: ");
+    gotoLbl->setFixedHeight(25);
+    analysisToolBar->addWidget(gotoLbl);
+    gotoText = new QLineEdit();
+    gotoText->setFixedHeight(25);
+    gotoText->setFixedWidth(80);
+    gotoText->setText(tr("0"));
+    connect(gotoText,SIGNAL(returnPressed()),SLOT(gotoAddress()));
+    analysisToolBar->addWidget(gotoText);
     //infoToolBar = addToolBar(tr("Info"));
 
 }
@@ -284,7 +295,7 @@ void HexWalkMain::loadFile(const QString &fileName)
 void HexWalkMain::about()
 {
     QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.0.0a is an HEX editor/viewer/analyzer.\r\n"
+                       tr("HexWalk v1.1.0 is an HEX editor/viewer/analyzer.\r\n"
                           "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
                           "Sources at https://github.com/gcarmix/HexWalk\r\n"));
 }
@@ -550,6 +561,12 @@ void HexWalkMain::showBinaryDialog()
 void HexWalkMain::showConverterDialog()
 {
     converterDialog->show();
+}
+
+void HexWalkMain::gotoAddress()
+{
+    hexEdit->setCursorPosition(2*(gotoText->text().toLong(NULL,16)));
+    hexEdit->ensureVisible();
 }
 void HexWalkMain::showHashDialog()
 {

@@ -29,19 +29,6 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QTextEdit" name="decTextEdit">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>50</y>
-     <width>471</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="acceptRichText">
-    <bool>false</bool>
-   </property>
-  </widget>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
@@ -53,16 +40,6 @@
    </property>
    <property name="text">
     <string>Decimal:</string>
-   </property>
-  </widget>
-  <widget class="QTextEdit" name="hexTextEdit">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>90</y>
-     <width>471</width>
-     <height>31</height>
-    </rect>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -78,16 +55,6 @@
     <string>Hexadecimal:</string>
    </property>
   </widget>
-  <widget class="QTextEdit" name="binTextEdit">
-   <property name="geometry">
-    <rect>
-     <x>130</x>
-     <y>130</y>
-     <width>471</width>
-     <height>31</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_4">
    <property name="geometry">
     <rect>
@@ -99,6 +66,36 @@
    </property>
    <property name="text">
     <string>Binary:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="decTextEdit">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>60</y>
+     <width>471</width>
+     <height>25</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="hexTextEdit">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>100</y>
+     <width>471</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="binTextEdit">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>140</y>
+     <width>471</width>
+     <height>25</height>
+    </rect>
    </property>
   </widget>
  </widget>

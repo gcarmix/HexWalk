@@ -1,7 +1,10 @@
-QT += widgets charts
+QT += charts
 CONFIG += static
 RC_ICONS = images/hexwalk.ico
-QMAKE_LFLAGS += -no-pie
+#Only for Windows:
+QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
+###############
+
 HEADERS = \
     advancedsearchdialog.h \
     binanalysisdialog.h \
@@ -47,9 +50,5 @@ FORMS += \
     hexwalkmain.ui \
     optionsdialog.ui \
     searchdialog.ui
-
-TRANSLATIONS += \
-    translations/hexwalk_cs.ts \
-    translations/hexwalk_de.ts
 
 DEFINES += QHEXEDIT_EXPORTS

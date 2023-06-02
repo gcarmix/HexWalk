@@ -58,6 +58,7 @@ private slots:
     void showConverterDialog();
     void showHashDialog();
     void toggleOverwriteMode();
+    void gotoAddress();
 
 private:
     void init();
@@ -121,6 +122,8 @@ private:
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;
+    QLabel * gotoLbl;
+    QLineEdit * gotoText;
 };
 
 #endif // HEXWALKMAIN_H
