@@ -32,15 +32,20 @@ It is cross platform and has plenty of features:
 * Hash Calculator
 ![hexwalk gui](screenshots/hexwalk_gui4.png)
 
-## Dependencies
+## Usage
 
 HexWalk release executables are self-contained, you can use as-is.
-Binwalk functionalities need Binwalk to be installed on the OS. For Linux OS simply install binwalk with your
-package manager (eg. sudo apt install binwalk)
+Binwalk functionalities need Binwalk to be installed on the OS. For Linux OS simply install binwalk with your package manager (eg. sudo apt install binwalk)
+
+## Binwalk on Windows OS
 
 For Windows, Binwalk support is experimental, it is done using a python helper file that launches the commands and must be on the same path of hexwalk.exe.
 in order for binwalk support to work on Windows it is necessary to install Python and to install binwalk, at the moment of writing on windows it is supported up to binwalk 2.1.1,
 sources of binwalk_2.1.1 are supplied inside the binwalk_windows folder. To install it on Windows just run "python setup.py install"
+
+## Build
+If you want to build from source just open hexedit.pro in QT Creator and build it.
+It is possible also to build from command line (linux_build.sh script provided).
 
 ## Acknowledgments
 
