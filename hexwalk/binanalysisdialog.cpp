@@ -193,8 +193,13 @@ void binanalysisdialog::analyze(QString filename)
     params << "binw.py" << filename;
     binwalkProcess->start("python",params);
 #else
-    params << filename;
-    binwalkProcess->start("binwalk",params);
+    #ifdef Q_OS_DARWIN
+        params << filename;
+        binwalkProcess->start("/usr/local/bin/binwalk",params);
+    #else
+        params << filename;
+        binwalkProcess->start("binwalk",params);
+    #endif
 #endif
 
 
