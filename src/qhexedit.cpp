@@ -202,6 +202,11 @@ int QHexEdit::bytesPerLine()
     return _bytesPerLine;
 }
 
+qint64 QHexEdit::firstByteAddress()
+{
+    return _bPosFirst;
+}
+
 void QHexEdit::setCursorPosition(qint64 position)
 {
     // 1. delete old cursor

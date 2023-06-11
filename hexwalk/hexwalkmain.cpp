@@ -39,6 +39,7 @@ void HexWalkMain::init()
     analysisDialog = new binanalysisdialog(hexEdit,this);
     converterDialog = new ConverterDialog(this);
     hashDialog = new HashDialog(this);
+    diffDialog = new DiffDialog(this);
 
     createActions();
     createMenus();
@@ -88,6 +89,7 @@ void HexWalkMain::createMenus()
     analysisMenu = menuBar()->addMenu(tr("&Analysis"));
     analysisMenu->addAction(entropyAct);
     analysisMenu->addAction(binaryAct);
+    analysisMenu->addAction(diffAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
@@ -202,6 +204,10 @@ void HexWalkMain::createActions()
     entropyAct->setStatusTip(tr("Calculate entropy of file"));
     connect(entropyAct, SIGNAL(triggered()), this, SLOT(showEntropyDialog()));
 
+    diffAct = new QAction(QIcon(":/images/diff.png"),tr("Diff Analysis"), this);
+    diffAct->setStatusTip(tr("do diff compare byte to byte"));
+    connect(diffAct, SIGNAL(triggered()), this, SLOT(showDiffDialog()));
+
     binaryAct = new QAction(QIcon(":/images/binary.png"),tr("Binary Analysis"), this);
     binaryAct->setStatusTip(tr("make binary analysis with Binwalk"));
     connect(binaryAct, SIGNAL(triggered()), this, SLOT(showBinaryDialog()));
@@ -249,6 +255,7 @@ void HexWalkMain::createToolBars()
     analysisToolBar = addToolBar(tr("Analysis"));
     analysisToolBar->addAction(entropyAct);
     analysisToolBar->addAction(binaryAct);
+    analysisToolBar->addAction(diffAct);
     analysisToolBar->addSeparator();
     gotoLbl = new QLabel();
     gotoLbl->setText("Go To: ");
@@ -277,8 +284,8 @@ void HexWalkMain::setCurrentFile(const QString &fileName)
 
 void HexWalkMain::loadFile(const QString &fileName)
 {
-    file.setFileName(fileName);
-    if (!hexEdit->setData(file)) {
+    hexfile.setFileName(fileName);
+    if (!hexEdit->setData(hexfile)) {
         QMessageBox::warning(this, tr("HexWalk"),
                              tr("Cannot read file %1:\n%2.")
                                  .arg(fileName)
@@ -295,7 +302,7 @@ void HexWalkMain::loadFile(const QString &fileName)
 void HexWalkMain::about()
 {
     QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.1.0 is an HEX editor/viewer/analyzer.\r\n"
+                       tr("HexWalk v1.2.0 is an HEX editor/viewer/analyzer.\r\n"
                           "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
                           "Sources at https://github.com/gcarmix/HexWalk\r\n"));
 }
@@ -524,6 +531,17 @@ void HexWalkMain::showSearchDialog()
 void HexWalkMain::showAdvancedSearchDialog()
 {
     advancedSearchDialog->show();
+}
+
+void HexWalkMain::showDiffDialog()
+{
+    diffFile = QFileDialog::getOpenFileName(this);
+    if (!diffFile.isEmpty()) {
+        diffDialog->setFiles(curFile,diffFile);
+        diffDialog->show();
+
+    }
+
 }
 
 void HexWalkMain::showEntropyDialog()

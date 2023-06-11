@@ -235,7 +235,9 @@ public:
      * \return Cursor position
      */
     qint64 cursorPosition(QPoint point);
-
+    /*! return address of current first byte shown
+     */
+    qint64 firstByteAddress();
     /*! Ensure the cursor to be visbile
      */
     void ensureVisible();
@@ -370,6 +372,10 @@ public:
     QColor selectionColor();
     void setSelectionColor(const QColor &color);
 
+    void resetSelection(qint64 pos);            // set selectionStart and selectionEnd to pos
+    void resetSelection();                      // set selectionEnd to selectionStart
+    void setSelection(qint64 pos);              // set min (if below init) or max (if greater init)
+
 protected:
     // Handle events
     void keyPressEvent(QKeyEvent *event);
@@ -380,9 +386,7 @@ protected:
     virtual bool focusNextPrevChild(bool next);
 private:
     // Handle selections
-    void resetSelection(qint64 pos);            // set selectionStart and selectionEnd to pos
-    void resetSelection();                      // set selectionEnd to selectionStart
-    void setSelection(qint64 pos);              // set min (if below init) or max (if greater init)
+
     qint64 getSelectionBegin();
     qint64 getSelectionEnd();
 

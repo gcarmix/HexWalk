@@ -11,6 +11,7 @@
 #include "binanalysisdialog.h"
 #include "converterdialog.h"
 #include "hashdialog.h"
+#include "diffdialog.h"
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
@@ -55,6 +56,7 @@ private slots:
     void showAdvancedSearchDialog();
     void showEntropyDialog();
     void showBinaryDialog();
+    void showDiffDialog();
     void showConverterDialog();
     void showHashDialog();
     void toggleOverwriteMode();
@@ -67,6 +69,8 @@ private:
     QList<QAction*> recentFileActionList;
     QString curFile;
     QFile file;
+    QFile hexfile;
+    QString diffFile;
     bool isUntitled;
     QMenu *fileMenu;
     QMenu *editMenu;
@@ -89,6 +93,7 @@ private:
     QAction *binaryAct;
     QAction *overwriteAct;
     QAction *hashAct;
+    QAction *diffAct;
 
     QAction *undoAct;
     QAction *redoAct;
@@ -119,6 +124,7 @@ private:
     SearchDialog *searchDialog;
     binanalysisdialog * analysisDialog;
     AdvancedSearchDialog *advancedSearchDialog;
+    DiffDialog *diffDialog;
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;

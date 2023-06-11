@@ -2,15 +2,16 @@ QT += charts
 CONFIG += static
 RC_ICONS = images/hexwalk.ico
 #Only for Windows:
-#QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
+QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
 #Only for Mac:
-ICON = images/hexwalk.icns
+#ICON = images/hexwalk.icns
 ###############
 
 HEADERS = \
     advancedsearchdialog.h \
     binanalysisdialog.h \
     converterdialog.h \
+    diffdialog.h \
     entropychart.h \
     entropydialog.h \
     hashdialog.h \
@@ -28,6 +29,7 @@ SOURCES = \
     advancedsearchdialog.cpp \
     binanalysisdialog.cpp \
     converterdialog.cpp \
+    diffdialog.cpp \
     entropychart.cpp \
     entropydialog.cpp \
     hashdialog.cpp \
@@ -47,6 +49,7 @@ FORMS += \
     advancedsearchdialog.ui \
     binanalysisdialog.ui \
     converterdialog.ui \
+    diffdialog.ui \
     entropydialog.ui \
     hashdialog.ui \
     hexwalkmain.ui \
