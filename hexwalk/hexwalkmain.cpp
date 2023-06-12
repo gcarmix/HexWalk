@@ -535,12 +535,23 @@ void HexWalkMain::showAdvancedSearchDialog()
 
 void HexWalkMain::showDiffDialog()
 {
-    diffFile = QFileDialog::getOpenFileName(this);
-    if (!diffFile.isEmpty()) {
+    if(curFile.length() == 0)
+    {
+        QMessageBox::warning(this, tr("HexWalk"),
+                             tr("You must select a file first.")
+                             );
+    }
+    else
+    {
+        diffFile = QFileDialog::getOpenFileName(this);
+        if (!diffFile.isEmpty()) {
         diffDialog->setFiles(curFile,diffFile);
         diffDialog->show();
 
+        }
+
     }
+
 
 }
 

@@ -164,6 +164,11 @@ void AdvancedSearchDialog::findAll()
                 break;
         }
     }
+
+    QString message = QString("%1 occurrencies found").arg(count);
+    QMessageBox::information(this, tr("HexWalk"),message);
+
+
     setData();
     ui->resultsTableView->resizeColumnsToContents();
     ui->resultsTableView->verticalHeader()->show();
