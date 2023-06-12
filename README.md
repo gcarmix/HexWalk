@@ -13,6 +13,7 @@ It is cross platform and has plenty of features:
 * Hash Calculator
 * Bin/Dec/Hex Converter
 * Hex file editing
+* Diff file analysis
 
 
 ## Screenshots
@@ -31,6 +32,9 @@ It is cross platform and has plenty of features:
 
 * Hash Calculator
 ![hexwalk gui](screenshots/hexwalk_gui4.png)
+
+* Diff Analysis
+![hexwalk gui](screenshots/hexwalk_gui13.png)
 
 ## Usage
 
