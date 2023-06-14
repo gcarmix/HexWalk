@@ -41,6 +41,11 @@ It is cross platform and has plenty of features:
 HexWalk release executables are self-contained, you can use as-is.
 Binwalk functionalities need Binwalk to be installed on the OS. For Linux OS simply install binwalk with your package manager (eg. sudo apt install binwalk). On Mac install with "brew install binwalk" or from sources following the instructions on Binwalk repository.
 
+For more details about the usage go to the Wiki:
+
+https://github.com/gcarmix/hexwalk/wiki
+
+
 ## Binwalk on Windows OS
 
 For Windows, Binwalk support is experimental, it is done using a python helper file that launches the commands and must be on the same path of hexwalk.exe.
