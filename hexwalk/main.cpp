@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(hexwalk);
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication app(argc, argv);
     app.setApplicationName("HexWalk");
     app.setOrganizationName("HexWalk");

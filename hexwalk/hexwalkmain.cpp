@@ -302,7 +302,7 @@ void HexWalkMain::loadFile(const QString &fileName)
 void HexWalkMain::about()
 {
     QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.2.0 is an HEX editor/viewer/analyzer.\r\n"
+                       tr("HexWalk v1.2.1 is an HEX editor/viewer/analyzer.\r\n"
                           "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
                           "Sources at https://github.com/gcarmix/HexWalk\r\n"));
 }
