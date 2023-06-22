@@ -61,6 +61,7 @@ private slots:
     void showHashDialog();
     void toggleOverwriteMode();
     void gotoAddress();
+    void setWidth();
 
 private:
     void init();
@@ -130,6 +131,8 @@ private:
     QLabel *lbSize, *lbSizeName;
     QLabel * gotoLbl;
     QLineEdit * gotoText;
+    QLabel * widthLbl;
+    QLineEdit * widthText;
 };
 
 #endif // HEXWALKMAIN_H

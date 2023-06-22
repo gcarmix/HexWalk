@@ -413,6 +413,7 @@ private:
     int _pxCursorWidth;                         // cursor width
     int _pxSelectionSub;                        // offset selection rect
     int _pxCursorX;                             // current cursor pos
+    int _pxCursorX2;                             // current cursor2 pos
     int _pxCursorY;                             // current cursor pos
 
     // Name convention: absolute byte positions in chunks start with _b
@@ -454,6 +455,7 @@ private:
     QTimer _cursorTimer;                        // for blinking cursor
     qint64 _cursorPosition;                     // absolute position of cursor, 1 Byte == 2 tics
     QRect _cursorRect;                          // physical dimensions of cursor
+    QRect _cursorRect2;                          // physical dimensions of cursor
     QByteArray _data;                           // QHexEdit's data, when setup with QByteArray
     QByteArray _dataShown;                      // data in the current View
     QByteArray _hexDataShown;                   // data in view, transformed to hex

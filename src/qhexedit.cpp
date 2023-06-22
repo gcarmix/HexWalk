@@ -212,6 +212,7 @@ void QHexEdit::setCursorPosition(qint64 position)
     // 1. delete old cursor
     _blink = false;
     viewport()->update(_cursorRect);
+    viewport()->update(_cursorRect2);
 
     // 2. Check, if cursor in range?
     if (position > (_chunks->size() * 2 - 1))
@@ -227,20 +228,29 @@ void QHexEdit::setCursorPosition(qint64 position)
     if (_editAreaIsAscii)
     {
         _pxCursorX = x / 2 * _pxCharWidth + _pxPosAsciiX;
+        _pxCursorX2 = (((x / 2) * 3) + (x % 2)) * _pxCharWidth + _pxPosHexX;
         _cursorPosition = position & 0xFFFFFFFFFFFFFFFE;
     } else {
         _pxCursorX = (((x / 2) * 3) + (x % 2)) * _pxCharWidth + _pxPosHexX;
+        _pxCursorX2 = x / 2 * _pxCharWidth + _pxPosAsciiX;
         _cursorPosition = position;
     }
 
     if (_overwriteMode)
+    {
         _cursorRect = QRect(_pxCursorX - horizontalScrollBar()->value(), _pxCursorY + _pxCursorWidth, _pxCharWidth, _pxCursorWidth);
+        _cursorRect2 = QRect(_pxCursorX2 - horizontalScrollBar()->value(), _pxCursorY + _pxCursorWidth, _pxCharWidth, _pxCursorWidth);
+    }
     else
+    {
         _cursorRect = QRect(_pxCursorX - horizontalScrollBar()->value(), _pxCursorY - _pxCharHeight + 4, _pxCursorWidth, _pxCharHeight);
+        _cursorRect2 = QRect(_pxCursorX2 - horizontalScrollBar()->value(), _pxCursorY + _pxCursorWidth, _pxCharWidth, _pxCursorWidth);
+    }
 
     // 4. Immediately draw new cursor
     _blink = true;
     viewport()->update(_cursorRect);
+    viewport()->update(_cursorRect2);
     emit currentAddressChanged(_bPosCurrent);
 }
 
@@ -1009,7 +1019,11 @@ void QHexEdit::paintEvent(QPaintEvent *event)
         else
         {
             if (_blink && hasFocus())
+            {
+
                 painter.fillRect(_cursorRect, this->palette().color(QPalette::WindowText));
+                painter.fillRect(_cursorRect2, this->palette().color(QPalette::WindowText));
+            }
         }
             if (_editAreaIsAscii)
             {

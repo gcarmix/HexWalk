@@ -261,12 +261,25 @@ void HexWalkMain::createToolBars()
     gotoLbl->setText("Go To: ");
     gotoLbl->setFixedHeight(25);
     analysisToolBar->addWidget(gotoLbl);
+
     gotoText = new QLineEdit();
     gotoText->setFixedHeight(25);
     gotoText->setFixedWidth(80);
     gotoText->setText(tr("0"));
     connect(gotoText,SIGNAL(returnPressed()),SLOT(gotoAddress()));
     analysisToolBar->addWidget(gotoText);
+
+    analysisToolBar->addSeparator();
+    widthLbl = new QLabel();
+    widthLbl->setText("Width: ");
+    widthLbl->setFixedHeight(25);
+    analysisToolBar->addWidget(widthLbl);
+    widthText = new QLineEdit();
+    widthText->setFixedHeight(25);
+    widthText->setFixedWidth(40);
+    widthText->setText(tr("16"));
+    connect(widthText,SIGNAL(returnPressed()),SLOT(setWidth()));
+    analysisToolBar->addWidget(widthText);
     //infoToolBar = addToolBar(tr("Info"));
 
 }
@@ -302,7 +315,7 @@ void HexWalkMain::loadFile(const QString &fileName)
 void HexWalkMain::about()
 {
     QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.2.1 is an HEX editor/viewer/analyzer.\r\n"
+                       tr("HexWalk v1.3.0 is an HEX editor/viewer/analyzer.\r\n"
                           "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
                           "Sources at https://github.com/gcarmix/HexWalk\r\n"));
 }
@@ -597,6 +610,24 @@ void HexWalkMain::gotoAddress()
     hexEdit->setCursorPosition(2*(gotoText->text().toLong(NULL,16)));
     hexEdit->ensureVisible();
 }
+
+void HexWalkMain::setWidth()
+{
+    int value =widthText->text().toInt();
+    if (value <= 0)
+    {
+        value = 8;
+        widthText->setText(QString("%1").arg(value));
+    }
+    else if(value > 64)
+    {
+        value = 64;
+        widthText->setText(QString("%1").arg(value));
+    }
+    QSettings settings;
+    settings.setValue("BytesPerLine",value);
+    hexEdit->setBytesPerLine(value);
+}
 void HexWalkMain::showHashDialog()
 {
     if(curFile.length() == 0)
@@ -616,6 +647,7 @@ void HexWalkMain::showHashDialog()
 void HexWalkMain::readSettings()
 {
     QSettings settings;
+
     hexEdit->setAddressWidth(8);
     hexEdit->setBytesPerLine(16);
     hexEdit->setHexCaps(true);
@@ -627,6 +659,19 @@ void HexWalkMain::readSettings()
     hexEdit->setFont(QFont("Courier",12));
     hexEdit->setHighlighting(true);
     hexEdit->setOverwriteMode(true);
+    int bytesperline = settings.value("BytesPerLine").toInt();
+    qInfo()<<bytesperline;
+    if( bytesperline > 0 && bytesperline < 64 )
+    {
+        hexEdit->setBytesPerLine(bytesperline);
+        widthText->setText(QString("%1").arg(bytesperline));
+    }
+    else{
+        bytesperline = 16;
+        hexEdit->setBytesPerLine(bytesperline);
+        qInfo()<<bytesperline;
+        widthText->setText(QString("%1").arg(bytesperline));
+    }
     /*
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
     QSize size = settings.value("size", QSize(610, 460)).toSize();
