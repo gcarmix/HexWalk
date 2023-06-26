@@ -8,8 +8,10 @@ QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -stat
 ###############
 
 HEADERS = \
+    ../src/colortag.h \
     advancedsearchdialog.h \
     binanalysisdialog.h \
+    colortag.h \
     converterdialog.h \
     diffdialog.h \
     entropychart.h \
@@ -22,6 +24,7 @@ HEADERS = \
     ../src/commands.h \
     resultType.h \
     searchdialog.h \
+    tagsdialog.h \
     worditemdelegate.h
 
 
@@ -40,6 +43,7 @@ SOURCES = \
     ../src/chunks.cpp \
     ../src/commands.cpp \
     searchdialog.cpp \
+    tagsdialog.cpp \
     worditemdelegate.cpp
 
 RESOURCES = \
@@ -54,6 +58,7 @@ FORMS += \
     hashdialog.ui \
     hexwalkmain.ui \
     optionsdialog.ui \
-    searchdialog.ui
+    searchdialog.ui \
+    tagsdialog.ui
 
 DEFINES += QHEXEDIT_EXPORTS

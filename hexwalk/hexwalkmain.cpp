@@ -40,6 +40,7 @@ void HexWalkMain::init()
     converterDialog = new ConverterDialog(this);
     hashDialog = new HashDialog(this);
     diffDialog = new DiffDialog(this);
+    tagsDialog = new TagsDialog(this);
 
     createActions();
     createMenus();
@@ -94,6 +95,7 @@ void HexWalkMain::createMenus()
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
     toolsMenu->addAction(hashAct);
+    toolsMenu->addAction(tagsAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
@@ -219,6 +221,10 @@ void HexWalkMain::createActions()
     hashAct = new QAction(tr("Hash Calculator"), this);
     hashAct->setStatusTip(tr("Hash Calculator"));
     connect(hashAct, SIGNAL(triggered()), this, SLOT(showHashDialog()));
+
+    tagsAct = new QAction(tr("Manage Tags"), this);
+    tagsAct->setStatusTip(tr("Manage Tags"));
+    connect(tagsAct, SIGNAL(triggered()), this, SLOT(showTagsDialog()));
 
     QAction* recentFileAction = 0;
     for(auto i = 0; i < 5; ++i){
@@ -640,6 +646,21 @@ void HexWalkMain::showHashDialog()
     {
         hashDialog->show();
         hashDialog->calculate(curFile);
+    }
+
+}
+
+void HexWalkMain::showTagsDialog()
+{
+    if(curFile.length() == 0)
+    {
+        QMessageBox::warning(this, tr("HexWalk"),
+                             tr("You must select a file first.")
+                             );
+    }
+    else
+    {
+        tagsDialog->show();
     }
 
 }

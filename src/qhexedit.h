@@ -7,6 +7,7 @@
 
 #include "chunks.h"
 #include "commands.h"
+#include "colortag.h"
 
 #ifdef QHEXEDIT_EXPORTS
 #define QHEXEDIT_API Q_DECL_EXPORT
@@ -282,6 +283,7 @@ public:
     /*! Gives back a formatted image of the content of QHexEdit
     */
     QString toReadableString();
+    QList<ColorTag> colorTag;
 
 
 public slots:
