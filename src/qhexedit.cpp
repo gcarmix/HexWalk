@@ -478,7 +478,7 @@ qint64 QHexEdit::lastIndexOf(const QByteArray &ba, qint64 from)
 void QHexEdit::redo()
 {
     _undoStack->redo();
-    setCursorPosition(_chunks->pos()*(_editAreaIsAscii ? 1 : 2));
+    setCursorPosition(_chunks->pos()*2);
     refresh();
 }
 
@@ -529,7 +529,7 @@ QString QHexEdit::toReadableString()
 void QHexEdit::undo()
 {
     _undoStack->undo();
-    setCursorPosition(_chunks->pos()*(_editAreaIsAscii ? 1 : 2));
+    setCursorPosition(_chunks->pos()*2);
     refresh();
 }
 
