@@ -185,7 +185,7 @@ void HexWalkMain::createActions()
     connect(findAct, SIGNAL(triggered()), this, SLOT(showSearchDialog()));
 
     overwriteAct = new QAction(tr("&Overwrite/Insert mode"), this);
-    overwriteAct->setShortcut(QKeySequence(Qt::Key_O));
+    overwriteAct->setShortcut(QKeySequence(Qt::Key_Insert));
     overwriteAct->setStatusTip(tr("Toggle overwrite/insert mode"));
     connect(overwriteAct, SIGNAL(triggered()), this, SLOT(toggleOverwriteMode()));
 
@@ -290,9 +290,16 @@ void HexWalkMain::setCurrentFile(const QString &fileName)
     isUntitled = fileName.isEmpty();
     setWindowModified(false);
     if (fileName.isEmpty())
+    {
         setWindowFilePath("HexWalk");
+        this->setWindowTitle("HexWalk");
+    }
     else
+    {
         setWindowFilePath(curFile + " - HexWalk");
+        this->setWindowTitle("HexWalk [" + curFile + "]");
+    }
+
 }
 
 void HexWalkMain::loadFile(const QString &fileName)
@@ -315,7 +322,7 @@ void HexWalkMain::loadFile(const QString &fileName)
 void HexWalkMain::about()
 {
     QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.3.1 is an HEX editor/viewer/analyzer.\r\n"
+                       tr("HexWalk v1.3.2 is an HEX editor/viewer/analyzer.\r\n"
                           "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
                           "Sources at https://github.com/gcarmix/HexWalk\r\n"));
 }
@@ -660,7 +667,6 @@ void HexWalkMain::readSettings()
     hexEdit->setHighlighting(true);
     hexEdit->setOverwriteMode(true);
     int bytesperline = settings.value("BytesPerLine").toInt();
-    qInfo()<<bytesperline;
     if( bytesperline > 0 && bytesperline < 64 )
     {
         hexEdit->setBytesPerLine(bytesperline);
@@ -669,7 +675,6 @@ void HexWalkMain::readSettings()
     else{
         bytesperline = 16;
         hexEdit->setBytesPerLine(bytesperline);
-        qInfo()<<bytesperline;
         widthText->setText(QString("%1").arg(bytesperline));
     }
     /*
@@ -722,6 +727,7 @@ void HexWalkMain::dropEvent(QDropEvent *event)
     {
         QList<QUrl> urls = event->mimeData()->urls();
         QString filePath = urls.at(0).toLocalFile();
+        adjustForCurrentFile(filePath);
         loadFile(filePath);
         event->accept();
     }
