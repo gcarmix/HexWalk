@@ -16,6 +16,7 @@ HEADERS = \
     colortag.h \
     converterdialog.h \
     diffdialog.h \
+    edittagdialog.h \
     entropychart.h \
     entropydialog.h \
     hashdialog.h \
@@ -35,6 +36,7 @@ SOURCES = \
     binanalysisdialog.cpp \
     converterdialog.cpp \
     diffdialog.cpp \
+    edittagdialog.cpp \
     entropychart.cpp \
     entropydialog.cpp \
     hashdialog.cpp \
@@ -56,6 +58,7 @@ FORMS += \
     binanalysisdialog.ui \
     converterdialog.ui \
     diffdialog.ui \
+    edittagdialog.ui \
     entropydialog.ui \
     hashdialog.ui \
     hexwalkmain.ui \
