@@ -2,7 +2,7 @@
 #define EDITTAGDIALOG_H
 
 #include <QDialog>
-
+#include "../src/qhexedit.h"
 namespace Ui {
 class EditTagDialog;
 }
@@ -12,7 +12,7 @@ class EditTagDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit EditTagDialog(QWidget *parent = nullptr);
+    explicit EditTagDialog(QHexEdit * hexedit,QWidget *parent = nullptr);
     ~EditTagDialog();
 
 private slots:
@@ -20,8 +20,12 @@ private slots:
 
     void on_colorButton_clicked();
 
+    void on_applyButton_clicked();
+signals:
+    void tagReady();
 private:
     Ui::EditTagDialog *ui;
+    QHexEdit * hexEdit;
 };
 
 #endif // EDITTAGDIALOG_H

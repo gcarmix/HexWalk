@@ -40,7 +40,7 @@ void HexWalkMain::init()
     converterDialog = new ConverterDialog(this);
     hashDialog = new HashDialog(this);
     diffDialog = new DiffDialog(this);
-    tagsDialog = new TagsDialog(this);
+    tagsDialog = new TagsDialog(hexEdit,this);
 
     createActions();
     createMenus();
@@ -668,6 +668,7 @@ void HexWalkMain::showTagsDialog()
     else
     {
         tagsDialog->show();
+
     }
 
 }

@@ -6,34 +6,60 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>371</height>
+    <width>863</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>HexWalk - Byte Pattern</string>
   </property>
-  <widget class="QListWidget" name="listWidget">
-   <property name="geometry">
-    <rect>
-     <x>15</x>
-     <y>90</y>
-     <width>371</width>
-     <height>271</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QPushButton" name="addBtn">
    <property name="geometry">
     <rect>
-     <x>290</x>
-     <y>20</y>
+     <x>760</x>
+     <y>10</y>
      <width>93</width>
      <height>29</height>
     </rect>
    </property>
    <property name="text">
     <string>Add</string>
+   </property>
+  </widget>
+  <widget class="QTableWidget" name="tableWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>50</y>
+     <width>861</width>
+     <height>291</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="addBtn_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>93</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="addBtn_3">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>10</y>
+     <width>93</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Save</string>
    </property>
   </widget>
  </widget>

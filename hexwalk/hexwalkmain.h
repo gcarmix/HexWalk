@@ -14,6 +14,7 @@
 #include "diffdialog.h"
 #include "tagsdialog.h"
 #include "edittagdialog.h"
+
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMenu;
