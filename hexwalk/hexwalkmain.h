@@ -43,6 +43,7 @@ private slots:
     void about();
     void dataChanged();
     void open();
+    void close();
     void openRecent();
     void findNext();
     bool save();

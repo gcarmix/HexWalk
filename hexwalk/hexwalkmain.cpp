@@ -63,6 +63,7 @@ void HexWalkMain::createMenus()
     fileMenu->addAction(saveAct);
     fileMenu->addAction(saveAsAct);
     fileMenu->addAction(saveReadable);
+    fileMenu->addAction(closeAct);
 
     recentFilesMenu = fileMenu->addMenu(tr("Open Recent"));
     for(auto i = 0; i < 5; ++i)
@@ -143,6 +144,11 @@ void HexWalkMain::createActions()
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
     connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+
+    closeAct = new QAction(tr("&Close..."), this);
+    closeAct->setShortcuts(QKeySequence::Close);
+    closeAct->setStatusTip(tr("Close current file"));
+    connect(closeAct, SIGNAL(triggered()), this, SLOT(close()));
 
     saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
@@ -377,6 +383,13 @@ void HexWalkMain::open()
         adjustForCurrentFile(fileName);
         loadFile(fileName);
     }
+}
+
+void HexWalkMain::close()
+{
+    QFile empty;
+    hexEdit->setData(empty);
+    setCurrentFile("");
 }
 
 void HexWalkMain::writeSettings()
