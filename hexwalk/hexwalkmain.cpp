@@ -222,8 +222,8 @@ void HexWalkMain::createActions()
     hashAct->setStatusTip(tr("Hash Calculator"));
     connect(hashAct, SIGNAL(triggered()), this, SLOT(showHashDialog()));
 
-    tagsAct = new QAction(tr("Manage Tags"), this);
-    tagsAct->setStatusTip(tr("Manage Tags"));
+    tagsAct = new QAction(tr("Byte Patterns"), this);
+    tagsAct->setStatusTip(tr("Byte Patterns"));
     connect(tagsAct, SIGNAL(triggered()), this, SLOT(showTagsDialog()));
 
     QAction* recentFileAction = 0;
@@ -328,7 +328,7 @@ void HexWalkMain::loadFile(const QString &fileName)
 void HexWalkMain::about()
 {
     QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.3.2 is an HEX editor/viewer/analyzer.\r\n"
+                       tr("HexWalk v1.4.0 is an HEX editor/viewer/analyzer.\r\n"
                           "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
                           "Sources at https://github.com/gcarmix/HexWalk\r\n"));
 }
@@ -471,7 +471,6 @@ bool HexWalkMain::saveAs()
         return false;
 
     return saveFile(fileName);
-    return 0;
 }
 
 void HexWalkMain::saveSelectionToReadableFile()

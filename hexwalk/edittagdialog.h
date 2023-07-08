@@ -13,6 +13,8 @@ class EditTagDialog : public QDialog
 
 public:
     explicit EditTagDialog(QHexEdit * hexedit,QWidget *parent = nullptr);
+    void colorGen();
+    void loadTag(int row);
     ~EditTagDialog();
 
 private slots:
@@ -26,6 +28,7 @@ signals:
 private:
     Ui::EditTagDialog *ui;
     QHexEdit * hexEdit;
+    int editedTagIdx;
 };
 
 #endif // EDITTAGDIALOG_H

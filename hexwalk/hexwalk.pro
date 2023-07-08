@@ -27,6 +27,7 @@ HEADERS = \
     ../src/commands.h \
     resultType.h \
     searchdialog.h \
+    tagparser.hpp \
     tagsdialog.h \
     worditemdelegate.h
 
@@ -47,6 +48,7 @@ SOURCES = \
     ../src/chunks.cpp \
     ../src/commands.cpp \
     searchdialog.cpp \
+    tagparser.cpp \
     tagsdialog.cpp \
     worditemdelegate.cpp
 

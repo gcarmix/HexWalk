@@ -1005,7 +1005,7 @@ void QHexEdit::paintEvent(QPaintEvent *event)
                         else
                             tagrect.setRect(pxPosX - _pxCharWidth, pxPosY - _pxCharHeight + _pxSelectionSub, 3*_pxCharWidth, _pxCharHeight);
                         QColor tempColor = tag0.color;
-                        tempColor.setAlpha(40);
+                        tempColor.setAlpha(80);
                         painter.fillRect(tagrect, QBrush(tempColor));
                     }
                 }

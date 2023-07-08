@@ -6,8 +6,11 @@ typedef enum TagType_e
 {
     STRING_t,
     BE_t,
-    LE_t
+    LE_t,
+    HEX_t
 }TagType_e;
+
+const QString tagStrings[]={"string","beint","leint","hex"};
 
 class ColorTag{
 public:
