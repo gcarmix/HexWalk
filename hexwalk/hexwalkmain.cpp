@@ -40,6 +40,7 @@ void HexWalkMain::init()
     converterDialog = new ConverterDialog(this);
     hashDialog = new HashDialog(this);
     diffDialog = new DiffDialog(this);
+    tagsDialog = new TagsDialog(hexEdit,this);
 
     createActions();
     createMenus();
@@ -95,6 +96,7 @@ void HexWalkMain::createMenus()
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
     toolsMenu->addAction(hashAct);
+    toolsMenu->addAction(tagsAct);
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
@@ -226,6 +228,10 @@ void HexWalkMain::createActions()
     hashAct->setStatusTip(tr("Hash Calculator"));
     connect(hashAct, SIGNAL(triggered()), this, SLOT(showHashDialog()));
 
+    tagsAct = new QAction(tr("Byte Patterns"), this);
+    tagsAct->setStatusTip(tr("Byte Patterns"));
+    connect(tagsAct, SIGNAL(triggered()), this, SLOT(showTagsDialog()));
+
     QAction* recentFileAction = 0;
     for(auto i = 0; i < 5; ++i){
         recentFileAction = new QAction(this);
@@ -328,7 +334,7 @@ void HexWalkMain::loadFile(const QString &fileName)
 void HexWalkMain::about()
 {
     QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.3.2 is an HEX editor/viewer/analyzer.\r\n"
+                       tr("HexWalk v1.4.0 is an HEX editor/viewer/analyzer.\r\n"
                           "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
                           "Sources at https://github.com/gcarmix/HexWalk\r\n"));
 }
@@ -478,7 +484,6 @@ bool HexWalkMain::saveAs()
         return false;
 
     return saveFile(fileName);
-    return 0;
 }
 
 void HexWalkMain::saveSelectionToReadableFile()
@@ -660,6 +665,22 @@ void HexWalkMain::showHashDialog()
     {
         hashDialog->show();
         hashDialog->calculate(curFile);
+    }
+
+}
+
+void HexWalkMain::showTagsDialog()
+{
+    if(curFile.length() == 0)
+    {
+        QMessageBox::warning(this, tr("HexWalk"),
+                             tr("You must select a file first.")
+                             );
+    }
+    else
+    {
+        tagsDialog->show();
+
     }
 
 }

@@ -919,7 +919,9 @@ void QHexEdit::paintEvent(QPaintEvent *event)
         // draw some patterns if needed
         painter.fillRect(event->rect(), viewport()->palette().color(QPalette::Base));
         if (_addressArea)
+        {
             painter.fillRect(QRect(-pxOfsX, event->rect().top(), _pxPosHexX - _pxGapAdrHex/2, height()), _addressAreaColor);
+        }
         if (_asciiArea)
         {
             int linePos = _pxPosAsciiX - (_pxGapHexAscii / 2);
@@ -979,7 +981,35 @@ void QHexEdit::paintEvent(QPaintEvent *event)
                     r.setRect(pxPosX, pxPosY - _pxCharHeight + _pxSelectionSub, 2*_pxCharWidth, _pxCharHeight);
                 else
                     r.setRect(pxPosX - _pxCharWidth, pxPosY - _pxCharHeight + _pxSelectionSub, 3*_pxCharWidth, _pxCharHeight);
-                painter.fillRect(r, c);
+                painter.fillRect(r,c);
+
+                QRect tagrect;
+                /*ColorTag tag;
+                tag.name = QString("prova");
+                tag.pos = 0;
+                tag.size=5;
+                tag.color = QString("#540000");
+                colorTag.append(tag);
+                tag.name = QString("prova");
+                tag.pos = 10;
+                tag.size=4;
+                tag.color = QString("#005400");
+                colorTag.append(tag);*/
+                for(int i=0;i<colorTag.size();i++)
+                {
+                    ColorTag  tag0 = colorTag.at(i);
+                    if(posBa >= tag0.pos && posBa < (tag0.pos + tag0.size))
+                    {
+                        if (colIdx == 0)
+                            tagrect.setRect(pxPosX, pxPosY - _pxCharHeight + _pxSelectionSub, 2*_pxCharWidth, _pxCharHeight);
+                        else
+                            tagrect.setRect(pxPosX - _pxCharWidth, pxPosY - _pxCharHeight + _pxSelectionSub, 3*_pxCharWidth, _pxCharHeight);
+                        QColor tempColor = tag0.color;
+                        tempColor.setAlpha(80);
+                        painter.fillRect(tagrect, QBrush(tempColor));
+                    }
+                }
+
                 hex = _hexDataShown.mid((bPosLine + colIdx) * 2, 2);
                 painter.drawText(pxPosX, pxPosY, hexCaps()?hex.toUpper():hex);
                 pxPosX += 3*_pxCharWidth;

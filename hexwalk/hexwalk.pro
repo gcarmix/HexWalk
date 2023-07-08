@@ -10,10 +10,13 @@ VERSION = "1.3.2"
 QMAKE_TARGET_COPYRIGHT = "gcarmix"
 QMAKE_TARGET_PRODUCT = "HexWalk"
 HEADERS = \
+    ../src/colortag.h \
     advancedsearchdialog.h \
     binanalysisdialog.h \
+    colortag.h \
     converterdialog.h \
     diffdialog.h \
+    edittagdialog.h \
     entropychart.h \
     entropydialog.h \
     hashdialog.h \
@@ -24,6 +27,8 @@ HEADERS = \
     ../src/commands.h \
     resultType.h \
     searchdialog.h \
+    tagparser.hpp \
+    tagsdialog.h \
     worditemdelegate.h
 
 
@@ -32,6 +37,7 @@ SOURCES = \
     binanalysisdialog.cpp \
     converterdialog.cpp \
     diffdialog.cpp \
+    edittagdialog.cpp \
     entropychart.cpp \
     entropydialog.cpp \
     hashdialog.cpp \
@@ -42,6 +48,8 @@ SOURCES = \
     ../src/chunks.cpp \
     ../src/commands.cpp \
     searchdialog.cpp \
+    tagparser.cpp \
+    tagsdialog.cpp \
     worditemdelegate.cpp
 
 RESOURCES = \
@@ -52,10 +60,12 @@ FORMS += \
     binanalysisdialog.ui \
     converterdialog.ui \
     diffdialog.ui \
+    edittagdialog.ui \
     entropydialog.ui \
     hashdialog.ui \
     hexwalkmain.ui \
     optionsdialog.ui \
-    searchdialog.ui
+    searchdialog.ui \
+    tagsdialog.ui
 
 DEFINES += QHEXEDIT_EXPORTS

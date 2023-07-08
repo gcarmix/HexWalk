@@ -1,0 +1,275 @@
+#include "tagsdialog.h"
+#include "ui_tagsdialog.h"
+#include <QLabel>
+#include <QColorDialog>
+#include <QDebug>
+#include <QFileDialog>
+#include "tagparser.hpp"
+#include <QMessageBox>
+
+
+TagsDialog::TagsDialog(QHexEdit * hexedit,QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::TagsDialog)
+{
+    ui->setupUi(this);
+    hexEdit = hexedit;
+    edittagDialog = new EditTagDialog(hexedit,this);
+    edittagDialog->hide();
+    connect(edittagDialog,SIGNAL(tagReady()),this,SLOT(triggerUpdate()));
+    ui->tableWidget->setColumnCount(6);
+    ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Name"));
+    ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Color"));
+    ui->tableWidget->setHorizontalHeaderItem(2,new QTableWidgetItem("Offset"));
+    ui->tableWidget->setHorizontalHeaderItem(3,new QTableWidgetItem("Size"));
+    ui->tableWidget->setHorizontalHeaderItem(4,new QTableWidgetItem("Type"));
+    ui->tableWidget->setHorizontalHeaderItem(5,new QTableWidgetItem("Value"));
+    ui->tableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->tableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ymlParser = new YMLParser();
+
+
+}
+
+QString TagsDialog::binToStr(QByteArray bin)
+{
+    QString outString;
+    for(int i=0;i<bin.length();i++)
+    {
+        if(bin.at(i)<32 || uchar(bin.at(i))>127)
+        {
+            outString += QString(".");
+        }
+        else if(bin.at(i) == '<')
+        {
+            outString += QString("&lt;");
+        }
+        else if(bin.at(i) == '>')
+        {
+            outString += QString("&gt;");
+        }
+        else if(bin.at(i) == '&')
+        {
+            outString += QString("&amp;");
+        }
+        else
+        {
+            outString += QString(bin.at(i));
+        }
+    }
+    return outString;
+}
+void TagsDialog::changeColor()
+{
+    QColor color = QColorDialog::getColor();
+}
+TagsDialog::~TagsDialog()
+{
+    delete ui;
+}
+
+void TagsDialog::on_addBtn_clicked()
+{
+
+
+    edittagDialog->show();
+    edittagDialog->colorGen();
+}
+void TagsDialog::triggerUpdate()
+{
+
+
+    updateTable();
+}
+void TagsDialog::updateTable()
+{
+    while(ui->tableWidget->rowCount() > 0)
+    {
+        ui->tableWidget->removeRow(0);
+    }
+    //ui->tableWidget->clearContents();
+
+    for(int i=0; i< hexEdit->colorTag.length();i++)
+    {
+        ColorTag tmpTag = hexEdit->colorTag.at(i);
+        ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,0,new QTableWidgetItem(tmpTag.name));
+        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,1,new QTableWidgetItem(" "));
+        ui->tableWidget->item(ui->tableWidget->rowCount()-1,1)->setBackground(QColor(tmpTag.color));
+        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,2,new QTableWidgetItem(QString("%1").arg(tmpTag.pos)));
+        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,3,new QTableWidgetItem(QString("%1").arg(tmpTag.size)));
+        ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,4,new QTableWidgetItem(tagStrings[tmpTag.type]));
+        QByteArray baValue = hexEdit->dataAt(tmpTag.pos,tmpTag.size);
+        if(baValue.length() > 8 && (tmpTag.type == LE_t || tmpTag.type == BE_t))
+        {
+            baValue.truncate(8);
+        }
+        else if(baValue.length() > 16)
+        {
+            baValue.truncate(16);
+        }
+        if(tmpTag.type == HEX_t)
+        {
+            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,5,new QTableWidgetItem(QString(hexEdit->dataAt(tmpTag.pos,tmpTag.size).toHex())));
+        }
+        else if(tmpTag.type == STRING_t)
+        {
+            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,5,new QTableWidgetItem(binToStr(hexEdit->dataAt(tmpTag.pos,tmpTag.size))));
+        }
+        else if(tmpTag.type == LE_t)
+        {
+            bool ok;
+            QByteArray dataArr = hexEdit->dataAt(tmpTag.pos,tmpTag.size);
+            std::reverse(dataArr.begin(),dataArr.end());
+            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,5,new QTableWidgetItem(QString("%1").arg(dataArr.toHex().toInt(&ok,16))));
+            if(!ok)
+            {
+                ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,5,new QTableWidgetItem("Error"));
+            }
+        }
+        else if(tmpTag.type == BE_t)
+        {
+            bool ok;
+            QByteArray dataArr = hexEdit->dataAt(tmpTag.pos,tmpTag.size);
+            ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,5,new QTableWidgetItem(QString("%1").arg(dataArr.toHex().toInt(&ok,16))));
+            if(!ok)
+            {
+                ui->tableWidget->setItem(ui->tableWidget->rowCount()-1,5,new QTableWidgetItem("Error"));
+            }
+        }
+
+    }
+
+}
+
+
+void TagsDialog::on_loadBtn_clicked()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,"Tag selection","patterns","YML (*.yml)");
+    if (fileName.isEmpty())
+        return;
+
+    ymlParser->loadFile(fileName.toStdString());
+    hexEdit->colorTag.clear();
+    for(int i=0;i<ymlParser->ymlobj.size();i++)
+    {
+        ColorTag tag;
+        tag.name = QString::fromStdString(ymlParser->ymlobj.at(i).name);
+        tag.color = QString::fromStdString(ymlParser->ymlobj.at(i).color);
+        QString typeStr = QString::fromStdString(ymlParser->ymlobj.at(i).type);
+        if(typeStr == tagStrings[LE_t])
+        {
+            tag.type = LE_t;
+        }
+        else if(typeStr == tagStrings[BE_t])
+        {
+            tag.type = BE_t;
+        }
+        else if(typeStr == tagStrings[STRING_t])
+        {
+            tag.type = STRING_t;
+        }
+        else if(typeStr == tagStrings[HEX_t])
+        {
+            tag.type = HEX_t;
+        }
+        else
+        {
+            QMessageBox::warning(this, tr("HexWalk"),
+                                 tr("Unknown tag type.")
+                                 );
+            break;
+        }
+        tag.pos = QString::fromStdString(ymlParser->ymlobj.at(i).offset).toLong();
+        tag.size = QString::fromStdString(ymlParser->ymlobj.at(i).size).toLong();
+
+
+        qInfo()<<"ELEM: "<<i<<"\n";
+        qInfo()<<"- name: "<<QString::fromStdString(ymlParser->ymlobj.at(i).name)<<"\n";
+        qInfo()<<"- size: "<<QString::fromStdString(ymlParser->ymlobj.at(i).size)<<"\n";
+        qInfo()<<"- offset: "<<QString::fromStdString(ymlParser->ymlobj.at(i).offset)<<"\n";
+        qInfo()<<"- color: "<<QString::fromStdString(ymlParser->ymlobj.at(i).color)<<"\n";
+        qInfo()<<"- type: "<<QString::fromStdString(ymlParser->ymlobj.at(i).type)<<"\n";
+
+        hexEdit->colorTag.append(tag);
+
+
+
+    }
+    updateTable();
+    hexEdit->update();
+    hexEdit->ensureVisible();
+
+    return;
+}
+
+
+void TagsDialog::on_tableWidget_clicked(const QModelIndex &index)
+{
+    hexEdit->indexOf("",hexEdit->colorTag.at(index.row()).pos,false,false);
+    hexEdit->setCursorPosition(hexEdit->colorTag.at(index.row()).pos*2);
+    hexEdit->setSelection(hexEdit->colorTag.at(index.row()).pos*2 + hexEdit->colorTag.at(index.row()).size*2);
+    hexEdit->update();
+    hexEdit->ensureVisible();
+}
+
+
+void TagsDialog::on_saveBtn_clicked()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save To YML File"));
+    if(!fileName.isEmpty())
+    {
+        for(int i=0;i<hexEdit->colorTag.size();i++)
+        {
+            YMLObj obj;
+            obj.color = hexEdit->colorTag.at(i).color.toStdString();
+            obj.name = hexEdit->colorTag.at(i).name.toStdString();
+            obj.size = QString("%1").arg(hexEdit->colorTag.at(i).size).toStdString();
+            obj.offset = QString("%1").arg(hexEdit->colorTag.at(i).pos).toStdString();
+            obj.type = tagStrings[hexEdit->colorTag.at(i).type].toStdString();
+
+
+
+            ymlParser->ymlobj.push_back(obj);
+        }
+        ymlParser->saveFile(fileName.toStdString());
+        QMessageBox::information(this, tr("HexWalk"),
+                             tr("Tag file saved successfully")
+                             );
+    }
+
+}
+
+
+void TagsDialog::on_delBtn_clicked()
+{
+    QModelIndexList selection = ui->tableWidget->selectionModel()->selectedRows();
+
+    // Multiple rows can be selected
+    for(int i=0; i< selection.count(); i++)
+    {
+        QModelIndex index = selection.at(i);
+        hexEdit->colorTag.removeAt(index.row());
+        ui->tableWidget->removeRow(index.row());
+        hexEdit->update();
+        hexEdit->ensureVisible();
+
+    }
+}
+
+
+void TagsDialog::on_tableWidget_doubleClicked(const QModelIndex &index)
+{
+    edittagDialog->show();
+    edittagDialog->loadTag(index.row());
+}
+
+
+void TagsDialog::on_resetBtn_clicked()
+{
+    hexEdit->colorTag.clear();
+    updateTable();
+    hexEdit->update();
+    hexEdit->ensureVisible();
+}
+
