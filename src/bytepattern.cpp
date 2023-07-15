@@ -109,7 +109,11 @@ int BytePattern::resolveReferences(){
                                     if(pos != std::string::npos)
                                     {
                                         found = true;
-                                        tag.obj.offset.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toInt(&ok,16)));
+                                        if(temptag.type == LE_t)
+                                        {
+                                            reverse(temptag.data.begin(),temptag.data.end());
+                                        }
+                                        tag.obj.offset.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toLong(&ok,16)));
                                         break;
                                     }
                                 }
@@ -151,7 +155,11 @@ int BytePattern::resolveReferences(){
                                     pos = tag.obj.size.find(temptag.name);
                                     if(pos != std::string::npos)
                                     {
-                                        tag.obj.size.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toInt(&ok,16)));
+                                        if(temptag.type == LE_t)
+                                        {
+                                            reverse(temptag.data.begin(),temptag.data.end());
+                                        }
+                                        tag.obj.size.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toLong(&ok,16)));
                                         found = true;
                                         break;
                                     }

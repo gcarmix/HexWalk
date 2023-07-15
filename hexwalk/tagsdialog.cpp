@@ -37,7 +37,7 @@ QString TagsDialog::binToStr(QByteArray bin)
     QString outString;
     for(int i=0;i<bin.length();i++)
     {
-        if(bin.at(i)<32 || uchar(bin.at(i))>127)
+        if(bin.at(i)<32 || uchar(bin.at(i))>=127)
         {
             outString += QString(".");
         }
