@@ -283,7 +283,7 @@ public:
     /*! Gives back a formatted image of the content of QHexEdit
     */
     QString toReadableString();
-    QList<ColorTag> colorTag;
+    QList<ColorTag> *colorTag;
 
 
 public slots:

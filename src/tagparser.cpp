@@ -50,6 +50,19 @@ bool YMLParser::isComment(std::string line){
     }
     return true;
 }
+
+std::string YMLParser::removeSpaces(std::string input) {
+
+    input.erase(input.begin(), std::find_if(input.begin(), input.end(), [](unsigned char ch) {
+                    return !std::isspace(ch);
+                }));
+
+    input.erase(std::find_if(input.rbegin(), input.rend(), [](unsigned char ch) {
+                    return !std::isspace(ch);
+                }).base(), input.end());
+
+    return input;
+}
 int YMLParser::loadFile(std::string filename)
 {
     ifstream ymlfile(filename);
@@ -74,8 +87,7 @@ int YMLParser::loadFile(std::string filename)
                             if(line.find(":") != string::npos)
                             {
                                 std::string name = line.substr(line.find(":") + 1);
-                            name.erase(remove(name.begin(), name.end(), ' '), name.end());
-                            cout<< "NAME FOUND: '" << name << "'\n";
+                                name = removeSpaces(name);
                             YMLObj obj;
                             obj.name = name;
                             ymlobj.push_back(obj);

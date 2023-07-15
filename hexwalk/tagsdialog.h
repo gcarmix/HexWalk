@@ -4,7 +4,11 @@
 #include <QDialog>
 #include "edittagdialog.h"
 #include "../src/qhexedit.h"
-#include "tagparser.hpp"
+#include "../src/tagparser.hpp"
+#include <iostream>
+#include <stack>
+#include <string>
+#include "../src/bytepattern.h"
 namespace Ui {
 class TagsDialog;
 }
@@ -18,6 +22,10 @@ public:
     void changeColor();
     ~TagsDialog();
     void updateTable();
+    bool isOperator(char c);
+    int performOperation(char operation, int operand1, int operand2);
+    int evaluateExpression(const string& expression);
+    BytePattern *bytePattern;
 
 private slots:
     void on_addBtn_clicked();
@@ -39,8 +47,9 @@ private:
     Ui::TagsDialog *ui;
     EditTagDialog * edittagDialog;
     QHexEdit * hexEdit;
-    YMLParser * ymlParser;
+
     QString binToStr(QByteArray bin);
+    void substVariables(string line,int idx);
 };
 
 #endif // TAGSDIALOG_H

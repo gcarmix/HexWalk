@@ -29,6 +29,7 @@ class YMLParser
     vector<YMLObj> ymlobj;
     private:
     bool isComment(std::string line);
+    std::string removeSpaces(std::string input);
 
 };
 #endif

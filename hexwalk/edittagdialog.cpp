@@ -3,11 +3,11 @@
 #include <QColorDialog>
 #include "../src/colortag.h"
 #include <QMessageBox>
-EditTagDialog::EditTagDialog(QHexEdit * hexedit,QWidget *parent) :
+EditTagDialog::EditTagDialog(BytePattern * bytePtr,QWidget *parent ) :
     QDialog(parent),
     ui(new Ui::EditTagDialog)
 {
-    hexEdit = hexedit;
+    bytePattern = bytePtr;
     ui->setupUi(this);
 
 
@@ -37,27 +37,27 @@ void EditTagDialog::colorGen()
 
 void EditTagDialog::loadTag(int row)
 {
-    ColorTag tag = hexEdit->colorTag.at(row);
-    QString qss = QString("background-color: %1").arg(tag.color);
+    ColorTag tag = bytePattern->colorTag.at(row);
+    QString qss = QString("background-color: %1").arg(QString::fromStdString(tag.color));
     ui->colorButton->setStyleSheet(qss);
-    ui->nameEdit->setText(tag.name);
-    ui->offsetEdit->setText(QString("%1").arg(tag.pos));
-    ui->lengthEdit->setText(QString("%1").arg(tag.size));
+    ui->nameEdit->setText(QString::fromStdString(tag.name));
+    ui->offsetEdit->setText(QString::fromStdString(tag.obj.offset));
+    ui->lengthEdit->setText(QString::fromStdString(tag.obj.size));
     if(tag.type == BE_t)
     {
-        ui->typeCombo->setCurrentIndex(BE_t);
+        ui->typeCombo->setCurrentIndex(BE_t-1);
     }
     else if(tag.type == LE_t)
     {
-        ui->typeCombo->setCurrentIndex(LE_t);
+        ui->typeCombo->setCurrentIndex(LE_t-1);
     }
     else if(tag.type == STRING_t)
     {
-        ui->typeCombo->setCurrentIndex(STRING_t);
+        ui->typeCombo->setCurrentIndex(STRING_t-1);
     }
     else
     {
-        ui->typeCombo->setCurrentIndex(HEX_t);
+        ui->typeCombo->setCurrentIndex(HEX_t-1);
     }
     editedTagIdx = row;
 }
@@ -73,37 +73,77 @@ void EditTagDialog::on_colorButton_clicked()
 
 void EditTagDialog::on_applyButton_clicked()
 {
-    ColorTag tag;
-    tag.color = ui->colorButton->palette().button().color().name();
-    tag.name = ui->nameEdit->text();
-    tag.pos = QString(ui->offsetEdit->text()).toLong();
-    tag.size = QString(ui->lengthEdit->text()).toLong();
-    tag.type = TagType_e(ui->typeCombo->currentIndex());
-    if(tag.pos < 0)
-    {
-        QMessageBox::warning(this, "HexWalk",
-                             "Position can't be less than 0");
-        return;
+    YMLObj obj;
+    BPerrors error = E_NONE;
+    obj.color = ui->colorButton->palette().button().color().name().toStdString();
+    obj.name = ui->nameEdit->text().toStdString();
+    obj.offset = ui->offsetEdit->text().toStdString();
+    obj.size = ui->lengthEdit->text().toStdString();
+    obj.type = tagStrings[ui->typeCombo->currentIndex() +1 ];
 
-    }
-    if(tag.size < 1)
+    if(!bytePattern->isValidColor(obj.color))
     {
-        QMessageBox::warning(this, "HexWalk",
-                             "Size can't be less than 1");
-        return;
+        error = E_WRONGCOLOR;
     }
-    if(editedTagIdx >= 0)
+    else if(!bytePattern->isValidName(obj.name))
     {
-        hexEdit->colorTag[editedTagIdx] = tag;
-        editedTagIdx = -1;
+        error = E_WRONGNAME;
     }
-    else {
-       hexEdit->colorTag.append(tag);
+    else if(bytePattern->isDuplicatedName(obj.name,editedTagIdx))
+    {
+        error = E_DUPNAME;
+    }
+    else if(obj.offset.length() == 0)
+    {
+        error = E_EMPTYOFFSET;
+    }
+    else if(obj.size.length() == 0)
+    {
+        error = E_EMPTYSIZE;
+    }
+    QString error_string;
+    if(error != E_NONE)
+    {
+    switch(error)
+    {
+    case E_WRONGNAME:
+        error_string = QString("Wrong name passed ");
+        break;
+    case E_WRONGTYPE:
+        error_string = QString("Wrong type passed ");
+        break;
+    case E_WRONGREF:
+        error_string = QString("Wrong reference passed" );
+        break;
+    case E_WRONGCOLOR:
+        error_string = QString("Wrong color passed");
+        break;
+    case E_DUPNAME:
+        error_string = QString("Duplicated name");
+        break;
+    default:
+        error_string = QString("Error code %1").arg(error);
     }
 
-    hexEdit->ensureVisible();
-    emit tagReady();
-    this->hide();
+    QMessageBox::warning(this, tr("HexWalk"),
+                         error_string
+                         );
+    }
+    else
+    {
+
+        if(editedTagIdx >= 0)
+        {
+            bytePattern->updateElement(editedTagIdx,obj);
+            editedTagIdx = -1;
+        }
+        else {
+            bytePattern->addElement(obj);
+        }
+
+        emit tagReady();
+        this->hide();
+    }
 
 
 }

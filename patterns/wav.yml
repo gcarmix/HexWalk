@@ -60,7 +60,7 @@
   type: string
 - name: DATA_SIZE
   offset: 40
-  size: 4
+  size: (2+2)
   color: #334455
   type: leint
 

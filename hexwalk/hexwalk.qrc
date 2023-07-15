@@ -11,5 +11,6 @@
         <file>fonts/Helvetica.ttf</file>
         <file>fonts/Courier.ttf</file>
         <file>images/diff.png</file>
+        <file>images/tags.png</file>
     </qresource>
 </RCC>

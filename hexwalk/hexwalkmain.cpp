@@ -92,11 +92,12 @@ void HexWalkMain::createMenus()
     analysisMenu->addAction(entropyAct);
     analysisMenu->addAction(binaryAct);
     analysisMenu->addAction(diffAct);
+    analysisMenu->addAction(tagsAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
     toolsMenu->addAction(hashAct);
-    toolsMenu->addAction(tagsAct);
+
 
     helpMenu = menuBar()->addMenu(tr("&Help"));
     helpMenu->addAction(aboutAct);
@@ -228,7 +229,7 @@ void HexWalkMain::createActions()
     hashAct->setStatusTip(tr("Hash Calculator"));
     connect(hashAct, SIGNAL(triggered()), this, SLOT(showHashDialog()));
 
-    tagsAct = new QAction(tr("Byte Patterns"), this);
+    tagsAct = new QAction(QIcon(":/images/tags.png"),tr("Byte Patterns"), this);
     tagsAct->setStatusTip(tr("Byte Patterns"));
     connect(tagsAct, SIGNAL(triggered()), this, SLOT(showTagsDialog()));
 
@@ -268,6 +269,7 @@ void HexWalkMain::createToolBars()
     analysisToolBar->addAction(entropyAct);
     analysisToolBar->addAction(binaryAct);
     analysisToolBar->addAction(diffAct);
+    analysisToolBar->addAction(tagsAct);
     analysisToolBar->addSeparator();
     gotoLbl = new QLabel();
     gotoLbl->setText("Go To: ");
@@ -699,7 +701,7 @@ void HexWalkMain::readSettings()
     hexEdit->setHighlightingColor(QColor("#540c00"));
     hexEdit->setFont(QFont("Courier",12));
     hexEdit->setHighlighting(true);
-    hexEdit->setOverwriteMode(true);
+    hexEdit->setOverwriteMode(false);
     int bytesperline = settings.value("BytesPerLine").toInt();
     if( bytesperline > 0 && bytesperline < 64 )
     {

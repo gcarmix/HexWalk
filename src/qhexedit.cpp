@@ -984,27 +984,17 @@ void QHexEdit::paintEvent(QPaintEvent *event)
                 painter.fillRect(r,c);
 
                 QRect tagrect;
-                /*ColorTag tag;
-                tag.name = QString("prova");
-                tag.pos = 0;
-                tag.size=5;
-                tag.color = QString("#540000");
-                colorTag.append(tag);
-                tag.name = QString("prova");
-                tag.pos = 10;
-                tag.size=4;
-                tag.color = QString("#005400");
-                colorTag.append(tag);*/
-                for(int i=0;i<colorTag.size();i++)
+
+                for(int i=0;i<colorTag->size();i++)
                 {
-                    ColorTag  tag0 = colorTag.at(i);
+                    ColorTag  tag0 = colorTag->at(i);
                     if(posBa >= tag0.pos && posBa < (tag0.pos + tag0.size))
                     {
                         if (colIdx == 0)
                             tagrect.setRect(pxPosX, pxPosY - _pxCharHeight + _pxSelectionSub, 2*_pxCharWidth, _pxCharHeight);
                         else
                             tagrect.setRect(pxPosX - _pxCharWidth, pxPosY - _pxCharHeight + _pxSelectionSub, 3*_pxCharWidth, _pxCharHeight);
-                        QColor tempColor = tag0.color;
+                        QColor tempColor = QColor(QString::fromStdString(tag0.color));
                         tempColor.setAlpha(80);
                         painter.fillRect(tagrect, QBrush(tempColor));
                     }
@@ -1038,7 +1028,7 @@ void QHexEdit::paintEvent(QPaintEvent *event)
     int hexPositionInShowData = _cursorPosition - 2 * _bPosFirst;
 
     // due to scrolling the cursor can go out of the currently displayed data
-    if ((hexPositionInShowData >= 0) && (hexPositionInShowData < _hexDataShown.size()))
+    if ((hexPositionInShowData >= 0) && (hexPositionInShowData <= _hexDataShown.size()) )
     {
         // paint cursor
         if (_readOnly)
@@ -1059,11 +1049,15 @@ void QHexEdit::paintEvent(QPaintEvent *event)
             {
                 // every 2 hex there is 1 ascii
                 int asciiPositionInShowData = hexPositionInShowData / 2;
-                int ch = (uchar)_dataShown.at(asciiPositionInShowData);
-                if (ch < ' ' || ch > '~')
-                    ch = '.';
+                if(asciiPositionInShowData <_dataShown.size())
+                {
+                    int ch = (uchar)_dataShown.at(asciiPositionInShowData);
 
-                painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, QChar(ch));
+                    if (ch < ' ' || ch > '~')
+                        ch = '.';
+
+                    painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, QChar(ch));
+                }
             }
             else
             {

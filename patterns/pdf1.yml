@@ -1,0 +1,11 @@
+- name: HEADER
+  offset: 0
+  size: 5
+  color: #8332c7
+  type: string
+- name: VERSION
+  offset: 0x05
+  size: 3
+  color: #b7dda3
+  type: string
+
