@@ -984,19 +984,21 @@ void QHexEdit::paintEvent(QPaintEvent *event)
                 painter.fillRect(r,c);
 
                 QRect tagrect;
-
-                for(int i=0;i<colorTag->size();i++)
+                if(colorTag)
                 {
-                    ColorTag  tag0 = colorTag->at(i);
-                    if(posBa >= tag0.pos && posBa < (tag0.pos + tag0.size))
+                    for(int i=0;i<colorTag->size();i++)
                     {
-                        if (colIdx == 0)
-                            tagrect.setRect(pxPosX, pxPosY - _pxCharHeight + _pxSelectionSub, 2*_pxCharWidth, _pxCharHeight);
-                        else
-                            tagrect.setRect(pxPosX - _pxCharWidth, pxPosY - _pxCharHeight + _pxSelectionSub, 3*_pxCharWidth, _pxCharHeight);
-                        QColor tempColor = QColor(QString::fromStdString(tag0.color));
-                        tempColor.setAlpha(80);
-                        painter.fillRect(tagrect, QBrush(tempColor));
+                        ColorTag  tag0 = colorTag->at(i);
+                        if(posBa >= tag0.pos && posBa < (tag0.pos + tag0.size))
+                        {
+                            if (colIdx == 0)
+                                tagrect.setRect(pxPosX, pxPosY - _pxCharHeight + _pxSelectionSub, 2*_pxCharWidth, _pxCharHeight);
+                            else
+                                tagrect.setRect(pxPosX - _pxCharWidth, pxPosY - _pxCharHeight + _pxSelectionSub, 3*_pxCharWidth, _pxCharHeight);
+                            QColor tempColor = QColor(QString::fromStdString(tag0.color));
+                            tempColor.setAlpha(80);
+                            painter.fillRect(tagrect, QBrush(tempColor));
+                        }
                     }
                 }
 
