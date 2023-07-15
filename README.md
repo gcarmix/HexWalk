@@ -14,6 +14,7 @@ It is cross platform and has plenty of features:
 * Bin/Dec/Hex Converter
 * Hex file editing
 * Diff file analysis
+* Byte Patterns to parse headers
 
 
 ## Screenshots
@@ -35,6 +36,9 @@ It is cross platform and has plenty of features:
 
 * Diff Analysis
 ![hexwalk gui](screenshots/hexwalk_gui13.png)
+
+* Binary Patterns for header parsing
+![hexwalk gui](screenshots/hexwalk_gui14.png)
 
 ## Usage
 
