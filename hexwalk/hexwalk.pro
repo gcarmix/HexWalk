@@ -2,7 +2,7 @@ QT += charts
 CONFIG += static
 RC_ICONS = images/hexwalk.ico
 #Only for Windows:
-QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
+#QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
 #Only for Mac:
 #ICON = images/hexwalk.icns
 ###############
