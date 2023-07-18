@@ -38,7 +38,7 @@ It is cross platform and has plenty of features:
 ![hexwalk gui](screenshots/hexwalk_gui13.png)
 
 * Binary Patterns for header parsing
-![hexwalk gui](screenshots/hexwalk_gui14.png)
+![hexwalk gui](screenshots/hexwalk_gui15.png)
 
 ## Usage
 
