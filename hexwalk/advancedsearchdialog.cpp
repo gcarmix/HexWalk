@@ -63,7 +63,7 @@ QByteArray AdvancedSearchDialog::getContent(int comboIndex, const QString &input
             break;
         case 1:
 
-            findBa = QByteArray::fromRawData((char*)(input.utf16()),input.length());
+            findBa = QByteArray::fromRawData((char*)(input.utf16()),input.length()*2);
     }
     return findBa;
 }
