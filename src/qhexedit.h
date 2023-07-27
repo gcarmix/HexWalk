@@ -249,7 +249,8 @@ public:
      * \param ba Data to find
      * \param from Point where the search starts
      * \param isRegex regex on off switch
-     * \return pos if fond, else -1
+     * \param isCaseSensitive case sensitive on off switch
+     * \return pos if found, else -1
      */
     qint64 indexOf(const QByteArray &ba, qint64 from, bool isRegex, bool isCaseSensitive);
 

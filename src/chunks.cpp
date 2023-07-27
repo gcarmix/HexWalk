@@ -189,12 +189,12 @@ qint64 Chunks::indexOf(const QByteArray &ba, qint64 from,bool isRegex,bool isCas
                     icase = std::regex_constants::icase;
                 }
 
-                std::regex re(regex,(std::regex_constants::syntax_option_type)icase);
+                    std::regex re(regex,(std::regex_constants::syntax_option_type)icase);
 
-                std::smatch match;
-                if (std::regex_search(buf, match, re)) {
-                    findPos = match.position(0);
-                    matchSize = match.str(0).size();
+                    std::smatch match;
+                    if (std::regex_search(buf, match, re)) {
+                        findPos = match.position(0);
+                        matchSize = match.str(0).size();
                 }
             } catch (std::regex_error& e) {
                // std::cerr << "Regex syntax error:" << std::endl << e.what() << std::endl;

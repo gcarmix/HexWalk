@@ -151,8 +151,8 @@ void AdvancedSearchDialog::findAll()
                     }
                 }
 
-                result.datastr = binToStr(preData) + QString("<b>")+ binToStr(inData) + QString("</b>")+ binToStr(postData);
-                result.hexdatastr = preData.toHex()+ QString("<b>") + inData.toHex() + QString("</b>")+ postData.toHex();
+                result.datastr = binToStr(preData) + QString("<b style='color:red'>")+ binToStr(inData) + QString("</b>")+ binToStr(postData);
+                result.hexdatastr = preData.toHex()+ QString("<b style='color:red'>") + inData.toHex() + QString("</b>")+ postData.toHex();
                 resultslist.append(result);
                 count++;
         }
@@ -279,7 +279,7 @@ void AdvancedSearchDialog::setData()
 
 void AdvancedSearchDialog::on_resultsTableView_clicked(const QModelIndex &index)
 {
-    _hexEdit->indexOf("",resultslist.at(index.row()).cursor,ui->cbRegex->isChecked(),ui->cbCase->isChecked());
+    //_hexEdit->indexOf("",resultslist.at(index.row()).cursor,ui->cbRegex->isChecked(),ui->cbCase->isChecked(),ui->cbFindFormat->currentIndex()==1);
     _hexEdit->setCursorPosition(resultslist.at(index.row()).cursor);
     _hexEdit->indexOf(_findBa, resultslist.at(index.row()).cursor - 1,ui->cbRegex->isChecked(),ui->cbCase->isChecked());
     _hexEdit->update();
@@ -313,17 +313,17 @@ void AdvancedSearchDialog::on_cbCase_clicked()
 
 void AdvancedSearchDialog::on_cbFindFormat_currentIndexChanged(int index)
 {
-    if(!ui->cbFindFormat->currentText().compare("Hex"))
+    if(!ui->cbFindFormat->currentText().compare("UTF-8"))
+    {
+        ui->cbRegex->setEnabled(true);
+        ui->cbCase->setEnabled(true);
+    }
+    else
     {
         ui->cbRegex->setChecked(false);
         ui->cbCase->setChecked(false);
         ui->cbRegex->setEnabled(false);
         ui->cbCase->setEnabled(false);
-    }
-    else
-    {
-        ui->cbRegex->setEnabled(true);
-        ui->cbCase->setEnabled(true);
     }
 }
 
