@@ -53,8 +53,10 @@ https://github.com/gcarmix/hexwalk/wiki
 ## Binwalk on Windows OS
 
 For Windows, Binwalk support is experimental, it is done using a python helper file that launches the commands and must be on the same path of hexwalk.exe.
-in order for binwalk support to work on Windows it is necessary to install Python and to install binwalk, at the moment of writing on windows it is supported up to binwalk 2.1.1,
-sources of binwalk_2.1.1 are supplied inside the binwalk_windows folder. To install it on Windows just run "python setup.py install"
+In order for binwalk support to work on Windows it is necessary to install Python and to install binwalk, at the moment of writing on windows it is supported up to binwalk 2.1.1, sources of binwalk_2.1.1 are supplied inside the binwalk_windows folder. To install it on Windows just run "python setup.py install".
+
+EDIT:
+from release 1.4.2 binwalk executables are included in the windows release folder, so it is just necessary to install Python on Windows, then the binwalk files are resolved automatically.
 
 ## Build
 If you want to build from source just open hexedit.pro in QT Creator and build it.
