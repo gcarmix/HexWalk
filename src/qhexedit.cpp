@@ -852,9 +852,25 @@ void QHexEdit::keyPressEvent(QKeyEvent *event)
     /* Copy */
     if (event->matches(QKeySequence::Copy))
     {
-        QByteArray ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin()).toHex();
+        QByteArray ba;
+        if(!_editAreaIsAscii)
+        {
+        ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin()).toHex();
         for (qint64 idx = 32; idx < ba.size(); idx +=33)
-            ba.insert(idx, "\n");
+        ba.insert(idx, "\n");
+        }
+        else
+        {
+            ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin());
+            for (int i = 0; i < ba.length(); i++) {
+                if(ba.at(i) < 32 || ba.at(i) > 126)
+                {
+                    ba[i] = '.';
+                }
+            }
+        }
+
+
         QClipboard *clipboard = QApplication::clipboard();
         clipboard->setText(ba);
     }
