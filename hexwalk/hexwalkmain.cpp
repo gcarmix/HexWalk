@@ -298,6 +298,15 @@ void HexWalkMain::createToolBars()
 
 }
 
+void HexWalkMain::setFileActionsEnabled(bool enabled)
+{
+    QAction* all[] = {diffAct, entropyAct, binaryAct, hashAct, tagsAct};
+    for (auto act: all)
+    {
+        act->setEnabled(enabled);
+    }
+}
+
 void HexWalkMain::setCurrentFile(const QString &fileName)
 {
     curFile = QFileInfo(fileName).canonicalFilePath();
@@ -307,11 +316,13 @@ void HexWalkMain::setCurrentFile(const QString &fileName)
     {
         setWindowFilePath("HexWalk");
         this->setWindowTitle("HexWalk");
+        setFileActionsEnabled(false);
     }
     else
     {
         setWindowFilePath(curFile + " - HexWalk");
         this->setWindowTitle("HexWalk [" + curFile + "]");
+        setFileActionsEnabled(true);
     }
 
 }
