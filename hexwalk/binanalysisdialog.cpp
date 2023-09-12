@@ -122,7 +122,9 @@ void binanalysisdialog::renderAnalysis(int status_code)
 
         if(status_code != 0)
         {
-            qInfo() << status_code;
+            progrDialog->hide();
+            QMessageBox::warning(this, tr("HexWalk"),
+                                 tr("Could not start binwalk.\r\nError code: %1.").arg(status_code));
             return;
         }
         resultslist.clear();
