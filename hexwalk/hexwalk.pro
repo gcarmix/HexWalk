@@ -6,7 +6,7 @@ RC_ICONS = images/hexwalk.ico
 #Only for Mac:
 #ICON = images/hexwalk.icns
 ###############
-VERSION = "1.4.0"
+VERSION = "1.4.3"
 QMAKE_TARGET_COPYRIGHT = "gcarmix"
 QMAKE_TARGET_PRODUCT = "HexWalk"
 HEADERS = \
@@ -71,4 +71,5 @@ FORMS += \
     searchdialog.ui \
     tagsdialog.ui
 
-DEFINES += QHEXEDIT_EXPORTS
+DEFINES += QHEXEDIT_EXPORTS \
+    APP_VERSION=\\\"$$VERSION\\\"
