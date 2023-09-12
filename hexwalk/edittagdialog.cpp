@@ -18,11 +18,6 @@ EditTagDialog::~EditTagDialog()
     delete ui;
 }
 
-void EditTagDialog::on_pushButton_clicked()
-{ 
-    this->hide();
-}
-
 void EditTagDialog::colorGen()
 {
     QRandomGenerator prng(time(0));
