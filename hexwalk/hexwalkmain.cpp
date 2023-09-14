@@ -335,10 +335,18 @@ void HexWalkMain::loadFile(const QString &fileName)
 /*****************************************************************************/
 void HexWalkMain::about()
 {
-    QMessageBox::about(this, tr("About HexWalk"),
-                       tr("HexWalk v1.4.2 is an HEX editor/viewer/analyzer.\r\n"
-                          "It is open source and it is based on QT, qhexedit2, binwalk\r\n"
-                          "Sources at https://github.com/gcarmix/HexWalk\r\n"));
+    QString title = tr("About HexWalk");
+    QString text = tr("HexWalk %1 is an HEX editor/viewer/analyzer.<br>"
+                      "It is open source and it is based on QT, qhexedit2, binwalk.<br>"
+                      "Sources at <a href='https://github.com/gcarmix/HexWalk'>Github</a>.<br>")
+    .arg(APP_VERSION);
+
+    QMessageBox msgBox(title, text, QMessageBox::Information, 0, 0, 0, this);
+    msgBox.setTextFormat(Qt::RichText);
+    QIcon icon = msgBox.windowIcon();
+    QSize size = icon.actualSize(QSize(64, 64));
+    msgBox.setIconPixmap(icon.pixmap(size));
+    msgBox.exec();
 }
 
 void HexWalkMain::dataChanged()
