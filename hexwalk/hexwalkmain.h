@@ -72,6 +72,7 @@ private:
     void init();
     void adjustForCurrentFile(const QString& filePath);
     void updateRecentActionList();
+    void setFileActionsEnabled(bool enabled);
     QList<QAction*> recentFileActionList;
     QString curFile;
     QFile file;
