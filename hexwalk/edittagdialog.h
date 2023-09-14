@@ -20,8 +20,6 @@ public:
     BytePattern * bytePattern;
 
 private slots:
-    void on_pushButton_clicked();
-
     void on_colorButton_clicked();
 
     void on_applyButton_clicked();
