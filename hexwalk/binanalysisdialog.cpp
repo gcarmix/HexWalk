@@ -122,7 +122,10 @@ void binanalysisdialog::renderAnalysis(int status_code)
 
         if(status_code != 0)
         {
-            qInfo() << status_code;
+            progrDialog->hide();
+            QMessageBox::warning(this, tr("HexWalk"),
+                                 tr("Could not start binwalk.\r\nError: \r\n%1").arg(QString(binwalkProcess->readAllStandardError())));
+            //qInfo() <<QString(binwalkProcess->readAllStandardError());
             return;
         }
         resultslist.clear();
@@ -172,6 +175,14 @@ void binanalysisdialog::renderAnalysis(int status_code)
                                  "Extraction complete.");
 
         }
+        else
+        {
+            progrDialog->hide();
+            QMessageBox::warning(this, tr("HexWalk"),
+                                 tr("Could not start binwalk.\r\nError: \r\n%1").arg(QString(binwalkProcess->readAllStandardError())));
+            //qInfo() <<QString(binwalkProcess->readAllStandardError());
+            return;
+        }
     }
 
 }
@@ -191,7 +202,14 @@ void binanalysisdialog::analyze(QString filename)
     QStringList params;
 #ifdef Q_OS_WIN
     params << "binw.py" << filename;
-    binwalkProcess->start("python",params);
+    binwalkProcess->start("py",params);
+    if(binwalkProcess->state() != QProcess::Running)
+    {
+        binwalkProcess->close();
+        QMessageBox::warning(this, tr("HexWalk"),
+                             tr("Could not start binwalk.\r\nError: \r\n%1").arg("Python executable not found"));
+        progrDialog->hide();
+    }
 #else
     #ifdef Q_OS_DARWIN
         params << filename;
@@ -222,8 +240,6 @@ void binanalysisdialog::on_closeBtn_clicked()
 void binanalysisdialog::on_extractAllBtn_clicked()
 {
     processType = 1;
-    qInfo()<<"Extract";
-
 
     progrDialog->show();
 
@@ -231,7 +247,14 @@ void binanalysisdialog::on_extractAllBtn_clicked()
 
 #ifdef Q_OS_WIN
     params << "binw.py"<<"-e" << curFile;
-    binwalkProcess->start("python",params);
+    binwalkProcess->start("py",params);
+    if(binwalkProcess->state() != QProcess::Running)
+    {
+        binwalkProcess->close();
+        QMessageBox::warning(this, tr("HexWalk"),
+                             tr("Could not start binwalk.\r\nError: \r\n%1").arg("Python executable not found"));
+        progrDialog->hide();
+    }
 #else
     QDir d = QFileInfo(curFile).absoluteDir();
     QString curDir=d.absolutePath();
