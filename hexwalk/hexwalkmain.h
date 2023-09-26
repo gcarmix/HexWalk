@@ -14,6 +14,7 @@
 #include "diffdialog.h"
 #include "tagsdialog.h"
 #include "edittagdialog.h"
+#include "stringsdialog.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -64,6 +65,7 @@ private slots:
     void showConverterDialog();
     void showHashDialog();
     void showTagsDialog();
+    void showStringsDialog();
     void toggleOverwriteMode();
     void gotoAddress();
     void setWidth();
@@ -102,6 +104,7 @@ private:
     QAction *hashAct;
     QAction *diffAct;
     QAction *tagsAct;
+    QAction *stringsAct;
 
     QAction *undoAct;
     QAction *redoAct;
@@ -134,6 +137,7 @@ private:
     AdvancedSearchDialog *advancedSearchDialog;
     TagsDialog *tagsDialog;
     DiffDialog *diffDialog;
+    StringsDialog *stringsDialog;
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;

@@ -2,7 +2,7 @@ QT += charts
 CONFIG += static
 RC_ICONS = images/hexwalk.ico
 #Only for Windows:
-#QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
+QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
 #Only for Mac:
 #ICON = images/hexwalk.icns
 ###############
@@ -15,7 +15,6 @@ HEADERS = \
     ../src/tagparser.hpp \
     advancedsearchdialog.h \
     binanalysisdialog.h \
-    colortag.h \
     converterdialog.h \
     diffdialog.h \
     edittagdialog.h \
@@ -29,6 +28,7 @@ HEADERS = \
     ../src/commands.h \
     resultType.h \
     searchdialog.h \
+    stringsdialog.h \
     tagsdialog.h \
     worditemdelegate.h
 
@@ -52,6 +52,7 @@ SOURCES = \
     ../src/chunks.cpp \
     ../src/commands.cpp \
     searchdialog.cpp \
+    stringsdialog.cpp \
     tagsdialog.cpp \
     worditemdelegate.cpp
 
@@ -69,6 +70,7 @@ FORMS += \
     hexwalkmain.ui \
     optionsdialog.ui \
     searchdialog.ui \
+    stringsdialog.ui \
     tagsdialog.ui
 
 DEFINES += QHEXEDIT_EXPORTS \

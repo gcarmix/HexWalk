@@ -41,6 +41,7 @@ void HexWalkMain::init()
     hashDialog = new HashDialog(this);
     diffDialog = new DiffDialog(this);
     tagsDialog = new TagsDialog(hexEdit,this);
+    stringsDialog = new StringsDialog(hexEdit,this);
 
     createActions();
     createMenus();
@@ -93,6 +94,7 @@ void HexWalkMain::createMenus()
     analysisMenu->addAction(binaryAct);
     analysisMenu->addAction(diffAct);
     analysisMenu->addAction(tagsAct);
+    analysisMenu->addAction(stringsAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
@@ -232,6 +234,10 @@ void HexWalkMain::createActions()
     tagsAct = new QAction(QIcon(":/images/tags.png"),tr("Byte Patterns"), this);
     tagsAct->setStatusTip(tr("Byte Patterns"));
     connect(tagsAct, SIGNAL(triggered()), this, SLOT(showTagsDialog()));
+
+    stringsAct = new QAction(QIcon(":/images/find.png"),tr("Search Strings"), this);
+    stringsAct->setStatusTip(tr("Search Strings"));
+    connect(stringsAct, SIGNAL(triggered()), this, SLOT(showStringsDialog()));
 
     QAction* recentFileAction = 0;
     for(auto i = 0; i < 5; ++i){
@@ -701,6 +707,22 @@ void HexWalkMain::showTagsDialog()
     else
     {
         tagsDialog->show();
+
+    }
+
+}
+
+void HexWalkMain::showStringsDialog()
+{
+    if(curFile.length() == 0)
+    {
+        QMessageBox::warning(this, tr("HexWalk"),
+                             tr("You must select a file first.")
+                             );
+    }
+    else
+    {
+        stringsDialog->show();
 
     }
 
