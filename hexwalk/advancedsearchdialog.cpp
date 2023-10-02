@@ -157,7 +157,7 @@ void AdvancedSearchDialog::findAll()
                 count++;
         }
 
-        if(count > 512)
+        if(count > 65535)
         {
 
                 QMessageBox::warning(this, tr("HexWalk"),tr("Too much occurrencies found, stopping search."));

@@ -24,6 +24,35 @@ HexWalkMain::HexWalkMain(QWidget *parent) :
     setCurrentFile("");
 }
 
+QString HexWalkMain::binToStr(QByteArray bin)
+{
+    QString outString;
+    for(int i=0;i<bin.length();i++)
+    {
+        if(bin.at(i)<32 || uchar(bin.at(i))>=127)
+        {
+            outString += QString(".");
+        }
+        else if(bin.at(i) == '<')
+        {
+            outString += QString("&lt;");
+        }
+        else if(bin.at(i) == '>')
+        {
+            outString += QString("&gt;");
+        }
+        else if(bin.at(i) == '&')
+        {
+            outString += QString("&amp;");
+        }
+        else
+        {
+            outString += QString(bin.at(i));
+        }
+    }
+    return outString;
+}
+
 void HexWalkMain::init()
 {
     setAttribute(Qt::WA_DeleteOnClose);
@@ -41,6 +70,7 @@ void HexWalkMain::init()
     hashDialog = new HashDialog(this);
     diffDialog = new DiffDialog(this);
     tagsDialog = new TagsDialog(hexEdit,this);
+    stringsDialog = new StringsDialog(hexEdit,this);
 
     createActions();
     createMenus();
@@ -93,6 +123,7 @@ void HexWalkMain::createMenus()
     analysisMenu->addAction(binaryAct);
     analysisMenu->addAction(diffAct);
     analysisMenu->addAction(tagsAct);
+    analysisMenu->addAction(stringsAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
@@ -233,6 +264,10 @@ void HexWalkMain::createActions()
     tagsAct->setStatusTip(tr("Byte Patterns"));
     connect(tagsAct, SIGNAL(triggered()), this, SLOT(showTagsDialog()));
 
+    stringsAct = new QAction(QIcon(":/images/strings.png"),tr("Search Strings"), this);
+    stringsAct->setStatusTip(tr("Search Strings"));
+    connect(stringsAct, SIGNAL(triggered()), this, SLOT(showStringsDialog()));
+
     QAction* recentFileAction = 0;
     for(auto i = 0; i < 5; ++i){
         recentFileAction = new QAction(this);
@@ -270,6 +305,7 @@ void HexWalkMain::createToolBars()
     analysisToolBar->addAction(binaryAct);
     analysisToolBar->addAction(diffAct);
     analysisToolBar->addAction(tagsAct);
+    analysisToolBar->addAction(stringsAct);
     analysisToolBar->addSeparator();
     gotoLbl = new QLabel();
     gotoLbl->setText("Go To: ");
@@ -300,7 +336,7 @@ void HexWalkMain::createToolBars()
 
 void HexWalkMain::setFileActionsEnabled(bool enabled)
 {
-    QAction* all[] = {diffAct, entropyAct, binaryAct, hashAct, tagsAct};
+    QAction* all[] = {diffAct, entropyAct, binaryAct, hashAct, tagsAct,stringsAct};
     for (auto act: all)
     {
         act->setEnabled(enabled);
@@ -551,6 +587,79 @@ void HexWalkMain::saveToReadableFile()
     }
 }
 
+void HexWalkMain::updateInfo()
+{
+    int selSize = hexEdit->selectedDataBa().size();
+
+    ui->selTextedit->setText(QString::number(selSize,10));
+    if(selSize > 0)
+    {
+        ui->asciiTextEdit->setText(binToStr(hexEdit->selectedDataBa()));
+        ui->hexTextedit->setText(hexEdit->selectedData());
+        if(selSize <= 8)
+        {
+            if(selSize == 4 || selSize == 8)
+            {
+
+                qint64 num = hexEdit->selectedData().toULongLong(NULL,16);
+                if(selSize == 4)
+                {
+                    float *numf;
+                    numf = (float *)&num;
+                    ui->floatTextedit->setText(QString::number(*numf));
+                }
+                else
+                {
+                    double *numf;
+                    numf = (double *)&num;
+                    ui->floatTextedit->setText(QString::number(*numf));
+                }
+
+
+
+
+            }
+            else
+            {
+                ui->floatTextedit->setText("-");
+            }
+            QByteArray baValue = hexEdit->selectedDataBa();
+            if(ui->signedcb->isChecked())
+            {
+                if(selSize < 5)
+                {
+                    ui->decTextedit->setText(QString("%1").arg((signed int)hexEdit->selectedData().toUInt(NULL,16)));
+                    std::reverse(baValue.begin(),baValue.end());
+                    ui->intbeTextedit->setText(QString("%1").arg((signed int)baValue.toHex().toUInt(NULL,16)));
+                }
+                else
+                {
+                    ui->decTextedit->setText(QString("%1").arg((signed long long)hexEdit->selectedData().toULongLong(NULL,16)));
+                    std::reverse(baValue.begin(),baValue.end());
+                    ui->intbeTextedit->setText(QString("%1").arg((signed long long)baValue.toHex().toULongLong(NULL,16)));
+                }
+            }
+            else
+            {
+                ui->decTextedit->setText(QString("%1").arg(hexEdit->selectedData().toULongLong(NULL,16)));
+                std::reverse(baValue.begin(),baValue.end());
+                ui->intbeTextedit->setText(QString("%1").arg(baValue.toHex().toULongLong(NULL,16)));
+            }
+            ui->binTextedit->setText(QString("%1").arg(hexEdit->selectedData().toULongLong(NULL,16),8,2,QLatin1Char('0')));
+        }
+        else
+        {
+            ui->decTextedit->setText("-");
+            ui->floatTextedit->setText("-");
+            ui->intbeTextedit->setText("-");
+            ui->binTextedit->setText("-");
+            ui->hexTextedit->setText("-");
+            ui->asciiTextEdit->setText("-");
+
+
+        }
+    }
+}
 void HexWalkMain::setAddress(qint64 address)
 {
     lbAddress->setText(QString("%1(%2)").arg(address, 1, 16).arg(address,1,10));
@@ -558,10 +667,19 @@ void HexWalkMain::setAddress(qint64 address)
     {
         if(address < hexEdit->getSize())
         {
-        ui->hexTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),2,16,QLatin1Char('0')));
-        ui->decTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
-        ui->octTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,8,QLatin1Char('0')));
-        ui->binTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),8,2,QLatin1Char('0')));
+            if(hexEdit->selectedDataBa().size() > 0)
+            {
+
+                updateInfo();
+            }
+            else
+            {
+                ui->hexTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),2,16,QLatin1Char('0')));
+                ui->decTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
+                ui->intbeTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
+                ui->binTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),8,2,QLatin1Char('0')));
+            }
+
         }
     }
 
@@ -706,6 +824,22 @@ void HexWalkMain::showTagsDialog()
 
 }
 
+void HexWalkMain::showStringsDialog()
+{
+    if(curFile.length() == 0)
+    {
+        QMessageBox::warning(this, tr("HexWalk"),
+                             tr("You must select a file first.")
+                             );
+    }
+    else
+    {
+        stringsDialog->show();
+
+    }
+
+}
+
 void HexWalkMain::readSettings()
 {
     QSettings settings;
@@ -787,3 +921,9 @@ void HexWalkMain::dropEvent(QDropEvent *event)
         event->accept();
     }
 }
+
+void HexWalkMain::on_signedcb_clicked()
+{
+    updateInfo();
+}
+

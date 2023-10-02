@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     if (fontId != -1)
     {
         QFont font("Helvetica");
-        font.setPointSize(font.pointSize()-1);
+        font.setPointSize(font.pointSize()-2);
         app.setFont(font);
     }
     /*QFont defaultFont = QApplication::font();

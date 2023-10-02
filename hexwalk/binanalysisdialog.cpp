@@ -99,6 +99,26 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
     connect(progrDialog,SIGNAL(canceled()),this,SLOT(kill_process()));
 
     binwalkProcess = new QProcess();
+    #ifdef Q_OS_WIN
+    if(!QFile::exists("binw.py"))
+    {
+        QFile file( "binw.py" );
+        if ( file.open(QIODevice::ReadWrite) )
+        {
+            QTextStream stream( &file );
+            stream << "import sys" << endl;
+            stream << "import os" << endl;
+            stream << "sys.path.append(os.path.dirname('binwalk/src/binwalk'))" << endl;
+            stream << "import binwalk" << endl;
+            stream << "if len(sys.argv) == 2:" << endl;
+            stream << "    binwalk.scan('--signature', sys.argv[1])" << endl;
+            stream << "elif len(sys.argv) == 3 and sys.argv[1] == '-e':" << endl;
+            stream << "    binwalk.scan('--signature','--extract', sys.argv[2])" << endl;
+        }
+        file.close();
+    }
+    #endif
+
 
 
     connect(binwalkProcess,SIGNAL(finished(int)),this,SLOT(renderAnalysis(int)));
@@ -203,23 +223,20 @@ void binanalysisdialog::analyze(QString filename)
 #ifdef Q_OS_WIN
     params << "binw.py" << filename;
     binwalkProcess->start("py",params);
+#else
+    params << filename;
+    binwalkProcess->start("binwalk",params);
+#endif
     if(binwalkProcess->state() != QProcess::Running)
     {
         binwalkProcess->close();
-        QMessageBox::warning(this, tr("HexWalk"),
-                             tr("Could not start binwalk.\r\nError: \r\n%1").arg("Python executable not found"));
+#ifdef Q_OS_WIN
+        QMessageBox::warning(this, tr("HexWalk"),tr("Could not start binwalk.\r\nError: \r\n%1").arg("Python executable not found"));
+#else
+        QMessageBox::warning(this, tr("HexWalk"),tr("Could not start binwalk.\r\nError: \r\n%1").arg("Binwalk executable not found"));
+#endif
         progrDialog->hide();
     }
-#else
-    #ifdef Q_OS_DARWIN
-        params << filename;
-        binwalkProcess->start("/usr/local/bin/binwalk",params);
-    #else
-        params << filename;
-        binwalkProcess->start("binwalk",params);
-    #endif
-#endif
-
 
 }
 
