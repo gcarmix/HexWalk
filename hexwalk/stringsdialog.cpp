@@ -16,6 +16,7 @@ StringsDialog::StringsDialog(QHexEdit *hexEdit,QWidget *parent) :
     ui->tableWidget->horizontalHeader()->resizeSection(1,400);
 }
 
+
 StringsDialog::~StringsDialog()
 {
     delete ui;
@@ -202,11 +203,10 @@ void StringsDialog::on_pbSearch_clicked()
 
 void StringsDialog::on_tableWidget_clicked(const QModelIndex &index)
 {
-
     _hexEdit->indexOf("",ui->tableWidget->item(index.row(),0)->text().toInt(NULL,16),false,false);
-    _hexEdit->setCursorPosition(ui->tableWidget->item(index.row(),0)->text().toInt(NULL,16)*2);
     _hexEdit->setSelection(ui->tableWidget->item(index.row(),0)->text().toInt(NULL,16)*2+ui->tableWidget->item(index.row(),1)->text().length()*2);
-    _hexEdit->update();
+    _hexEdit->setCursorPosition(ui->tableWidget->item(index.row(),0)->text().toInt(NULL,16)*2);
     _hexEdit->ensureVisible();
+
 }
 

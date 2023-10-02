@@ -206,9 +206,8 @@ void TagsDialog::on_loadBtn_clicked()
 void TagsDialog::on_tableWidget_clicked(const QModelIndex &index)
 {
     hexEdit->indexOf("",bytePattern->colorTag.at(index.row()).pos,false,false);
-    hexEdit->setCursorPosition(bytePattern->colorTag.at(index.row()).pos*2);
     hexEdit->setSelection(bytePattern->colorTag.at(index.row()).pos*2 + bytePattern->colorTag.at(index.row()).size*2);
-    hexEdit->update();
+    hexEdit->setCursorPosition(bytePattern->colorTag.at(index.row()).pos*2);
     hexEdit->ensureVisible();
 }
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>937</width>
-    <height>696</height>
+    <width>944</width>
+    <height>786</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -60,8 +60,14 @@
       <property name="minimumSize">
        <size>
         <width>600</width>
-        <height>100</height>
+        <height>160</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Segoe UI</family>
+        <pointsize>9</pointsize>
+       </font>
       </property>
       <property name="autoFillBackground">
        <bool>false</bool>
@@ -72,9 +78,9 @@
       <widget class="QLabel" name="hexlbl">
        <property name="geometry">
         <rect>
-         <x>10</x>
-         <y>40</y>
-         <width>101</width>
+         <x>570</x>
+         <y>90</y>
+         <width>31</width>
          <height>31</height>
         </rect>
        </property>
@@ -85,34 +91,34 @@
       <widget class="QLabel" name="declbl">
        <property name="geometry">
         <rect>
-         <x>120</x>
-         <y>40</y>
+         <x>180</x>
+         <y>60</y>
          <width>41</width>
          <height>31</height>
         </rect>
        </property>
        <property name="text">
-        <string>Dec:</string>
+        <string>IntLE:</string>
        </property>
       </widget>
-      <widget class="QLabel" name="octlbl">
+      <widget class="QLabel" name="intbelbl">
        <property name="geometry">
         <rect>
-         <x>230</x>
-         <y>40</y>
+         <x>180</x>
+         <y>90</y>
          <width>41</width>
          <height>31</height>
         </rect>
        </property>
        <property name="text">
-        <string>Oct:</string>
+        <string>IntBE:</string>
        </property>
       </widget>
       <widget class="QLabel" name="binlbl">
        <property name="geometry">
         <rect>
-         <x>350</x>
-         <y>40</y>
+         <x>180</x>
+         <y>120</y>
          <width>41</width>
          <height>31</height>
         </rect>
@@ -124,11 +130,17 @@
       <widget class="QLabel" name="hexTextedit">
        <property name="geometry">
         <rect>
-         <x>50</x>
-         <y>40</y>
-         <width>61</width>
+         <x>630</x>
+         <y>90</y>
+         <width>281</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>9</pointsize>
+        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -138,16 +150,28 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
        </property>
       </widget>
       <widget class="QLabel" name="decTextedit">
        <property name="geometry">
         <rect>
-         <x>160</x>
-         <y>40</y>
-         <width>61</width>
+         <x>230</x>
+         <y>60</y>
+         <width>281</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>9</pointsize>
+        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -157,16 +181,28 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
        </property>
       </widget>
-      <widget class="QLabel" name="octTextedit">
+      <widget class="QLabel" name="intbeTextedit">
        <property name="geometry">
         <rect>
-         <x>270</x>
-         <y>40</y>
-         <width>61</width>
+         <x>230</x>
+         <y>90</y>
+         <width>281</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>9</pointsize>
+        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -176,16 +212,28 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
        </property>
       </widget>
       <widget class="QLabel" name="binTextedit">
        <property name="geometry">
         <rect>
-         <x>390</x>
-         <y>40</y>
-         <width>161</width>
+         <x>230</x>
+         <y>120</y>
+         <width>681</width>
          <height>31</height>
         </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>9</pointsize>
+        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -195,6 +243,154 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="floatlbl">
+       <property name="geometry">
+        <rect>
+         <x>570</x>
+         <y>30</y>
+         <width>61</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Float:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="floatTextedit">
+       <property name="geometry">
+        <rect>
+         <x>630</x>
+         <y>30</y>
+         <width>281</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="asciilbl">
+       <property name="geometry">
+        <rect>
+         <x>570</x>
+         <y>60</y>
+         <width>61</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>ASCII:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="asciiTextEdit">
+       <property name="geometry">
+        <rect>
+         <x>630</x>
+         <y>60</y>
+         <width>281</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sellbl">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>30</y>
+         <width>111</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Selected bytes:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="selTextedit">
+       <property name="geometry">
+        <rect>
+         <x>470</x>
+         <y>30</y>
+         <width>41</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <family>Courier</family>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="signedcb">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>70</y>
+         <width>88</width>
+         <height>24</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Signed</string>
        </property>
       </widget>
      </widget>

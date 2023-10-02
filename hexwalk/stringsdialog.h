@@ -26,6 +26,7 @@ private:
     QHexEdit * _hexEdit;
     void searchStrings();
     QProgressDialog *progrDialog;
+
 };
 
 #endif // STRINGSDIALOG_H

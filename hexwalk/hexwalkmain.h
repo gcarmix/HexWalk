@@ -70,11 +70,14 @@ private slots:
     void gotoAddress();
     void setWidth();
 
+    void on_signedcb_clicked();
+
 private:
     void init();
     void adjustForCurrentFile(const QString& filePath);
     void updateRecentActionList();
     void setFileActionsEnabled(bool enabled);
+    void updateInfo();
     QList<QAction*> recentFileActionList;
     QString curFile;
     QFile file;
@@ -92,6 +95,7 @@ private:
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
     QToolBar *analysisToolBar;
+    QString binToStr(QByteArray bin);
 
     QAction *openAct;
     QAction *saveAct;
