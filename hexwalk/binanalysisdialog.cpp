@@ -121,7 +121,7 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
     }
 #else
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    binwalkProcess->setEnvironment(env);
+    binwalkProcess->setProcessEnvironment(env);
     #endif
 
 
