@@ -4,6 +4,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QProcess>
+#include <QProcessEnvironment>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -99,6 +100,7 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
     connect(progrDialog,SIGNAL(canceled()),this,SLOT(kill_process()));
 
     binwalkProcess = new QProcess();
+
     #ifdef Q_OS_WIN
     if(!QFile::exists("binw.py"))
     {
@@ -106,17 +108,20 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
         if ( file.open(QIODevice::ReadWrite) )
         {
             QTextStream stream( &file );
-            stream << "import sys" << endl;
-            stream << "import os" << endl;
-            stream << "sys.path.append(os.path.dirname('binwalk/src/binwalk'))" << endl;
-            stream << "import binwalk" << endl;
-            stream << "if len(sys.argv) == 2:" << endl;
-            stream << "    binwalk.scan('--signature', sys.argv[1])" << endl;
-            stream << "elif len(sys.argv) == 3 and sys.argv[1] == '-e':" << endl;
-            stream << "    binwalk.scan('--signature','--extract', sys.argv[2])" << endl;
+            stream << "import sys" << Qt::endl;
+            stream << "import os" << Qt::endl;
+            stream << "sys.path.append(os.path.dirname('binwalk/src/binwalk'))" << Qt::endl;
+            stream << "import binwalk" << Qt::endl;
+            stream << "if len(sys.argv) == 2:" << Qt::endl;
+            stream << "    binwalk.scan('--signature', sys.argv[1])" << Qt::endl;
+            stream << "elif len(sys.argv) == 3 and sys.argv[1] == '-e':" << Qt::endl;
+            stream << "    binwalk.scan('--signature','--extract', sys.argv[2])" << Qt::endl;
         }
         file.close();
     }
+#else
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    binwalkProcess->setEnvironment(env);
     #endif
 
 
@@ -227,6 +232,7 @@ void binanalysisdialog::analyze(QString filename)
     params << filename;
     binwalkProcess->start("binwalk",params);
 #endif
+    binwalkProcess->waitForStarted(2000);
     if(binwalkProcess->state() != QProcess::Running)
     {
         binwalkProcess->close();

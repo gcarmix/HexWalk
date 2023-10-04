@@ -81,7 +81,7 @@ void StringsDialog::searchStrings()
                     {
                         toAdd = true;
                     }
-                    else if(test_c >='a' && test_c <='z' && ui->cbUpper->isChecked())
+                    else if(test_c >='A' && test_c <='Z' && ui->cbUpper->isChecked())
                     {
                         toAdd = true;
                     }

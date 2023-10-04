@@ -22,6 +22,14 @@ HexWalkMain::HexWalkMain(QWidget *parent) :
     setAcceptDrops( true );
     init();
     setCurrentFile("");
+    QFont font("Courier",10);
+    ui->binTextedit->setFont(font);
+    ui->asciiTextEdit->setFont(font);
+    ui->decTextedit->setFont(font);
+    ui->floatTextedit->setFont(font);
+    ui->hexTextedit->setFont(font);
+    ui->intbeTextedit->setFont(font);
+    ui->selTextedit->setFont(font);
 }
 
 QString HexWalkMain::binToStr(QByteArray bin)
@@ -595,7 +603,7 @@ void HexWalkMain::updateInfo()
     if(selSize > 0)
     {
         ui->asciiTextEdit->setText(binToStr(hexEdit->selectedDataBa()));
-        ui->hexTextedit->setText(hexEdit->selectedData());
+        ui->hexTextedit->setText(hexEdit->selectedData().toUpper());
         if(selSize <= 8)
         {
             if(selSize == 4 || selSize == 8)
@@ -674,7 +682,7 @@ void HexWalkMain::setAddress(qint64 address)
             }
             else
             {
-                ui->hexTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),2,16,QLatin1Char('0')));
+                ui->hexTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),2,16,QLatin1Char('0')).toUpper());
                 ui->decTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
                 ui->intbeTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
                 ui->binTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),8,2,QLatin1Char('0')));

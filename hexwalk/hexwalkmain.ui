@@ -63,15 +63,6 @@
         <height>160</height>
        </size>
       </property>
-      <property name="font">
-       <font>
-        <family>Segoe UI</family>
-        <pointsize>9</pointsize>
-       </font>
-      </property>
-      <property name="autoFillBackground">
-       <bool>false</bool>
-      </property>
       <property name="title">
        <string>Info</string>
       </property>
@@ -80,7 +71,7 @@
         <rect>
          <x>570</x>
          <y>90</y>
-         <width>31</width>
+         <width>61</width>
          <height>31</height>
         </rect>
        </property>
@@ -91,9 +82,9 @@
       <widget class="QLabel" name="declbl">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>140</x>
          <y>60</y>
-         <width>41</width>
+         <width>51</width>
          <height>31</height>
         </rect>
        </property>
@@ -104,9 +95,9 @@
       <widget class="QLabel" name="intbelbl">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>140</x>
          <y>90</y>
-         <width>41</width>
+         <width>51</width>
          <height>31</height>
         </rect>
        </property>
@@ -117,9 +108,9 @@
       <widget class="QLabel" name="binlbl">
        <property name="geometry">
         <rect>
-         <x>180</x>
+         <x>140</x>
          <y>120</y>
-         <width>41</width>
+         <width>51</width>
          <height>31</height>
         </rect>
        </property>
@@ -135,12 +126,6 @@
          <width>281</width>
          <height>31</height>
         </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Courier</family>
-         <pointsize>9</pointsize>
-        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -161,17 +146,11 @@
       <widget class="QLabel" name="decTextedit">
        <property name="geometry">
         <rect>
-         <x>230</x>
+         <x>200</x>
          <y>60</y>
-         <width>281</width>
+         <width>311</width>
          <height>31</height>
         </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Courier</family>
-         <pointsize>9</pointsize>
-        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -192,17 +171,11 @@
       <widget class="QLabel" name="intbeTextedit">
        <property name="geometry">
         <rect>
-         <x>230</x>
+         <x>200</x>
          <y>90</y>
-         <width>281</width>
+         <width>311</width>
          <height>31</height>
         </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Courier</family>
-         <pointsize>9</pointsize>
-        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -223,17 +196,11 @@
       <widget class="QLabel" name="binTextedit">
        <property name="geometry">
         <rect>
-         <x>230</x>
+         <x>200</x>
          <y>120</y>
-         <width>681</width>
+         <width>711</width>
          <height>31</height>
         </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Courier</family>
-         <pointsize>9</pointsize>
-        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -273,12 +240,6 @@
          <height>31</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <family>Courier</family>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
        </property>
@@ -317,12 +278,6 @@
          <height>31</height>
         </rect>
        </property>
-       <property name="font">
-        <font>
-         <family>Courier</family>
-         <pointsize>9</pointsize>
-        </font>
-       </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>
        </property>
@@ -342,9 +297,9 @@
       <widget class="QLabel" name="sellbl">
        <property name="geometry">
         <rect>
-         <x>360</x>
+         <x>330</x>
          <y>30</y>
-         <width>111</width>
+         <width>121</width>
          <height>31</height>
         </rect>
        </property>
@@ -360,12 +315,6 @@
          <width>41</width>
          <height>31</height>
         </rect>
-       </property>
-       <property name="font">
-        <font>
-         <family>Courier</family>
-         <pointsize>9</pointsize>
-        </font>
        </property>
        <property name="frameShape">
         <enum>QFrame::Box</enum>

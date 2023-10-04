@@ -18,12 +18,12 @@ int main(int argc, char *argv[])
     QString fontPath2=":/fonts/Courier.ttf";
     int fontId = QFontDatabase::addApplicationFont(fontPath1);
     QFontDatabase::addApplicationFont(fontPath2);
-    if (fontId != -1)
-    {
+    //if (fontId != -1)
+    //{
         QFont font("Helvetica");
-        font.setPointSize(font.pointSize()-2);
+        font.setPointSize(font.pointSize()-1);
         app.setFont(font);
-    }
+    //}
     /*QFont defaultFont = QApplication::font();
     defaultFont.setPointSize(defaultFont.pointSize()+2);
     app.setFont(defaultFont);*/
