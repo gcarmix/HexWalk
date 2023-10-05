@@ -120,8 +120,9 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
         file.close();
     }
 #else
-    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    binwalkProcess->setProcessEnvironment(env);
+    QString path = qgetenv("PATH");
+    path = path + ":/usr/local/bin:/opt/homebrew/bin:/opt/local/bin";
+    qputenv("PATH",path.toUtf8());
     #endif
 
 
