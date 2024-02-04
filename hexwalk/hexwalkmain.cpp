@@ -117,6 +117,9 @@ void HexWalkMain::createMenus()
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(undoAct);
     editMenu->addAction(redoAct);
+    editMenu->addAction(copyAct);
+    editMenu->addAction(pasteAct);
+    editMenu->addAction(cutAct);
     editMenu->addAction(saveSelectionReadable);
     editMenu->addSeparator();
     editMenu->addAction(advancedFindAct);
@@ -218,6 +221,16 @@ void HexWalkMain::createActions()
     redoAct = new QAction(QIcon(":/images/redo.png"), tr("&Redo"), this);
     redoAct->setShortcuts(QKeySequence::Redo);
     connect(redoAct, SIGNAL(triggered()), hexEdit, SLOT(redo()));
+
+    copyAct = new QAction( tr("&Copy"), this);
+    copyAct->setShortcuts(QKeySequence::Copy);
+    connect(copyAct, SIGNAL(triggered()), hexEdit, SLOT(copyText()));
+    pasteAct = new QAction(tr("&Paste"), this);
+    pasteAct->setShortcuts(QKeySequence::Paste);
+    connect(pasteAct, SIGNAL(triggered()), hexEdit, SLOT(pasteText()));
+    cutAct = new QAction( tr("&Cut"), this);
+    cutAct->setShortcuts(QKeySequence::Cut);
+    connect(cutAct, SIGNAL(triggered()), hexEdit, SLOT(cutText()));
 
     saveSelectionReadable = new QAction(tr("&Save Selection Readable..."), this);
     saveSelectionReadable->setStatusTip(tr("Save selection in readable form"));

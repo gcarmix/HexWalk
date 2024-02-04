@@ -21,6 +21,8 @@ public:
     void calculate();
 public slots:
     void mousePressed(qint64 value);
+    void mouseMoved(qint64 address);
+    void limitZoomOut();
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 
@@ -32,6 +34,8 @@ private:
     double blockEntropy(QByteArray * data);
     EntropyChart *entropyView;
     QProgressDialog *progrDialog;
+    QLineSeries *series = NULL;
+    QPointF findClosestPoint(QLineSeries* lineSeries, qreal x);
 };
 
 #endif // ENTROPYDIALOG_H

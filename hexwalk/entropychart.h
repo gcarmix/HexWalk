@@ -12,8 +12,14 @@ public:
 
 signals:
     void mousePressed(qint64 value);
+    void mouseMoved(qint64 address);
+    void rubberBandEvent();
 protected:
     void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+    void resizeEvent(QResizeEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
+
 
 
 

@@ -43,13 +43,16 @@ void StringsDialog::searchStrings()
     progrDialog = new QProgressDialog("Search in progress...","Cancel",0,100,this);
     progrDialog->setValue(0);
     progrDialog->show();
-    while(ui->tableWidget->rowCount() > 0)
+    /*while(ui->tableWidget->rowCount() > 0)
     {
         ui->tableWidget->removeRow(0);
-    }
+    }*/
+    ui->tableWidget->clearContents();
+    ui->tableWidget->setRowCount(0);
+
     while(cursor < _hexEdit->getSize())
     {
-        dataSize = 4096;
+        dataSize = 16384;
         if(dataSize > (_hexEdit->getSize()-cursor))
         {
             dataSize = (_hexEdit->getSize()-cursor);
@@ -166,12 +169,12 @@ void StringsDialog::searchStrings()
         cursor+=dataSize;
         progrDialog->setValue(int(100.0*(double(cursor)/double(_hexEdit->getSize()))));
         QCoreApplication::processEvents();
-        if(occurrencies > 65535)
+        /*if(occurrencies > 100000)
         {
 
             QMessageBox::warning(this, tr("HexWalk"),tr("Too much occurrencies found, stopping search."));
             break;
-        }
+        }*/
         if(progrDialog->wasCanceled())
             break;
     }
@@ -214,3 +217,27 @@ void StringsDialog::on_tableWidget_clicked(const QModelIndex &index)
 
 }
 
+
+void StringsDialog::on_btnNext_clicked()
+{
+    findStringInColumn(ui->edtFind->text());
+}
+
+bool StringsDialog::findStringInColumn(const QString& target) {
+    int rowCount = ui->tableWidget->rowCount();
+    int currentRow = ui->tableWidget->currentRow() +1;
+    for (int row = currentRow; row < rowCount; ++row) {
+        QTableWidgetItem* item = ui->tableWidget->item(row, 1);
+        if (item && item->text().contains(target)) {
+            //item->setSelected(true);
+            ui->tableWidget->setCurrentItem(ui->tableWidget->item(row, 1));
+
+            // Scroll to make the item visible
+            ui->tableWidget->scrollToItem(ui->tableWidget->item(row, 1), QAbstractItemView::PositionAtTop);
+            qDebug() << "Found at row:" << row << "column:" << 1;
+            return true;
+        }
+    }
+    qDebug() << "String not found in column:" << 1;
+    return false;
+}

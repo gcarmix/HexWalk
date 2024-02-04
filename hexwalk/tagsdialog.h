@@ -43,6 +43,8 @@ private slots:
 
     void on_resetBtn_clicked();
 
+    void on_closeBtn_clicked();
+
 private:
     Ui::TagsDialog *ui;
     EditTagDialog * edittagDialog;

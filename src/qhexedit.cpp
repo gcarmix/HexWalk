@@ -3,6 +3,7 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QScrollBar>
+#include <QMenu>
 
 #include "qhexedit.h"
 #include <algorithm>
@@ -38,7 +39,8 @@ QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
     setAddressFontColor(QPalette::WindowText);
     setAsciiAreaColor(this->palette().alternateBase().color());
     setAsciiFontColor(QPalette::WindowText);
-
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QAbstractScrollArea::customContextMenuRequested, this, &QHexEdit::showContextMenu);
     connect(&_cursorTimer, SIGNAL(timeout()), this, SLOT(updateCursor()));
     connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
     connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
@@ -1274,4 +1276,83 @@ void QHexEdit::updateCursor()
     else
         _blink = true;
     viewport()->update(_cursorRect);
+}
+void QHexEdit::showContextMenu(const QPoint &pos)
+{
+    QMenu contextMenu;
+    if(!_editAreaIsAscii)
+    {
+        if(getSelectionEnd() - getSelectionBegin()> 0)
+        {
+
+
+            QAction *copyAction = contextMenu.addAction("Copy");
+            connect(copyAction, &QAction::triggered, this, &QHexEdit::copyText);
+
+            QAction *cutAction = contextMenu.addAction("Cut");
+            connect(cutAction, &QAction::triggered, this, &QHexEdit::cutText);
+
+
+        }
+        QAction *pasteAction = contextMenu.addAction("Paste");
+        connect(pasteAction, &QAction::triggered, this, &QHexEdit::pasteText);
+
+        contextMenu.exec(mapToGlobal(pos));
+    }
+
+
+}
+void QHexEdit::copyText(){
+    QByteArray ba;
+    if(!_editAreaIsAscii)
+    {
+        ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin()).toHex();
+        for (qint64 idx = 32; idx < ba.size(); idx +=33)
+            ba.insert(idx, "\n");
+    }
+    else
+    {
+        ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin());
+        for (int i = 0; i < ba.length(); i++) {
+            if(ba.at(i) < 32 || ba.at(i) > 126)
+            {
+                ba[i] = '.';
+            }
+        }
+    }
+
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(ba);
+}
+void QHexEdit::pasteText(){
+    QClipboard *clipboard = QApplication::clipboard();
+    QByteArray ba = QByteArray().fromHex(clipboard->text().toLatin1());
+    if (_overwriteMode)
+    {
+        ba = ba.left(std::min<qint64>(ba.size(), (_chunks->size() - _bPosCurrent)));
+        replace(_bPosCurrent, ba.size(), ba);
+    }
+    else
+        insert(_bPosCurrent, ba);
+    setCursorPosition(_cursorPosition + 2 * ba.size());
+    resetSelection(getSelectionBegin());
+}
+void QHexEdit::cutText(){
+    QByteArray ba = _chunks->data(getSelectionBegin(), getSelectionEnd() - getSelectionBegin()).toHex();
+    for (qint64 idx = 32; idx < ba.size(); idx +=33)
+        ba.insert(idx, "\n");
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(ba);
+    if (_overwriteMode)
+    {
+        qint64 len = getSelectionEnd() - getSelectionBegin();
+        replace(getSelectionBegin(), (int)len, QByteArray((int)len, char(0)));
+    }
+    else
+    {
+        remove(getSelectionBegin(), getSelectionEnd() - getSelectionBegin());
+    }
+    setCursorPosition(2 * getSelectionBegin());
+    resetSelection(2 * getSelectionBegin());
 }

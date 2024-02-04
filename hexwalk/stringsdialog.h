@@ -21,11 +21,14 @@ private slots:
 
     void on_tableWidget_clicked(const QModelIndex &index);
 
+    void on_btnNext_clicked();
+
 private:
     Ui::StringsDialog *ui;
     QHexEdit * _hexEdit;
     void searchStrings();
     QProgressDialog *progrDialog;
+    bool findStringInColumn(const QString& target);
 
 };
 

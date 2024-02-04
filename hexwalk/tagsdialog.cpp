@@ -262,3 +262,9 @@ void TagsDialog::on_resetBtn_clicked()
     hexEdit->update();
     hexEdit->ensureVisible();
 }
+
+void TagsDialog::on_closeBtn_clicked()
+{
+    this->hide();
+}
+

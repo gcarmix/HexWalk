@@ -14,13 +14,6 @@
    <string>HexWalk - Byte Pattern</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="3">
-    <widget class="QPushButton" name="resetBtn">
-     <property name="text">
-      <string>Reset</string>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0">
     <widget class="QPushButton" name="loadBtn">
      <property name="text">
@@ -64,6 +57,20 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="resetBtn">
+     <property name="text">
+      <string>Reset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QPushButton" name="closeBtn">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

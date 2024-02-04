@@ -6,7 +6,7 @@ QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -stat
 #Only for Mac:
 #ICON = images/hexwalk.icns
 ###############
-VERSION = "1.5.0"
+VERSION = "1.6.0"
 QMAKE_TARGET_COPYRIGHT = "gcarmix"
 QMAKE_TARGET_PRODUCT = "HexWalk"
 HEADERS = \

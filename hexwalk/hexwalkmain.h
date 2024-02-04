@@ -112,6 +112,9 @@ private:
 
     QAction *undoAct;
     QAction *redoAct;
+    QAction *copyAct;
+    QAction *pasteAct;
+    QAction *cutAct;
     QAction *saveSelectionReadable;
 
     QAction *aboutAct;

@@ -403,6 +403,10 @@ private slots:
     void dataChangedPrivate(int idx=0);         // emit dataChanged() signal
     void refresh();                             // ensureVisible() and readBuffers()
     void updateCursor();                        // update blinking cursor
+    void showContextMenu(const QPoint &pos);
+    void copyText();
+    void pasteText();
+    void cutText();
 
 private:
     // Name convention: pixel positions start with _px
