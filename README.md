@@ -64,7 +64,9 @@ https://launchpad.net/hexwalk
 to install on Ubuntu you can simply do:
 
 sudo add-apt-repository ppa:carmix/ppa
+
 sudo apt update
+
 sudo apt install hexwalk
 
 
