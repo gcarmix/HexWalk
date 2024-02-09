@@ -58,6 +58,16 @@ For Windows, Binwalk support is done using a python helper file that launches th
 If you want to build from source just open hexedit.pro in QT Creator and build it.
 It is possible also to build from command line (linux_build.sh script provided).
 
+## Ubuntu
+The project is also available on launchpad
+https://launchpad.net/hexwalk
+to install on Ubuntu you can simply do:
+
+sudo add-apt-repository ppa:carmix/ppa
+sudo apt update
+sudo apt install hexwalk
+
+
 ## Acknowledgments
 
 Thanks to these projects:
