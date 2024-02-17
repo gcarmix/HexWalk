@@ -57,8 +57,8 @@ void DiffDialog::setFiles(QString file1str, QString file2str)
     file1.setFileName(file1str);
 
     file2.setFileName(file2str);
-    qInfo()<<file1.fileName();
-    qInfo()<<file2.fileName();
+    //qInfo()<<file1.fileName();
+    //qInfo()<<file2.fileName();
     ui->hexEdit1->setData(file1);
     ui->hexEdit2->setData(file2);
     connect(ui->hexEdit1,SIGNAL(currentAddressChanged(qint64)),this,SLOT(trackCursor1(qint64)));

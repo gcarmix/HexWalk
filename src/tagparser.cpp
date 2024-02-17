@@ -11,7 +11,7 @@ YMLParser::YMLParser()
 }
 void YMLParser::saveFile(std::string filename)
 {
-    qInfo()<<"Filename: "<<QString::fromStdString(filename)<<"\n";
+    //qInfo()<<"Filename: "<<QString::fromStdString(filename)<<"\n";
     ofstream fw(filename,std::ofstream::out);
     if(fw.is_open())
     {
@@ -22,7 +22,7 @@ void YMLParser::saveFile(std::string filename)
             fw << "  size: " << ymlobj.at(i).size <<"\n";
             fw << "  color: " << ymlobj.at(i).color <<"\n";
             fw << "  type: " << ymlobj.at(i).type <<"\n";
-            qInfo() << "#"<<"\n";
+            //qInfo() << "#"<<"\n";
 
         }
         fw.close();

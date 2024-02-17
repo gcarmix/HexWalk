@@ -13,5 +13,6 @@
         <file>images/diff.png</file>
         <file>images/tags.png</file>
         <file>images/strings.png</file>
+        <file>images/bytemap.png</file>
     </qresource>
 </RCC>

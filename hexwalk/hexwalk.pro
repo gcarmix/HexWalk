@@ -6,7 +6,7 @@ QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -stat
 #Only for Mac:
 #ICON = images/hexwalk.icns
 ###############
-VERSION = "1.6.0"
+VERSION = "1.7.0"
 QMAKE_TARGET_COPYRIGHT = "gcarmix"
 QMAKE_TARGET_PRODUCT = "HexWalk"
 HEADERS = \
@@ -15,6 +15,8 @@ HEADERS = \
     ../src/tagparser.hpp \
     advancedsearchdialog.h \
     binanalysisdialog.h \
+    bytemap.h \
+    bytemapdialog.h \
     converterdialog.h \
     diffdialog.h \
     edittagdialog.h \
@@ -39,6 +41,8 @@ SOURCES = \
     ../src/tagparser.cpp \
     advancedsearchdialog.cpp \
     binanalysisdialog.cpp \
+    bytemap.cpp \
+    bytemapdialog.cpp \
     converterdialog.cpp \
     diffdialog.cpp \
     edittagdialog.cpp \
@@ -62,6 +66,7 @@ RESOURCES = \
 FORMS += \
     advancedsearchdialog.ui \
     binanalysisdialog.ui \
+    bytemapdialog.ui \
     converterdialog.ui \
     diffdialog.ui \
     edittagdialog.ui \

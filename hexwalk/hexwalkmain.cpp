@@ -80,6 +80,7 @@ void HexWalkMain::init()
     tagsDialog = new TagsDialog(hexEdit,this);
     stringsDialog = new StringsDialog(hexEdit,this);
 
+    byteMapDialog = new ByteMapDialog(hexEdit,this);
     createActions();
     createMenus();
     createToolBars();
@@ -135,6 +136,7 @@ void HexWalkMain::createMenus()
     analysisMenu->addAction(diffAct);
     analysisMenu->addAction(tagsAct);
     analysisMenu->addAction(stringsAct);
+    analysisMenu->addAction(byteMapAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
@@ -289,6 +291,10 @@ void HexWalkMain::createActions()
     stringsAct->setStatusTip(tr("Search Strings"));
     connect(stringsAct, SIGNAL(triggered()), this, SLOT(showStringsDialog()));
 
+    byteMapAct = new QAction(QIcon(":/images/bytemap.png"),tr("ByteMap"), this);
+    byteMapAct->setStatusTip(tr("Byte Map"));
+    connect(byteMapAct, SIGNAL(triggered()), this, SLOT(showByteMap()));
+
     QAction* recentFileAction = 0;
     for(auto i = 0; i < 5; ++i){
         recentFileAction = new QAction(this);
@@ -327,6 +333,7 @@ void HexWalkMain::createToolBars()
     analysisToolBar->addAction(diffAct);
     analysisToolBar->addAction(tagsAct);
     analysisToolBar->addAction(stringsAct);
+    analysisToolBar->addAction(byteMapAct);
     analysisToolBar->addSeparator();
     gotoLbl = new QLabel();
     gotoLbl->setText("Go To: ");
@@ -357,7 +364,7 @@ void HexWalkMain::createToolBars()
 
 void HexWalkMain::setFileActionsEnabled(bool enabled)
 {
-    QAction* all[] = {diffAct, entropyAct, binaryAct, hashAct, tagsAct,stringsAct};
+    QAction* all[] = {diffAct, entropyAct, binaryAct, hashAct, tagsAct,stringsAct,byteMapAct};
     for (auto act: all)
     {
         act->setEnabled(enabled);
@@ -396,6 +403,7 @@ void HexWalkMain::loadFile(const QString &fileName)
     }
     setCurrentFile(fileName);
     statusBar()->showMessage(tr("File loaded"), 2000);
+    emit fileLoaded();
 }
 
 /*****************************************************************************/
@@ -948,3 +956,7 @@ void HexWalkMain::on_signedcb_clicked()
     updateInfo();
 }
 
+void HexWalkMain::showByteMap()
+{
+    byteMapDialog->showByteMapDialog();
+}

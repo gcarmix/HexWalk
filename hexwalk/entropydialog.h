@@ -23,6 +23,7 @@ public slots:
     void mousePressed(qint64 value);
     void mouseMoved(qint64 address);
     void limitZoomOut();
+    void refresh();
 private slots:
     void on_buttonBox_clicked(QAbstractButton *button);
 

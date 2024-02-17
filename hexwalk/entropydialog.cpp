@@ -10,7 +10,7 @@ EntropyDialog::EntropyDialog(QHexEdit * hexedit,QWidget *parent) :
 {
     _hexed = hexedit;
     ui->setupUi(this);
-
+    connect(parent,SIGNAL(fileLoaded()),this,SLOT(refresh()));
 }
 double EntropyDialog::blockEntropy(QByteArray * data)
 {
@@ -31,6 +31,13 @@ double EntropyDialog::blockEntropy(QByteArray * data)
 
     return entropy/8;
 
+}
+void EntropyDialog::refresh()
+{
+    if(this->isVisible())
+    {
+        calculate();
+    }
 }
 void EntropyDialog::calculate()
 {

@@ -15,6 +15,7 @@
 #include "tagsdialog.h"
 #include "edittagdialog.h"
 #include "stringsdialog.h"
+#include "bytemapdialog.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -37,7 +38,8 @@ public:
     explicit HexWalkMain(QWidget *parent = nullptr);
     ~HexWalkMain();
     void loadFile(const QString &fileName);
-
+signals:
+    void fileLoaded();
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -66,6 +68,7 @@ private slots:
     void showHashDialog();
     void showTagsDialog();
     void showStringsDialog();
+    void showByteMap();
     void toggleOverwriteMode();
     void gotoAddress();
     void setWidth();
@@ -109,6 +112,7 @@ private:
     QAction *diffAct;
     QAction *tagsAct;
     QAction *stringsAct;
+    QAction *byteMapAct;
 
     QAction *undoAct;
     QAction *redoAct;
@@ -137,6 +141,7 @@ private:
     QHexEdit *hexEdit;
 
     EntropyDialog *entropyDialog;
+    ByteMapDialog *byteMapDialog;
     ConverterDialog *converterDialog;
     HashDialog * hashDialog;
     SearchDialog *searchDialog;

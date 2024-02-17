@@ -39,7 +39,7 @@ void StringsDialog::searchStrings()
     QElapsedTimer timer;
     timer.start();
 
-    qInfo()<<"Starting search...\n";
+    //qInfo()<<"Starting search...\n";
     progrDialog = new QProgressDialog("Search in progress...","Cancel",0,100,this);
     progrDialog->setValue(0);
     progrDialog->show();
@@ -178,10 +178,7 @@ void StringsDialog::searchStrings()
         if(progrDialog->wasCanceled())
             break;
     }
-    /*for(int i = 0; i < stringList.size() ; i++)
-    {
-        qInfo()<<i<<" "<<stringList.at(i)<<"\n";
-    }*/
+
     progrDialog->cancel();
     if((int)rawString.length() >= ui->spinBoxMinLen->value())
     {
