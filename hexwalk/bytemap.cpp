@@ -44,14 +44,14 @@ void ByteMap::paintEvent(QPaintEvent *event)
 {
     QPainter painter(viewport());
 
-    verticalScrollBar()->value();
     int value = verticalScrollBar()->value();
-    int _bPosFirst = (qint64)value * _bytesPerLine;
+    qInfo()<<value;
+    qint64 _bPosFirst = (qint64)value * _bytesPerLine;
     for(int i=0;i<_rowsShown;i++)
     {
 
         QByteArray rowdata  = _hexedit->dataAt(_bPosFirst+i*_bytesPerLine,_bytesPerLine);
-        for(int k=0;k<_bytesPerLine;k++)
+        for(int k=0;k<rowdata.size();k++)
         {
             if((_bPosFirst + i*_bytesPerLine + k) > _hexedit->getSize() )
             {
@@ -75,7 +75,7 @@ void ByteMap::paintEvent(QPaintEvent *event)
         painter.fillRect(QRect(mPoint.x(), mPoint.y(), _pxHeight, _pxHeight), QColor(255,255,0));
 }
 qint64 ByteMap::cursorPosition(QPoint pos){
-    qint64 actPos = pos.x()/_pxHeight + (pos.y()/_pxHeight)*_bytesPerLine+verticalScrollBar()->value()*_bytesPerLine;
+    qint64 actPos = (qint64)(pos.x()/_pxHeight) + (qint64)(pos.y()/_pxHeight)*_bytesPerLine+(qint64)verticalScrollBar()->value()*_bytesPerLine;
 
     return actPos;
 }
