@@ -800,7 +800,8 @@ void HexWalkMain::showConverterDialog()
 
 void HexWalkMain::gotoAddress()
 {
-    hexEdit->setCursorPosition(2*(gotoText->text().toLong(NULL,16)));
+    qint64 destPos = 2*(gotoText->text().toLongLong(NULL,16));
+    hexEdit->setCursorPosition(destPos);
     hexEdit->ensureVisible();
 }
 

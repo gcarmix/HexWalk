@@ -48,7 +48,7 @@ QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
 
     _cursorTimer.setInterval(500);
     _cursorTimer.start();
-
+    _scrollMult = 1;
     setAddressWidth(4);
     setAddressArea(true);
     setAsciiArea(true);
@@ -434,9 +434,9 @@ void QHexEdit::replace(qint64 pos, qint64 len, const QByteArray &ba)
 void QHexEdit::ensureVisible()
 {
     if (_cursorPosition < (_bPosFirst * 2))
-        verticalScrollBar()->setValue((int)(_cursorPosition / 2 / _bytesPerLine));
-    if (_cursorPosition > ((_bPosFirst + (_rowsShown - 1)*_bytesPerLine) * 2))
-        verticalScrollBar()->setValue((int)(_cursorPosition / 2 / _bytesPerLine) - _rowsShown + 1);
+        verticalScrollBar()->setValue((int)(_cursorPosition / 2 / _bytesPerLine/_scrollMult));
+    if (_cursorPosition > ((_bPosFirst + (qint64)((_rowsShown - 1)*_bytesPerLine) * 2)))
+        verticalScrollBar()->setValue((int)(((_cursorPosition / 2 / _bytesPerLine) - _rowsShown + 1)/_scrollMult));
     if (_pxCursorX < horizontalScrollBar()->value())
         horizontalScrollBar()->setValue(_pxCursorX);
     if ((_pxCursorX + _pxCharWidth) > (horizontalScrollBar()->value() + viewport()->width()))
@@ -1187,6 +1187,7 @@ void QHexEdit::init()
     resetSelection(0);
     setCursorPosition(0);
     verticalScrollBar()->setValue(0);
+
     _modified = false;
 }
 
@@ -1212,12 +1213,19 @@ void QHexEdit::adjust()
 
     // set verticalScrollbar()
     _rowsShown = ((viewport()->height()-4)/_pxCharHeight);
-    int lineCount = (int)(_chunks->size() / (qint64)_bytesPerLine) + 1;
-    verticalScrollBar()->setRange(0, lineCount - _rowsShown);
+    qint64 lineCount = _chunks->size() / (qint64)_bytesPerLine + 1;
+    if(lineCount >= 1024*1024*1024){
+        _scrollMult = ceil(lineCount/(1024*1024*1024));
+    }
+    else
+    {
+        _scrollMult = 1;
+    }
+    verticalScrollBar()->setRange(0, (lineCount - _rowsShown)/_scrollMult);
     verticalScrollBar()->setPageStep(_rowsShown);
 
-    int value = verticalScrollBar()->value();
-    _bPosFirst = (qint64)value * _bytesPerLine;
+    qint64 value = (qint64)verticalScrollBar()->value()*_scrollMult;
+    _bPosFirst = value * _bytesPerLine;
     _bPosLast = _bPosFirst + (qint64)(_rowsShown * _bytesPerLine) - 1;
     if (_bPosLast >= _chunks->size())
         _bPosLast = _chunks->size() - 1;

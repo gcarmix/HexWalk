@@ -17,6 +17,7 @@ TagsDialog::TagsDialog(QHexEdit * hexedit,QWidget *parent) :
     edittagDialog = new EditTagDialog(bytePattern,this);
     edittagDialog->hide();
     connect(edittagDialog,SIGNAL(tagReady()),this,SLOT(triggerUpdate()));
+    connect(parent,SIGNAL(fileLoaded()),this,SLOT(triggerUpdate()));
     ui->tableWidget->setColumnCount(6);
     ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Name"));
     ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Color"));
@@ -71,16 +72,19 @@ TagsDialog::~TagsDialog()
 
 void TagsDialog::on_addBtn_clicked()
 {
-
-
     edittagDialog->show();
     edittagDialog->colorGen();
 }
 void TagsDialog::triggerUpdate()
 {
-
-    hexEdit->ensureVisible();
+    bytePattern->resolveReferences();
     updateTable();
+    hexEdit->ensureVisible();
+}
+
+void TagsDialog::triggerFileUpdate()
+{
+    analyzePattern();
 }
 void TagsDialog::updateTable()
 {
@@ -141,17 +145,11 @@ void TagsDialog::updateTable()
     }
 
 }
-
-
-void TagsDialog::on_loadBtn_clicked()
+void TagsDialog::analyzePattern()
 {
-    QString fileName = QFileDialog::getOpenFileName(this,"Tag selection","patterns","YML (*.yml)");
-    if (fileName.isEmpty())
-        return;
-
-    bytePattern->ymlParser.loadFile(fileName.toStdString());
+    bytePattern->ymlParser.loadFile(curFileTag.toStdString());
     bytePattern->colorTag.clear();
-    for(int i=0;i<bytePattern->ymlParser.ymlobj.size();i++)
+    for(int i=0 ; i<(int)bytePattern->ymlParser.ymlobj.size() ; i++)
     {
 
         int ret =bytePattern->addElement(bytePattern->ymlParser.ymlobj.at(i));
@@ -159,38 +157,38 @@ void TagsDialog::on_loadBtn_clicked()
         {
             QString error_string;
             switch(ret)
-                {
-                case E_WRONGNAME:
+            {
+            case E_WRONGNAME:
                 error_string = QString("Wrong name passed at element %1").arg(i);
                 break;
-                case E_WRONGTYPE:
+            case E_WRONGTYPE:
                 error_string = QString("Wrong type passed at element %1").arg(i);
                 break;
-                case E_WRONGREF:
+            case E_WRONGREF:
                 error_string = QString("Wrong reference passed at element %1").arg(i);
                 break;
-                case E_WRONGCOLOR:
+            case E_WRONGCOLOR:
                 error_string = QString("Wrong color passed at element %1").arg(i);
                 break;
-                case E_DUPNAME:
+            case E_DUPNAME:
                 error_string = QString("Duplicated name passed at element %1").arg(i);
                 break;
-                case E_EMPTYOFFSET:
+            case E_EMPTYOFFSET:
                 error_string = QString("Empty offset passed at element %1").arg(i);
                 break;
-                case E_EMPTYSIZE:
+            case E_EMPTYSIZE:
                 error_string = QString("Empty size passed at element %1").arg(i);
                 break;
-                default:
+            default:
                 error_string = QString("Error code %1 at element %2").arg(ret).arg(i);
-                }
-
-                QMessageBox::warning(this, tr("HexWalk"),
-                                     error_string
-                                         );
-                return;
             }
+
+            QMessageBox::warning(this, tr("HexWalk"),
+                                 error_string
+                                 );
+            return;
         }
+    }
 
 
 
@@ -200,6 +198,15 @@ void TagsDialog::on_loadBtn_clicked()
     hexEdit->ensureVisible();
 
     return;
+}
+
+void TagsDialog::on_loadBtn_clicked()
+{
+    curFileTag = QFileDialog::getOpenFileName(this,"Tag selection","patterns","YML (*.yml)");
+    if (curFileTag.isEmpty())
+        return;
+
+    analyzePattern();
 }
 
 

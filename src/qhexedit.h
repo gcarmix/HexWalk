@@ -470,6 +470,7 @@ private:
     QByteArray _markedShown;                    // marked data in view
     bool _modified;                             // Is any data in editor modified?
     int _rowsShown;                             // lines of text shown
+    int _scrollMult;
     UndoStack * _undoStack;                     // Stack to store edit actions for undo/redo
     /*! \endcond docNever */
 };

@@ -45,7 +45,6 @@ void ByteMap::paintEvent(QPaintEvent *event)
     QPainter painter(viewport());
 
     int value = verticalScrollBar()->value();
-    qInfo()<<value;
     qint64 _bPosFirst = (qint64)value * _bytesPerLine;
     for(int i=0;i<_rowsShown;i++)
     {

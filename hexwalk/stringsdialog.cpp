@@ -195,8 +195,8 @@ void StringsDialog::searchStrings()
 
     QString message = QString("%1 occurrencies found").arg(occurrencies);
     QMessageBox::information(this, tr("HexWalk"),message);
-    qDebug() << timer.elapsed();
-    qInfo()<<"done.\n";
+    //qDebug() << timer.elapsed();
+    //qInfo()<<"done.\n";
 }
 void StringsDialog::on_pbSearch_clicked()
 {
@@ -231,10 +231,10 @@ bool StringsDialog::findStringInColumn(const QString& target) {
 
             // Scroll to make the item visible
             ui->tableWidget->scrollToItem(ui->tableWidget->item(row, 1), QAbstractItemView::PositionAtTop);
-            qDebug() << "Found at row:" << row << "column:" << 1;
+            //qDebug() << "Found at row:" << row << "column:" << 1;
             return true;
         }
     }
-    qDebug() << "String not found in column:" << 1;
+    //qDebug() << "String not found in column:" << 1;
     return false;
 }

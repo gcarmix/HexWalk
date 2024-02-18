@@ -128,16 +128,15 @@ void EntropyDialog::limitZoomOut() {
 
        QValueAxis *axisX = dynamic_cast<QValueAxis *>(ui->entropyChart->chart()->axisX());
        if (axisX) {
-       qreal newMin = axisX->min();
-       qreal newMax = axisX->max();
-       if(axisX->min()< 0.0)
-       {
-           ui->entropyChart->chart()->axes(Qt::Horizontal).back()->setRange(0.0,axisX->max());
-       }
-       if(axisX->max()>_hexed->getSize())
-       {
-           ui->entropyChart->chart()->axes(Qt::Horizontal).back()->setRange(axisX->min(),_hexed->getSize());
-       }
+
+           if(axisX->min()< 0.0)
+           {
+               ui->entropyChart->chart()->axes(Qt::Horizontal).back()->setRange(0.0,axisX->max());
+           }
+           if(axisX->max()>_hexed->getSize())
+           {
+               ui->entropyChart->chart()->axes(Qt::Horizontal).back()->setRange(axisX->min(),_hexed->getSize());
+           }
        }
 
 }

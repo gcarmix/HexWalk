@@ -83,7 +83,7 @@ int BytePattern::resolveReferences(){
         {
             //Offset is not a number, check if there are variables to substitute
             vector<string> foundTokens = tokenizeString(tag.obj.offset,"+-*/()");
-            for(int k=0;k<foundTokens.size();k++)
+            for(int k=0;k<(int)foundTokens.size();k++)
             {
                 string token = foundTokens.at(k);
                 if(!isDigit(token)){
@@ -106,14 +106,14 @@ int BytePattern::resolveReferences(){
                                 if(temptag.type == BE_t || temptag.type == LE_t)
                                 {
                                     pos = tag.obj.offset.find(temptag.name);
-                                    if(pos != std::string::npos)
+                                    if(pos != (int)std::string::npos)
                                     {
                                         found = true;
                                         if(temptag.type == LE_t)
                                         {
                                             reverse(temptag.data.begin(),temptag.data.end());
                                         }
-                                        tag.obj.offset.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toLong(&ok,16)));
+                                        tag.obj.offset.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toLongLong(&ok,16)));
                                         break;
                                     }
                                 }
@@ -130,7 +130,7 @@ int BytePattern::resolveReferences(){
         {
             //Offset is not a number, check if there are variables to substitute
             vector<string> foundTokens = tokenizeString(tag.obj.size,"+-*/()");
-            for(int k=0;k<foundTokens.size();k++)
+            for(int k=0 ; k<(int)foundTokens.size();k++)
             {
                 string token = foundTokens.at(k);
                 if(!isDigit(token)){
@@ -153,13 +153,13 @@ int BytePattern::resolveReferences(){
                                 if(temptag.type == BE_t || temptag.type == LE_t)
                                 {
                                     pos = tag.obj.size.find(temptag.name);
-                                    if(pos != std::string::npos)
+                                    if(pos != (int)std::string::npos)
                                     {
                                         if(temptag.type == LE_t)
                                         {
                                             reverse(temptag.data.begin(),temptag.data.end());
                                         }
-                                        tag.obj.size.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toLong(&ok,16)));
+                                        tag.obj.size.replace(pos,temptag.name.length(),to_string(temptag.data.toHex().toLongLong(&ok,16)));
                                         found = true;
                                         break;
                                     }

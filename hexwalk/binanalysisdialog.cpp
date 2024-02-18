@@ -169,7 +169,7 @@ void binanalysisdialog::renderAnalysis(int status_code)
         foreach(line,lines)
         {
             if(line.length()>0){
-                binwalkResult.cursor = line.section(' ',1,1,QString::SectionSkipEmpty).toLong(NULL,16);
+                binwalkResult.cursor = line.section(' ',1,1,QString::SectionSkipEmpty).toLongLong(NULL,16);
                 binwalkResult.datastr = line.section(' ',2,-1,QString::SectionSkipEmpty);
 
                 resultslist.append(binwalkResult);

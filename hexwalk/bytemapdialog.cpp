@@ -42,18 +42,16 @@ void ByteMapDialog::updatePos()
 {
     if(ui->byteMap->getCurrentPosition() < _hexedit->getSize())
     {
-        ui->edtAddress->setText(QString::asprintf("%lld",ui->byteMap->getCurrentPosition()));
-        ui->edtValue->setText(QString::asprintf("%u",(unsigned char)(_hexedit->dataAt(ui->byteMap->getCurrentPosition(),1).at(0))));
+        ui->edtAddress->setText(QString::asprintf("%02llX (%lld)",ui->byteMap->getCurrentPosition(),ui->byteMap->getCurrentPosition()));
+        ui->edtValue->setText(QString::asprintf("%02X (%u)",(unsigned char)(_hexedit->dataAt(ui->byteMap->getCurrentPosition(),1).at(0)),(unsigned char)(_hexedit->dataAt(ui->byteMap->getCurrentPosition(),1).at(0))));
     }
 
 }
 
 void ByteMapDialog::gotoAddress()
 {
-    ui->byteMap->getCurrentPosition();
     _hexedit->setCursorPosition(2*ui->byteMap->getCurrentPosition());
     _hexedit->ensureVisible();
-
 }
 
 void ByteMapDialog::on_comboCols_currentIndexChanged(int index)

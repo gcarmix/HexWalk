@@ -25,11 +25,14 @@ public:
     bool isOperator(char c);
     int performOperation(char operation, int operand1, int operand2);
     int evaluateExpression(const string& expression);
+    void analyzePattern();
     BytePattern *bytePattern;
+    QString curFileTag;
 
 private slots:
     void on_addBtn_clicked();
     void triggerUpdate();
+    void triggerFileUpdate();
 
     void on_loadBtn_clicked();
 

@@ -271,7 +271,7 @@ void AdvancedSearchDialog::setData()
         auto wordItemDelegate = new WordItemDelegate(this);
         ui->resultsTableView->setItemDelegate(wordItemDelegate);
     }
-    catch(QException)
+    catch(QException &)
     {
         qInfo() <<"Exception!!\n";
     }
