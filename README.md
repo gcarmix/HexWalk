@@ -23,6 +23,9 @@ It is cross platform and has plenty of features:
 * Main page
 ![hexwalk gui](screenshots/hexwalk_gui1.png)
 
+* Byte Map
+![hexwalk gui](screenshots/hexwalk_gui17.png)
+
 * Advanced Search
 ![hexwalk gui](screenshots/hexwalk_gui5.png)
 
@@ -32,8 +35,7 @@ It is cross platform and has plenty of features:
 * Binary Analyzer
 ![hexwalk gui](screenshots/hexwalk_gui3.png)
 
-* Byte Map
-![hexwalk gui](screenshots/hexwalk_gui17.png)
+
 
 * Hash Calculator
 ![hexwalk gui](screenshots/hexwalk_gui4.png)
