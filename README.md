@@ -10,6 +10,7 @@ It is cross platform and has plenty of features:
 * Advanced Find (can find patterns in binary files based on HEX,UTF8,UTF16 and regex)
 * Binwalk integration
 * Entropy Analysis
+* Byte Map
 * Hash Calculator
 * Bin/Dec/Hex Converter
 * Hex file editing
@@ -30,6 +31,9 @@ It is cross platform and has plenty of features:
 
 * Binary Analyzer
 ![hexwalk gui](screenshots/hexwalk_gui3.png)
+
+* Byte Map
+![hexwalk gui](screenshots/hexwalk_gui17.png)
 
 * Hash Calculator
 ![hexwalk gui](screenshots/hexwalk_gui4.png)
