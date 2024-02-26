@@ -55,26 +55,42 @@ For more details about the usage go to the Wiki:
 
 https://github.com/gcarmix/hexwalk/wiki
 
+## Windows 
+HexWalk on Windows is released in different flavours:
+ - as an installer
+ - as a portable zip file
 
-## Binwalk on Windows OS
+The fastest way to install it is through winget:
 
-For Windows, Binwalk support is done using a python helper file that launches the commands and must be on the same path of hexwalk.exe. Binwalk is provided in the binwalk_windows folder and should not be installed manually, as it is called by the helper file.
+```
+winget install hexwalk
+```
+## MacOS
+On MacOS you can easily download the .dmg file available in the release page and drag the app in the Applications folder as usual
 
-## Build
-If you want to build from source just open hexedit.pro in QT Creator and build it.
-It is possible also to build from command line (linux_build.sh script provided).
 
 ## Ubuntu
 The project is also available on launchpad
 https://launchpad.net/hexwalk
 to install on Ubuntu you can simply do:
-
+```
 sudo add-apt-repository ppa:carmix/ppa
 
 sudo apt update
 
 sudo apt install hexwalk
+```
 
+## Linux
+For other Linux distributions there's the AppImage file available in the release page. Just download, give execution permissions and you are ready to go.
+
+## Build
+If you want to build from source just open hexedit.pro in QT Creator and build it.
+It is possible also to build from command line (linux_build.sh script provided).
+
+## Binwalk on Windows OS
+
+For Windows, Binwalk support is done using a python helper file that launches the commands and must be on the same path of hexwalk.exe. Binwalk is provided in the binwalk_windows folder and should not be installed manually, as it is called by the helper file.
 
 ## Acknowledgments
 
