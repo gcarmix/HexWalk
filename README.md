@@ -88,10 +88,6 @@ For other Linux distributions there's the AppImage file available in the release
 If you want to build from source just open hexedit.pro in QT Creator and build it.
 It is possible also to build from command line (linux_build.sh script provided).
 
-## Binwalk on Windows OS
-
-For Windows, Binwalk support is done using a python helper file that launches the commands and must be on the same path of hexwalk.exe. Binwalk is provided in the binwalk_windows folder and should not be installed manually, as it is called by the helper file.
-
 ## Acknowledgments
 
 Thanks to these projects:
