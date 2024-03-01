@@ -2,11 +2,11 @@ QT += charts
 CONFIG += static
 RC_ICONS = images/hexwalk.ico
 #Only for Windows:
-QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
+win32:QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++ -static
 #Only for Mac:
-#ICON = images/hexwalk.icns
+macx:ICON = images/hexwalk.icns
 ###############
-VERSION = "1.7.0"
+VERSION = "1.7.1"
 QMAKE_TARGET_COPYRIGHT = "gcarmix"
 QMAKE_TARGET_PRODUCT = "HexWalk"
 HEADERS = \
@@ -80,3 +80,11 @@ FORMS += \
 
 DEFINES += QHEXEDIT_EXPORTS \
     APP_VERSION=\\\"$$VERSION\\\"
+
+DESTDIR = ../bin
+MOC_DIR = ../build/moc
+RCC_DIR = ../build/rcc
+UI_DIR = ../build/ui
+unix:OBJECTS_DIR = ../build/o/unix
+win32:OBJECTS_DIR = ../build/o/win32
+macx:OBJECTS_DIR = ../build/o/mac

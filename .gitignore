@@ -1,5 +1,5 @@
 build-*
 build/
 deploy_linux/
-
-
+deploy_win/
+bin/
