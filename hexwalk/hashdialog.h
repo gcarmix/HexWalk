@@ -15,7 +15,8 @@ public:
     explicit HashDialog(QWidget *parent = nullptr);
     ~HashDialog();
     void calculate(QString curFile);
-
+protected:
+    void keyPressEvent(QKeyEvent *event);
 private slots:
     void on_pushButton_clicked();
 
