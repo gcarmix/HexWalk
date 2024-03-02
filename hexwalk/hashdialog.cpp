@@ -1,4 +1,5 @@
 #include "hashdialog.h"
+#include "qevent.h"
 #include "ui_hashdialog.h"
 #include <QFile>
 #include <QCryptographicHash>
@@ -14,7 +15,14 @@ HashDialog::~HashDialog()
 {
     delete ui;
 }
-
+void HashDialog::keyPressEvent(QKeyEvent *event) {
+    if (event->key() == Qt::Key_Escape) {
+        haltCalc = true;
+        this->hide();
+    } else {
+        QDialog::keyPressEvent(event);
+    }
+}
 void HashDialog::calculate(QString filepath)
 {
     QFile in(filepath);

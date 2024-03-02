@@ -18,11 +18,13 @@ public:
     void showByteMapDialog();
 
 private slots:
-    void on_buttonBox_accepted();
     void updatePos();
     void gotoAddress();
     void refresh();
-    void on_comboCols_currentIndexChanged(int index);
+    void on_spinCols_valueChanged(int arg1);
+    void on_closeBtn_clicked();
+
+    void on_colorBox_stateChanged(int arg1);
 
 private:
     int imageWidth;

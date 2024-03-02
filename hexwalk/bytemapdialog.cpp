@@ -10,7 +10,8 @@ ByteMapDialog::ByteMapDialog(QHexEdit * hexedit,QWidget *parent) :
     connect(ui->byteMap,SIGNAL(mousePress()),this,SLOT(gotoAddress()));
     connect(parent,SIGNAL(fileLoaded()),this,SLOT(refresh()));
     ui->byteMap->setBytesPerLine(256);
-    ui->comboCols->setCurrentIndex(1);
+    ui->spinCols->setValue(256);
+    ui->byteMap->colored = ui->colorBox->isChecked();
     setFixedWidth(48+256*3);
 }
 
@@ -33,10 +34,6 @@ void ByteMapDialog::refresh()
 
 }
 
-void ByteMapDialog::on_buttonBox_accepted()
-{
-    this->hide();
-}
 
 void ByteMapDialog::updatePos()
 {
@@ -54,29 +51,32 @@ void ByteMapDialog::gotoAddress()
     _hexedit->ensureVisible();
 }
 
-void ByteMapDialog::on_comboCols_currentIndexChanged(int index)
+
+void ByteMapDialog::on_spinCols_valueChanged(int arg1)
 {
-    switch(index)
+    ui->byteMap->setBytesPerLine(arg1);
+    if(arg1 > 512)
     {
-        case 0:
-        {
-            ui->byteMap->setBytesPerLine(128);
-            setFixedWidth(48+128*3);
-        }break;
-        case 1:
-        {
-            ui->byteMap->setBytesPerLine(256);
-            setFixedWidth(48+256*3);
-        }break;
-        case 2:
-        {
-            ui->byteMap->setBytesPerLine(512);
-            setFixedWidth(48+512*3);
-        }break;
-
-
+      setFixedWidth(32+arg1*2);
     }
+    else
+    {
+    setFixedWidth(48+arg1*3);
+    }
+}
 
+
+
+void ByteMapDialog::on_closeBtn_clicked()
+{
+    this->hide();
+}
+
+
+void ByteMapDialog::on_colorBox_stateChanged(int arg1)
+{
+
+        ui->byteMap->colored = ui->colorBox->isChecked();
 
 }
 

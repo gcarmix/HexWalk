@@ -263,7 +263,7 @@ void HexWalkMain::createActions()
     connect(advancedFindAct, SIGNAL(triggered()), this, SLOT(showAdvancedSearchDialog()));
 
     entropyAct = new QAction(QIcon(":/images/entropy.png"),tr("Entropy"), this);
-    entropyAct->setShortcuts(QKeySequence::Find);
+    entropyAct->setShortcut(Qt::CTRL|Qt::Key_E);
     entropyAct->setStatusTip(tr("Calculate entropy of file"));
     connect(entropyAct, SIGNAL(triggered()), this, SLOT(showEntropyDialog()));
 

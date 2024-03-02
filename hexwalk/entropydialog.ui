@@ -29,7 +29,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="ValueEdt"/>
+        <widget class="QLineEdit" name="ValueEdt">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QLabel" name="Addresslbl">
@@ -39,7 +43,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="AddressEdt"/>
+        <widget class="QLineEdit" name="AddressEdt">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="horizontalSpacer">
@@ -64,7 +72,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Close</set>
      </property>
     </widget>
    </item>
