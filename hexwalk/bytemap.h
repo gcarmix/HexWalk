@@ -15,6 +15,7 @@ public:
     void setCursorPosition(qint64 actpos);
     qint64 getCurrentPosition();
     void setBytesPerLine(int value);
+    bool colored = false;
 protected:
     void paintEvent(QPaintEvent *event);
     void mouseMoveEvent(QMouseEvent * event);
@@ -25,6 +26,7 @@ signals:
     void mousePress();
 private:
     int _rowsShown;
+    QColor _jetColor(int value);
     int _pxHeight;
     int _pxWidth;
     int _bytesPerLine;

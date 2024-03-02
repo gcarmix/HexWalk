@@ -83,10 +83,10 @@
         <bool>true</bool>
        </property>
        <property name="minimum">
-        <number>128</number>
+        <number>80</number>
        </property>
        <property name="maximum">
-        <number>512</number>
+        <number>940</number>
        </property>
        <property name="singleStep">
         <number>1</number>
@@ -123,6 +123,13 @@
        </property>
        <property name="acceptDrops">
         <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="colorBox">
+       <property name="text">
+        <string>Color map</string>
        </property>
       </widget>
      </item>

@@ -11,6 +11,7 @@ ByteMapDialog::ByteMapDialog(QHexEdit * hexedit,QWidget *parent) :
     connect(parent,SIGNAL(fileLoaded()),this,SLOT(refresh()));
     ui->byteMap->setBytesPerLine(256);
     ui->spinCols->setValue(256);
+    ui->byteMap->colored = ui->colorBox->isChecked();
     setFixedWidth(48+256*3);
 }
 
@@ -54,7 +55,14 @@ void ByteMapDialog::gotoAddress()
 void ByteMapDialog::on_spinCols_valueChanged(int arg1)
 {
     ui->byteMap->setBytesPerLine(arg1);
+    if(arg1 > 512)
+    {
+      setFixedWidth(32+arg1*2);
+    }
+    else
+    {
     setFixedWidth(48+arg1*3);
+    }
 }
 
 
@@ -62,5 +70,13 @@ void ByteMapDialog::on_spinCols_valueChanged(int arg1)
 void ByteMapDialog::on_closeBtn_clicked()
 {
     this->hide();
+}
+
+
+void ByteMapDialog::on_colorBox_stateChanged(int arg1)
+{
+
+        ui->byteMap->colored = ui->colorBox->isChecked();
+
 }
 

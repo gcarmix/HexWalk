@@ -24,6 +24,8 @@ private slots:
     void on_spinCols_valueChanged(int arg1);
     void on_closeBtn_clicked();
 
+    void on_colorBox_stateChanged(int arg1);
+
 private:
     int imageWidth;
     int imageHeight;
