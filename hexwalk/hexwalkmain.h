@@ -9,13 +9,14 @@
 #include "advancedsearchdialog.h"
 #include "entropydialog.h"
 #include "binanalysisdialog.h"
-#include "converterdialog.h"
 #include "hashdialog.h"
 #include "diffdialog.h"
 #include "tagsdialog.h"
 #include "edittagdialog.h"
 #include "stringsdialog.h"
 #include "bytemapdialog.h"
+#include "disasmdialog.h"
+#include "converterwidget.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -64,11 +65,12 @@ private slots:
     void showEntropyDialog();
     void showBinaryDialog();
     void showDiffDialog();
-    void showConverterDialog();
+    void showConverterWidget();
     void showHashDialog();
     void showTagsDialog();
     void showStringsDialog();
     void showByteMap();
+    void showDisasm();
     void toggleOverwriteMode();
     void gotoAddress();
     void setWidth();
@@ -113,6 +115,7 @@ private:
     QAction *tagsAct;
     QAction *stringsAct;
     QAction *byteMapAct;
+    QAction *disasmAct;
 
     QAction *undoAct;
     QAction *redoAct;
@@ -142,7 +145,6 @@ private:
 
     EntropyDialog *entropyDialog;
     ByteMapDialog *byteMapDialog;
-    ConverterDialog *converterDialog;
     HashDialog * hashDialog;
     SearchDialog *searchDialog;
     binanalysisdialog * analysisDialog;
@@ -150,6 +152,8 @@ private:
     TagsDialog *tagsDialog;
     DiffDialog *diffDialog;
     StringsDialog *stringsDialog;
+    DisasmDialog * disasmDialog;
+    ConverterWidget * converterWidget;
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;

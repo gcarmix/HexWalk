@@ -1,25 +1,20 @@
-#include "converterdialog.h"
-#include "ui_converterdialog.h"
+#include "converterwidget.h"
+#include "ui_converterwidget.h"
 
-ConverterDialog::ConverterDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ConverterDialog)
+ConverterWidget::ConverterWidget(QWidget *parent) :
+    QDockWidget(parent),
+    ui(new Ui::ConverterWidget)
 {
     ui->setupUi(this);
-    binValue = QString("0");
-    hexValue = QString("0");
-    decValue = QString("0");
-    ui->hexTextEdit->setText(hexValue);
-    ui->decTextEdit->setText(decValue);
-    ui->binTextEdit->setText(binValue);
+    hide();
 }
 
-ConverterDialog::~ConverterDialog()
+ConverterWidget::~ConverterWidget()
 {
     delete ui;
 }
 
-void ConverterDialog::on_decTextEdit_textChanged()
+void ConverterWidget::on_decTextEdit_textChanged(const QString &arg1)
 {
     if(decValue != ui->decTextEdit->text())
     {
@@ -48,22 +43,20 @@ void ConverterDialog::on_decTextEdit_textChanged()
                 blockSignals(false);
             }
             else
-        {
-            blockSignals(true);
-            ui->decTextEdit->setText(decValue);
-            blockSignals(false);
-        }
+            {
+                blockSignals(true);
+                ui->decTextEdit->setText(decValue);
+                blockSignals(false);
+            }
         }
     }
-
 
 }
 
 
-void ConverterDialog::on_hexTextEdit_textChanged()
+void ConverterWidget::on_hexTextEdit_textChanged(const QString &arg1)
 {
-
-   if(hexValue != ui->hexTextEdit->text())
+    if(hexValue != ui->hexTextEdit->text())
     {
         QString check = ui->hexTextEdit->text();
         int i;
@@ -71,7 +64,7 @@ void ConverterDialog::on_hexTextEdit_textChanged()
         if(check.length()){
             for(i=0;i<check.length();i++)
             {
-            if(check.at(i) < 0x30 || (check.at(i) >0x39 && check.at(i) < 0x41) || (check.at(i)>0x46 && check.at(i) < 0x61) ||(check.at(i)> 0x66))
+                if(check.at(i) < 0x30 || (check.at(i) >0x39 && check.at(i) < 0x41) || (check.at(i)>0x46 && check.at(i) < 0x61) ||(check.at(i)> 0x66))
                 {
                     good = false;
                     break;
@@ -89,18 +82,18 @@ void ConverterDialog::on_hexTextEdit_textChanged()
                 blockSignals(false);
             }
             else
-    {
+            {
                 blockSignals(true);
-        ui->hexTextEdit->setText(hexValue);
+                ui->hexTextEdit->setText(hexValue);
                 blockSignals(false);
-    }
+            }
         }
     }
 
 }
 
 
-void ConverterDialog::on_binTextEdit_textChanged()
+void ConverterWidget::on_binTextEdit_textChanged(const QString &arg1)
 {
     if(binValue != ui->binTextEdit->text())
     {
@@ -108,17 +101,17 @@ void ConverterDialog::on_binTextEdit_textChanged()
         int i;
         bool good = true;
         if(check.length()){
-    for(i=0;i<check.length();i++)
-    {
+            for(i=0;i<check.length();i++)
+            {
                 if(check.at(i) != 0x30 && check.at(i) != 0x31)
                 {
                     good = false;
                     break;
                 }
-    }
+            }
 
-    if(ui->binTextEdit->text().length() < 64 && good == true)
-    {
+            if(ui->binTextEdit->text().length() < 64 && good == true)
+            {
                 binValue = ui->binTextEdit->text();
                 decValue = QString("%1").arg(binValue.toLongLong(NULL,2),1,10);
                 hexValue = QString("%1").arg(binValue.toLongLong(NULL,2),1,16);
@@ -126,13 +119,13 @@ void ConverterDialog::on_binTextEdit_textChanged()
                 ui->decTextEdit->setText(decValue);
                 ui->hexTextEdit->setText(hexValue);
                 blockSignals(false);
-    }
-    else
-    {
+            }
+            else
+            {
                 blockSignals(true);
                 ui->binTextEdit->setText(binValue);
                 blockSignals(false);
-    }
+            }
         }
     }
 }
