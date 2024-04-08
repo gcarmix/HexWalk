@@ -1,0 +1,7 @@
+hexwalk (1.7.1-1) stable; urgency=medium
+
+  * Solves #26 #27 and #28
+  * Added colored ByteMap
+  * ByteMap width is now customizable
+
+ -- Carmix <carmixdev@gmail.com>  Sun, 3 Mar 2024 13:56:50 +0100

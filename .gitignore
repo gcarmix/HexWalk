@@ -2,4 +2,5 @@ build-*
 build/
 deploy_linux/
 deploy_win/
+deploy_deb/
 bin/
