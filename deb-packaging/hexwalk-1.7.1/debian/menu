@@ -1,0 +1,4 @@
+?package(hexwalk):needs="x11" \
+      section="Applications/Editors" \
+      title="HexWalk" \
+      command="/usr/bin/hexwalk"

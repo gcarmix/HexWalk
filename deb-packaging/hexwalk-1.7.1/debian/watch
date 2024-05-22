@@ -1,0 +1,5 @@
+version=4
+opts="searchmode=plain,\
+filenamemangle=s%.*/v?@ANY_VERSION@%@PACKAGE@-$1.tar.xz%" \
+https://api.github.com/repos/gcarmix/hexwalk/releases?per_page=50 \
+https://api.github.com/repos/[^/]+/[^/]+/tarball/v?@ANY_VERSION@

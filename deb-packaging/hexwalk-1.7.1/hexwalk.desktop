@@ -1,0 +1,11 @@
+  [Desktop Entry]
+  Version=1.0
+  Type=Application
+  Terminal=false
+  Name=HexWalk
+  Exec=/usr/bin/hexwalk
+  Comment=Hex Analyzer
+  Icon=/usr/share/pixmaps/hexwalk.ico
+  StartupNotify=false
+  Encoding=UTF-8
+  Categories=HexEditor;Development;Qt;
