@@ -2,8 +2,9 @@ Source: hexwalk
 Section: editors
 Priority: optional
 Maintainer: Carmix <carmixdev@gmail.com>
-Build-Depends: debhelper-compat (= 13), debhelper (>= 13), qtbase5-dev, qtbase5-dev-tools,libqt5charts5-dev
-Standards-Version: 4.6.2
+Build-Depends: debhelper-compat (= 13), qtbase5-dev, qtbase5-dev-tools,libqt5charts5-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
 Homepage: https://www.hexwalk.com
 Vcs-Git: https://github.com/gcarmix/hexwalk.git
 Vcs-Browser: https://github.com/gcarmix/hexwalk
@@ -23,4 +24,3 @@ Description: HexWalk is an Hex analyzer, editor and viewer
     - Hex file editing
     - Diff file analysis
     - Byte Patterns to parse headers
-
