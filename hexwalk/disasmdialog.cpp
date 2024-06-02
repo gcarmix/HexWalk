@@ -17,28 +17,39 @@ void DisasmDialog::capst(void)
     ui->edtBaseAddr->setText(QString("%1").arg(addrBase,2,16,QLatin1Char('0')).toUpper());
     ui->edtSelected->setText(QString("%1").arg(selectedHex.size()));
     cs_arch arch = CS_ARCH_X86;
-    cs_mode arch_mode = CS_MODE_64;
+    uint32_t mode_int = CS_MODE_64;
+    cs_mode mode = CS_MODE_64;
+    uint32_t endianness = CS_MODE_LITTLE_ENDIAN;
+    if(ui->comboEndian->currentText().contains("Little"))
+    {
+        endianness = CS_MODE_LITTLE_ENDIAN;
+    }
+    else
+    {
+        endianness = CS_MODE_BIG_ENDIAN;
+    }
     if(ui->comboBox->currentText().contains("x86/64"))
     {
         arch = CS_ARCH_X86;
-        arch_mode = CS_MODE_64;
+        mode_int = CS_MODE_64;
     }
     else if(ui->comboBox->currentText().contains("x86/32"))
     {
         arch = CS_ARCH_X86;
-        arch_mode = CS_MODE_32;
+        mode_int = CS_MODE_32;
     }
     else if(ui->comboBox->currentText().contains("ARM32"))
     {
         arch = CS_ARCH_ARM;
-        arch_mode = CS_MODE_ARM;
+        mode_int = CS_MODE_ARM;
     }
     else if(ui->comboBox->currentText().contains("ARM64"))
     {
         arch = CS_ARCH_ARM64;
-        arch_mode = CS_MODE_ARM;
+        mode_int = CS_MODE_ARM;
     }
-    if (cs_open(arch, arch_mode, &handle) != CS_ERR_OK)
+    mode = (cs_mode) (mode_int | endianness);
+    if (cs_open(arch, mode , &handle) != CS_ERR_OK)
         return;
     count = cs_disasm(handle, (const uint8_t*)selectedHex.data(), selectedHex.size(), addrBase, 0, &insn);
     if (count > 0) {

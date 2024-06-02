@@ -29,7 +29,7 @@ HexWalkMain::HexWalkMain(QWidget *parent) :
     ui->floatTextedit_le->setFont(font);
     ui->floatTextedit_be->setFont(font);
     ui->hexTextedit->setFont(font);
-    ui->intbeTextedit->setFont(font);
+    ui->intleTextedit->setFont(font);
     ui->selTextedit->setFont(font);
 }
 
@@ -644,27 +644,22 @@ void HexWalkMain::updateInfo()
                 {
                     float *numf;
                     numf = (float *)&num;
-                    ui->floatTextedit_le->setText(QString::number(*numf));
+                    ui->floatTextedit_be->setText(QString::number(*numf));
                     std::reverse(baValue.begin(),baValue.end());
                     num = baValue.toHex().toULongLong(NULL,16);
                     numf = (float *)&num;
-                    ui->floatTextedit_be->setText(QString::number(*numf));
-
+                    ui->floatTextedit_le->setText(QString::number(*numf));
                 }
                 else
                 {
                     double *numf;
                     numf = (double *)&num;
-                    ui->floatTextedit_le->setText(QString::number(*numf));
+                    ui->floatTextedit_be->setText(QString::number(*numf));
                     std::reverse(baValue.begin(),baValue.end());
                     num = baValue.toHex().toULongLong(NULL,16);
                     numf = (double *)&num;
-                    ui->floatTextedit_be->setText(QString::number(*numf));
+                    ui->floatTextedit_le->setText(QString::number(*numf));
                 }
-
-
-
-
             }
             else
             {
@@ -678,20 +673,20 @@ void HexWalkMain::updateInfo()
                 {
                     ui->decTextedit->setText(QString("%1").arg((signed int)hexEdit->selectedData().toUInt(NULL,16)));
                     std::reverse(baValue.begin(),baValue.end());
-                    ui->intbeTextedit->setText(QString("%1").arg((signed int)baValue.toHex().toUInt(NULL,16)));
+                    ui->intleTextedit->setText(QString("%1").arg((signed int)baValue.toHex().toUInt(NULL,16)));
                 }
                 else
                 {
                     ui->decTextedit->setText(QString("%1").arg((signed long long)hexEdit->selectedData().toULongLong(NULL,16)));
                     std::reverse(baValue.begin(),baValue.end());
-                    ui->intbeTextedit->setText(QString("%1").arg((signed long long)baValue.toHex().toULongLong(NULL,16)));
+                    ui->intleTextedit->setText(QString("%1").arg((signed long long)baValue.toHex().toULongLong(NULL,16)));
                 }
             }
             else
             {
                 ui->decTextedit->setText(QString("%1").arg(hexEdit->selectedData().toULongLong(NULL,16)));
                 std::reverse(baValue.begin(),baValue.end());
-                ui->intbeTextedit->setText(QString("%1").arg(baValue.toHex().toULongLong(NULL,16)));
+                ui->intleTextedit->setText(QString("%1").arg(baValue.toHex().toULongLong(NULL,16)));
             }
             ui->binTextedit->setText(QString("%1").arg(hexEdit->selectedData().toULongLong(NULL,16),8,2,QLatin1Char('0')));
         }
@@ -699,7 +694,7 @@ void HexWalkMain::updateInfo()
         {
             ui->decTextedit->setText("-");
             ui->floatTextedit_le->setText("-");
-            ui->intbeTextedit->setText("-");
+            ui->intleTextedit->setText("-");
             ui->binTextedit->setText("-");
             ui->hexTextedit->setText("-");
             ui->asciiTextEdit->setText("-");
@@ -724,7 +719,7 @@ void HexWalkMain::setAddress(qint64 address)
             {
                 ui->hexTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),2,16,QLatin1Char('0')).toUpper());
                 ui->decTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
-                ui->intbeTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
+                ui->intleTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
                 ui->binTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),8,2,QLatin1Char('0')));
             }
 

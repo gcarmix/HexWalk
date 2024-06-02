@@ -63,7 +63,7 @@
       <widget class="QLabel" name="hexlbl">
        <property name="geometry">
         <rect>
-         <x>570</x>
+         <x>560</x>
          <y>90</y>
          <width>61</width>
          <height>31</height>
@@ -83,10 +83,10 @@
         </rect>
        </property>
        <property name="text">
-        <string>IntLE:</string>
+        <string>IntBE:</string>
        </property>
       </widget>
-      <widget class="QLabel" name="intbelbl">
+      <widget class="QLabel" name="intlelbl">
        <property name="geometry">
         <rect>
          <x>140</x>
@@ -96,7 +96,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>IntBE:</string>
+        <string>IntLE:</string>
        </property>
       </widget>
       <widget class="QLabel" name="binlbl">
@@ -162,7 +162,7 @@
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
        </property>
       </widget>
-      <widget class="QLabel" name="intbeTextedit">
+      <widget class="QLabel" name="intleTextedit">
        <property name="geometry">
         <rect>
          <x>200</x>
@@ -215,7 +215,7 @@
       <widget class="QLabel" name="floatlbl_le">
        <property name="geometry">
         <rect>
-         <x>570</x>
+         <x>560</x>
          <y>30</y>
          <width>61</width>
          <height>31</height>
@@ -364,7 +364,7 @@
       <widget class="QLabel" name="floatlbl_be">
        <property name="geometry">
         <rect>
-         <x>570</x>
+         <x>560</x>
          <y>60</y>
          <width>61</width>
          <height>31</height>
