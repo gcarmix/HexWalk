@@ -497,6 +497,8 @@ void HexWalkMain::writeSettings()
     QSettings settings;
     settings.setValue("pos", pos());
     settings.setValue("size", size());
+    settings.setValue("mainWindowGeometry", saveGeometry());
+    settings.setValue("mainWindowState", saveState());
 }
 
 void HexWalkMain::findNext()
@@ -899,6 +901,8 @@ void HexWalkMain::readSettings()
     hexEdit->setFont(QFont("Courier",12));
     hexEdit->setHighlighting(true);
     hexEdit->setOverwriteMode(false);
+    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
+    restoreState(settings.value("mainWindowState").toByteArray());
     int bytesperline = settings.value("BytesPerLine").toInt();
     if( bytesperline > 0 && bytesperline < 64 )
     {
