@@ -20,8 +20,14 @@ private slots:
     void on_decTextEdit_textChanged(const QString &arg1);
     void on_hexTextEdit_textChanged(const QString &arg1);
     void on_binTextEdit_textChanged(const QString &arg1);
+    void on_checkBox_be_stateChanged(int arg1);
+
 private:
     Ui::ConverterWidget *ui;
+    bool isBE=false;
+    bool isSigned=false;
+    void updateDec();
+    void updateHex();
     QString binValue;
     QString decValue;
     QString hexValue;

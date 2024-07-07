@@ -18,37 +18,7 @@ void ConverterWidget::on_decTextEdit_textChanged(const QString &arg1)
 {
     if(decValue != ui->decTextEdit->text())
     {
-        QString check = ui->decTextEdit->text().replace(" ","");
-        int i;
-        bool good = true;
-        if(check.length())
-        {
-            for(i=0;i<check.length();i++)
-            {
-                if(check.at(i) < 0x30 || check.at(i) >0x39)
-                {
-                    good = false;
-                    break;
-                }
-            }
-
-            if(ui->decTextEdit->text().length() <= 16 && good == true)
-            {
-                decValue = ui->decTextEdit->text();
-                hexValue = QString("%1").arg(decValue.toLongLong(),1,16);
-                binValue = QString("%1").arg(decValue.toLongLong(),1,2);
-                blockSignals(true);
-                ui->hexTextEdit->setText(hexValue);
-                ui->binTextEdit->setText(binValue);
-                blockSignals(false);
-            }
-            else
-            {
-                blockSignals(true);
-                ui->decTextEdit->setText(decValue);
-                blockSignals(false);
-            }
-        }
+        updateDec();
     }
 
 }
@@ -58,36 +28,7 @@ void ConverterWidget::on_hexTextEdit_textChanged(const QString &arg1)
 {
     if(hexValue != ui->hexTextEdit->text())
     {
-        QString check = ui->hexTextEdit->text();
-        int i;
-        bool good = true;
-        if(check.length()){
-            for(i=0;i<check.length();i++)
-            {
-                if(check.at(i) < 0x30 || (check.at(i) >0x39 && check.at(i) < 0x41) || (check.at(i)>0x46 && check.at(i) < 0x61) ||(check.at(i)> 0x66))
-                {
-                    good = false;
-                    break;
-                }
-            }
-
-            if(ui->hexTextEdit->text().length() <= 16 && good == true)
-            {
-                hexValue = ui->hexTextEdit->text();
-                decValue = QString("%1").arg(hexValue.toLongLong(NULL,16),1,10);
-                binValue = QString("%1").arg(hexValue.toLongLong(NULL,16),1,2);
-                blockSignals(true);
-                ui->decTextEdit->setText(decValue);
-                ui->binTextEdit->setText(binValue);
-                blockSignals(false);
-            }
-            else
-            {
-                blockSignals(true);
-                ui->hexTextEdit->setText(hexValue);
-                blockSignals(false);
-            }
-        }
+        updateHex();
     }
 
 }
@@ -128,5 +69,88 @@ void ConverterWidget::on_binTextEdit_textChanged(const QString &arg1)
             }
         }
     }
+}
+void ConverterWidget::updateHex()
+{
+    QString check = ui->hexTextEdit->text();
+    int i;
+    bool good = true;
+    if(check.length()){
+        for(i=0;i<check.length();i++)
+        {
+            if(check.at(i) < 0x30 || (check.at(i) >0x39 && check.at(i) < 0x41) || (check.at(i)>0x46 && check.at(i) < 0x61) ||(check.at(i)> 0x66))
+            {
+                good = false;
+                break;
+            }
+        }
+
+        if(ui->hexTextEdit->text().length() <= 16 && good == true)
+        {
+            hexValue = ui->hexTextEdit->text();
+            QByteArray baValue = QByteArray::fromHex(hexValue.toUtf8());
+
+            binValue = QString("%1").arg(hexValue.toLongLong(NULL,16),1,2);
+            if(!isBE)
+            {
+                std::reverse(baValue.begin(),baValue.end());
+            }
+            decValue= (QString("%1").arg((signed long long)baValue.toHex().toULongLong(NULL,16)));
+            //decValue = QString("%1").arg(hexValue.toLongLong(NULL,16),1,10);
+
+            blockSignals(true);
+            ui->decTextEdit->setText(decValue);
+            ui->binTextEdit->setText(binValue);
+            blockSignals(false);
+        }
+        else
+        {
+            blockSignals(true);
+            ui->hexTextEdit->setText(hexValue);
+            blockSignals(false);
+        }
+    }
+}
+void ConverterWidget::updateDec()
+{
+    QString check = ui->decTextEdit->text().replace(" ","");
+    int i;
+    bool good = true;
+    if(check.length())
+    {
+        for(i=0;i<check.length();i++)
+        {
+            if(check.at(i) < 0x30 || check.at(i) >0x39)
+            {
+                good = false;
+                break;
+            }
+        }
+
+        if(ui->decTextEdit->text().length() <= 16 && good == true)
+        {
+            decValue = ui->decTextEdit->text();
+            hexValue = QString("%1").arg(decValue.toLongLong(),1,16);
+            binValue = QString("%1").arg(decValue.toLongLong(),1,2);
+            blockSignals(true);
+            ui->hexTextEdit->setText(hexValue);
+            ui->binTextEdit->setText(binValue);
+            blockSignals(false);
+        }
+        else
+        {
+            blockSignals(true);
+            ui->decTextEdit->setText(decValue);
+            blockSignals(false);
+        }
+    }
+}
+
+
+void ConverterWidget::on_checkBox_be_stateChanged(int arg1)
+{
+    isBE = ui->checkBox_be->isChecked();
+    updateHex();
+
 }
 

@@ -32,9 +32,9 @@
    <widget class="QLineEdit" name="hexTextEdit">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>100</x>
       <y>10</y>
-      <width>141</width>
+      <width>171</width>
       <height>25</height>
      </rect>
     </property>
@@ -42,9 +42,9 @@
    <widget class="QLineEdit" name="binTextEdit">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>100</x>
       <y>40</y>
-      <width>141</width>
+      <width>171</width>
       <height>25</height>
      </rect>
     </property>
@@ -59,7 +59,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Hexadecimal:</string>
+     <string>Hex:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_4">
@@ -72,15 +72,15 @@
      </rect>
     </property>
     <property name="text">
-     <string>Binary:</string>
+     <string>Bin:</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="decTextEdit">
     <property name="geometry">
      <rect>
-      <x>130</x>
+      <x>100</x>
       <y>70</y>
-      <width>141</width>
+      <width>171</width>
       <height>25</height>
      </rect>
     </property>
@@ -95,82 +95,20 @@
      </rect>
     </property>
     <property name="text">
-     <string>Decimal:</string>
+     <string>Dec:</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="decTextEdit_2">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>100</y>
-      <width>141</width>
-      <height>25</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QCheckBox" name="checkBox_be">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>100</y>
-      <width>90</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Float:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_5">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>130</y>
-      <width>90</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Double:</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="decTextEdit_3">
-    <property name="geometry">
-     <rect>
-      <x>130</x>
-      <y>130</y>
-      <width>141</width>
-      <height>25</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>160</y>
+      <y>110</y>
       <width>121</width>
       <height>24</height>
      </rect>
     </property>
     <property name="text">
      <string>Big Endian</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="checkBox_2">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>180</y>
-      <width>121</width>
-      <height>24</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Signed</string>
     </property>
    </widget>
   </widget>
