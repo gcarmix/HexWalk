@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+export QT_SELECT := qt5
+export DH_VERBOSE = 1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@

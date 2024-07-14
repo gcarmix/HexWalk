@@ -1,0 +1,27 @@
+Source: hexwalk
+Section: editors
+Priority: optional
+Maintainer: Carmix <carmixdev@gmail.com>
+Build-Depends: debhelper-compat (= 13), qtbase5-dev, qtbase5-dev-tools,libqt5charts5-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://www.hexwalk.com
+Vcs-Git: https://github.com/gcarmix/hexwalk.git
+Vcs-Browser: https://github.com/gcarmix/hexwalk
+
+Package: hexwalk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Hex analyzer, editor and viewer
+ HexWalk is an Hex editor, viewer, analyzer based on opensource
+ projects like qhexedit2,binwalk and QT
+ It is cross platform and has plenty of features:
+  - Advanced find patterns in binary files based on HEX,UTF8,UTF16 and regex
+  - Binwalk integration
+  - Entropy Analysis
+  - Byte Map
+  - Hash Calculator
+  - Bin/Dec/Hex Converter
+  - Hex file editing
+  - Diff file analysis
+  - Byte Patterns to parse headers
