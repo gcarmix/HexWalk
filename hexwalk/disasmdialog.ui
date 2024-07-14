@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DisasmDialog</class>
+ <widget class="QDialog" name="DisasmDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>621</width>
+    <height>569</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>200</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Disassembler</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="1" column="5">
+    <widget class="QPushButton" name="btnClose">
+     <property name="text">
+      <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLineEdit" name="edtSelected"/>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="lblBaseAddr">
+     <property name="text">
+      <string>Base Address:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="lblSelected">
+     <property name="text">
+      <string>Selected:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="5">
+    <widget class="QPushButton" name="btnDisasm">
+     <property name="text">
+      <string>Disasm</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3">
+    <widget class="QComboBox" name="comboBox">
+     <item>
+      <property name="text">
+       <string>x86/64</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>x86/32</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ARM32</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>ARM64</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>MIPS</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="2">
+    <widget class="QLabel" name="labelArch">
+     <property name="text">
+      <string>Arch:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="edtBaseAddr"/>
+   </item>
+   <item row="0" column="4">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="0" colspan="6">
+    <widget class="QListWidget" name="lstDisasm"/>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLabel" name="labelEndian">
+     <property name="text">
+      <string>Endian:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="3">
+    <widget class="QComboBox" name="comboEndian">
+     <item>
+      <property name="text">
+       <string>Big Endian</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Little Endian</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

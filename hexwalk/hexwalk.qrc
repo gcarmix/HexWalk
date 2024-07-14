@@ -14,5 +14,6 @@
         <file>images/tags.png</file>
         <file>images/strings.png</file>
         <file>images/bytemap.png</file>
+        <file>images/disasm.png</file>
     </qresource>
 </RCC>

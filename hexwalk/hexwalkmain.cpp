@@ -26,9 +26,10 @@ HexWalkMain::HexWalkMain(QWidget *parent) :
     ui->binTextedit->setFont(font);
     ui->asciiTextEdit->setFont(font);
     ui->decTextedit->setFont(font);
-    ui->floatTextedit->setFont(font);
+    ui->floatTextedit_le->setFont(font);
+    ui->floatTextedit_be->setFont(font);
     ui->hexTextedit->setFont(font);
-    ui->intbeTextedit->setFont(font);
+    ui->intleTextedit->setFont(font);
     ui->selTextedit->setFont(font);
 }
 
@@ -74,13 +75,14 @@ void HexWalkMain::init()
     advancedSearchDialog = new AdvancedSearchDialog(hexEdit,this);
     entropyDialog = new EntropyDialog(hexEdit,this);
     analysisDialog = new binanalysisdialog(hexEdit,this);
-    converterDialog = new ConverterDialog(this);
     hashDialog = new HashDialog(this);
     diffDialog = new DiffDialog(this);
     tagsDialog = new TagsDialog(hexEdit,this);
     stringsDialog = new StringsDialog(hexEdit,this);
-
     byteMapDialog = new ByteMapDialog(hexEdit,this);
+    disasmDialog = new DisasmDialog(hexEdit,this);
+    converterWidget = new ConverterWidget(this);
+
     createActions();
     createMenus();
     createToolBars();
@@ -137,6 +139,7 @@ void HexWalkMain::createMenus()
     analysisMenu->addAction(tagsAct);
     analysisMenu->addAction(stringsAct);
     analysisMenu->addAction(byteMapAct);
+    analysisMenu->addAction(disasmAct);
 
     toolsMenu = menuBar()->addMenu(tr("&Tools"));
     toolsMenu->addAction(converterAct);
@@ -277,7 +280,7 @@ void HexWalkMain::createActions()
 
     converterAct = new QAction(tr("Number Converter"), this);
     converterAct->setStatusTip(tr("Useful number converter"));
-    connect(converterAct, SIGNAL(triggered()), this, SLOT(showConverterDialog()));
+    connect(converterAct, SIGNAL(triggered()), this, SLOT(showConverterWidget()));
 
     hashAct = new QAction(tr("Hash Calculator"), this);
     hashAct->setStatusTip(tr("Hash Calculator"));
@@ -294,6 +297,10 @@ void HexWalkMain::createActions()
     byteMapAct = new QAction(QIcon(":/images/bytemap.png"),tr("ByteMap"), this);
     byteMapAct->setStatusTip(tr("Byte Map"));
     connect(byteMapAct, SIGNAL(triggered()), this, SLOT(showByteMap()));
+
+    disasmAct = new QAction(QIcon(":/images/disasm.png"),tr("Disasm"), this);
+    disasmAct->setStatusTip(tr("Disassembler"));
+    connect(disasmAct, SIGNAL(triggered()), this, SLOT(showDisasm()));
 
     QAction* recentFileAction = 0;
     for(auto i = 0; i < 5; ++i){
@@ -334,6 +341,7 @@ void HexWalkMain::createToolBars()
     analysisToolBar->addAction(tagsAct);
     analysisToolBar->addAction(stringsAct);
     analysisToolBar->addAction(byteMapAct);
+    analysisToolBar->addAction(disasmAct);
     analysisToolBar->addSeparator();
     gotoLbl = new QLabel();
     gotoLbl->setText("Go To: ");
@@ -489,6 +497,8 @@ void HexWalkMain::writeSettings()
     QSettings settings;
     settings.setValue("pos", pos());
     settings.setValue("size", size());
+    settings.setValue("mainWindowGeometry", saveGeometry());
+    settings.setValue("mainWindowState", saveState());
 }
 
 void HexWalkMain::findNext()
@@ -631,26 +641,32 @@ void HexWalkMain::updateInfo()
             {
 
                 qint64 num = hexEdit->selectedData().toULongLong(NULL,16);
+                QByteArray baValue = hexEdit->selectedDataBa();
                 if(selSize == 4)
                 {
                     float *numf;
                     numf = (float *)&num;
-                    ui->floatTextedit->setText(QString::number(*numf));
+                    ui->floatTextedit_be->setText(QString::number(*numf));
+                    std::reverse(baValue.begin(),baValue.end());
+                    num = baValue.toHex().toULongLong(NULL,16);
+                    numf = (float *)&num;
+                    ui->floatTextedit_le->setText(QString::number(*numf));
                 }
                 else
                 {
                     double *numf;
                     numf = (double *)&num;
-                    ui->floatTextedit->setText(QString::number(*numf));
+                    ui->floatTextedit_be->setText(QString::number(*numf));
+                    std::reverse(baValue.begin(),baValue.end());
+                    num = baValue.toHex().toULongLong(NULL,16);
+                    numf = (double *)&num;
+                    ui->floatTextedit_le->setText(QString::number(*numf));
                 }
-
-
-
-
             }
             else
             {
-                ui->floatTextedit->setText("-");
+                ui->floatTextedit_le->setText("-");
+                ui->floatTextedit_be->setText("-");
             }
             QByteArray baValue = hexEdit->selectedDataBa();
             if(ui->signedcb->isChecked())
@@ -659,28 +675,28 @@ void HexWalkMain::updateInfo()
                 {
                     ui->decTextedit->setText(QString("%1").arg((signed int)hexEdit->selectedData().toUInt(NULL,16)));
                     std::reverse(baValue.begin(),baValue.end());
-                    ui->intbeTextedit->setText(QString("%1").arg((signed int)baValue.toHex().toUInt(NULL,16)));
+                    ui->intleTextedit->setText(QString("%1").arg((signed int)baValue.toHex().toUInt(NULL,16)));
                 }
                 else
                 {
                     ui->decTextedit->setText(QString("%1").arg((signed long long)hexEdit->selectedData().toULongLong(NULL,16)));
                     std::reverse(baValue.begin(),baValue.end());
-                    ui->intbeTextedit->setText(QString("%1").arg((signed long long)baValue.toHex().toULongLong(NULL,16)));
+                    ui->intleTextedit->setText(QString("%1").arg((signed long long)baValue.toHex().toULongLong(NULL,16)));
                 }
             }
             else
             {
                 ui->decTextedit->setText(QString("%1").arg(hexEdit->selectedData().toULongLong(NULL,16)));
                 std::reverse(baValue.begin(),baValue.end());
-                ui->intbeTextedit->setText(QString("%1").arg(baValue.toHex().toULongLong(NULL,16)));
+                ui->intleTextedit->setText(QString("%1").arg(baValue.toHex().toULongLong(NULL,16)));
             }
             ui->binTextedit->setText(QString("%1").arg(hexEdit->selectedData().toULongLong(NULL,16),8,2,QLatin1Char('0')));
         }
         else
         {
             ui->decTextedit->setText("-");
-            ui->floatTextedit->setText("-");
-            ui->intbeTextedit->setText("-");
+            ui->floatTextedit_le->setText("-");
+            ui->intleTextedit->setText("-");
             ui->binTextedit->setText("-");
             ui->hexTextedit->setText("-");
             ui->asciiTextEdit->setText("-");
@@ -705,7 +721,7 @@ void HexWalkMain::setAddress(qint64 address)
             {
                 ui->hexTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),2,16,QLatin1Char('0')).toUpper());
                 ui->decTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
-                ui->intbeTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
+                ui->intleTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
                 ui->binTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),8,2,QLatin1Char('0')));
             }
 
@@ -793,9 +809,9 @@ void HexWalkMain::showBinaryDialog()
 
 }
 
-void HexWalkMain::showConverterDialog()
+void HexWalkMain::showConverterWidget()
 {
-    converterDialog->show();
+    converterWidget->show();
 }
 
 void HexWalkMain::gotoAddress()
@@ -885,6 +901,8 @@ void HexWalkMain::readSettings()
     hexEdit->setFont(QFont("Courier",12));
     hexEdit->setHighlighting(true);
     hexEdit->setOverwriteMode(false);
+    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
+    restoreState(settings.value("mainWindowState").toByteArray());
     int bytesperline = settings.value("BytesPerLine").toInt();
     if( bytesperline > 0 && bytesperline < 64 )
     {
@@ -960,4 +978,9 @@ void HexWalkMain::on_signedcb_clicked()
 void HexWalkMain::showByteMap()
 {
     byteMapDialog->showByteMapDialog();
+}
+
+void HexWalkMain::showDisasm()
+{
+    disasmDialog->show();
 }

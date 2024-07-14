@@ -6,7 +6,7 @@ win32:QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++
 #Only for Mac:
 macx:ICON = images/hexwalk.icns
 ###############
-VERSION = "1.7.1"
+VERSION = "1.8.0"
 QMAKE_TARGET_COPYRIGHT = "gcarmix"
 QMAKE_TARGET_PRODUCT = "HexWalk"
 HEADERS = \
@@ -17,8 +17,9 @@ HEADERS = \
     binanalysisdialog.h \
     bytemap.h \
     bytemapdialog.h \
-    converterdialog.h \
+    converterwidget.h \
     diffdialog.h \
+    disasmdialog.h \
     edittagdialog.h \
     entropychart.h \
     entropydialog.h \
@@ -43,8 +44,9 @@ SOURCES = \
     binanalysisdialog.cpp \
     bytemap.cpp \
     bytemapdialog.cpp \
-    converterdialog.cpp \
+    converterwidget.cpp \
     diffdialog.cpp \
+    disasmdialog.cpp \
     edittagdialog.cpp \
     entropychart.cpp \
     entropydialog.cpp \
@@ -67,8 +69,9 @@ FORMS += \
     advancedsearchdialog.ui \
     binanalysisdialog.ui \
     bytemapdialog.ui \
-    converterdialog.ui \
+    converterwidget.ui \
     diffdialog.ui \
+    disasmdialog.ui \
     edittagdialog.ui \
     entropydialog.ui \
     hashdialog.ui \
@@ -88,3 +91,11 @@ UI_DIR = ../build/ui
 unix:OBJECTS_DIR = ../build/o/unix
 win32:OBJECTS_DIR = ../build/o/win32
 macx:OBJECTS_DIR = ../build/o/mac
+
+win32: LIBS += -L$$PWD/../capstone/build/ -lcapstone
+
+INCLUDEPATH += $$PWD/../capstone/include
+DEPENDPATH += $$PWD/../capstone/include
+
+win32: PRE_TARGETDEPS += $$PWD/../capstone/build/libcapstone.a
+
