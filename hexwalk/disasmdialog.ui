@@ -73,6 +73,11 @@
        <string>ARM64</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>MIPS</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="0" column="2">

@@ -48,6 +48,11 @@ void DisasmDialog::capst(void)
         arch = CS_ARCH_ARM64;
         mode_int = CS_MODE_ARM;
     }
+    else if(ui->comboBox->currentText().contains("MIPS"))
+    {
+        arch = CS_ARCH_MIPS;
+        mode_int = CS_MODE_MIPS32;
+    }
     mode = (cs_mode) (mode_int | endianness);
     if (cs_open(arch, mode , &handle) != CS_ERR_OK)
         return;

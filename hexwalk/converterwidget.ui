@@ -98,11 +98,37 @@
      <string>Dec:</string>
     </property>
    </widget>
+   <widget class="QLineEdit" name="floatTextEdit">
+    <property name="geometry">
+     <rect>
+      <x>100</x>
+      <y>100</y>
+      <width>171</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>90</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Float:</string>
+    </property>
+   </widget>
    <widget class="QCheckBox" name="checkBox_be">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>110</y>
+      <y>160</y>
       <width>121</width>
       <height>24</height>
      </rect>

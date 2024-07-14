@@ -101,6 +101,12 @@ void ConverterWidget::updateHex()
             blockSignals(true);
             ui->decTextEdit->setText(decValue);
             ui->binTextEdit->setText(binValue);
+            qint64 num = (signed long long)baValue.toHex().toULongLong(NULL,16);
+            float *numf;
+            numf = (float *)&num;
+
+            ui->floatTextEdit->setText(QString::number(*numf));
+
             blockSignals(false);
         }
         else
