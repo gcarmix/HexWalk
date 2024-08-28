@@ -92,7 +92,7 @@ unix:OBJECTS_DIR = ../build/o/unix
 win32:OBJECTS_DIR = ../build/o/win32
 macx:OBJECTS_DIR = ../build/o/mac
 
-win32: LIBS += -L$$PWD/../capstone/build/ -lcapstone
+LIBS += -L$$PWD/../capstone/build/ -lcapstone
 
 INCLUDEPATH += $$PWD/../capstone/include
 DEPENDPATH += $$PWD/../capstone/include
