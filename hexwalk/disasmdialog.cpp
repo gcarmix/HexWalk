@@ -65,7 +65,7 @@ void DisasmDialog::capst(void)
     if (count > 0) {
         size_t j;
         for (j = 0; j < count; j++) {
-            message.sprintf("0x%X: %s %s", insn[j].address, insn[j].mnemonic,
+            message.sprintf("0x%llX: %s %s", insn[j].address, insn[j].mnemonic,
                             insn[j].op_str);
             ui->lstDisasm->addItem(message);
 

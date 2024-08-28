@@ -92,10 +92,13 @@ unix:OBJECTS_DIR = ../build/o/unix
 win32:OBJECTS_DIR = ../build/o/win32
 macx:OBJECTS_DIR = ../build/o/mac
 
-LIBS += -L$$PWD/../capstone/build/ -lcapstone
+win32:LIBS += -L$$PWD/../capstone/build/ -lcapstone
+unix:LIBS += -L$$PWD/../capstone/ -lcapstone
+macx:LIBS += -L$$PWD/../capstone/ -lcapstone
 
 INCLUDEPATH += $$PWD/../capstone/include
 DEPENDPATH += $$PWD/../capstone/include
 
 win32: PRE_TARGETDEPS += $$PWD/../capstone/build/libcapstone.a
-
+unix: PRE_TARGETDEPS += $$PWD/../capstone/libcapstone.a
+macx: PRE_TARGETDEPS += $$PWD/../capstone/libcapstone.a
