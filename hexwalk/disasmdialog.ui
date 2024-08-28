@@ -70,6 +70,11 @@
      </item>
      <item>
       <property name="text">
+       <string>ARM32/THUMB</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>ARM64</string>
       </property>
      </item>

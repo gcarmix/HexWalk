@@ -38,10 +38,15 @@ void DisasmDialog::capst(void)
         arch = CS_ARCH_X86;
         mode_int = CS_MODE_32;
     }
-    else if(ui->comboBox->currentText().contains("ARM32"))
+    else if(ui->comboBox->currentText() == "ARM32")
     {
         arch = CS_ARCH_ARM;
         mode_int = CS_MODE_ARM;
+    }
+    else if(ui->comboBox->currentText() == "ARM32/THUMB")
+    {
+        arch = CS_ARCH_ARM;
+        mode_int = CS_MODE_THUMB;
     }
     else if(ui->comboBox->currentText().contains("ARM64"))
     {
