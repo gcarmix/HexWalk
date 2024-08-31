@@ -16,6 +16,7 @@ It is cross platform and has plenty of features:
 * Hex file editing
 * Diff file analysis
 * Byte Patterns to parse headers
+* Disassembler for x86,ARM and MIPS architectures
 
 
 ## Screenshots
@@ -97,3 +98,5 @@ Thanks to these projects:
 * QHexEdit2 - https://github.com/Simsys/qhexedit2
 
 * QT5
+
+* Capstone - https://www.capstone-engine.org
