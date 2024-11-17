@@ -69,6 +69,17 @@ winget install hexwalk
 ## MacOS
 On MacOS you can easily download the .dmg file available in the release page and drag the app in the Applications folder as usual
 
+## Debian
+The project is now available on backports for Bookworm, just enable the backports repos by adding this line to /etc/apt/sources.list:
+```
+deb http://deb.debian.org/debian bookworm-backports main
+```
+and then type in:
+```
+sudo apt update
+
+sudo apt install hexwalk
+```
 
 ## Ubuntu
 The project is also available on launchpad
