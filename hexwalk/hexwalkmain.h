@@ -17,6 +17,7 @@
 #include "bytemapdialog.h"
 #include "disasmdialog.h"
 #include "converterwidget.h"
+#include "optionsdialog.h"
 
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -65,6 +66,7 @@ private slots:
     void showEntropyDialog();
     void showBinaryDialog();
     void showDiffDialog();
+    void showOptionsDialog();
     void showConverterWidget();
     void showHashDialog();
     void showTagsDialog();
@@ -74,6 +76,7 @@ private slots:
     void toggleOverwriteMode();
     void gotoAddress();
     void setWidth();
+    void updateOptions();
 
     void on_signedcb_clicked();
 
@@ -109,6 +112,7 @@ private:
     QAction *closeAct;
     QAction *exitAct;
     QAction *binaryAct;
+    QAction *optionsAct;
     QAction *overwriteAct;
     QAction *hashAct;
     QAction *diffAct;
@@ -149,6 +153,7 @@ private:
     SearchDialog *searchDialog;
     binanalysisdialog * analysisDialog;
     AdvancedSearchDialog *advancedSearchDialog;
+    OptionsDialog *optionsDialog;
     TagsDialog *tagsDialog;
     DiffDialog *diffDialog;
     StringsDialog *stringsDialog;
@@ -161,6 +166,7 @@ private:
     QLineEdit * gotoText;
     QLabel * widthLbl;
     QLineEdit * widthText;
+    QSettings * appSettings;
 };
 
 #endif // HEXWALKMAIN_H

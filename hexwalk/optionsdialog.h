@@ -13,7 +13,7 @@ class OptionsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit OptionsDialog(QWidget *parent = 0);
+    explicit OptionsDialog(QSettings * appSettings,QWidget *parent = 0);
     ~OptionsDialog();
     Ui::OptionsDialog *ui;
     void show();
@@ -35,6 +35,7 @@ private:
     void readSettings();
     void writeSettings();
     void setColor(QWidget *widget, QColor color);
+    QSettings * appSettings;
 };
 
 #endif // OPTIONSDIALOG_H

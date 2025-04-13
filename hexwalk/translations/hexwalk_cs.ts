@@ -284,7 +284,7 @@
     </message>
     <message>
         <location filename="../optionsdialog.ui" line="33"/>
-        <source>Higlighting</source>
+        <source>Highlighting</source>
         <translation>Zvýraznění</translation>
     </message>
     <message>

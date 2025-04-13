@@ -15,14 +15,14 @@ int main(int argc, char *argv[])
     // set style
     app.setStyle(QStyleFactory::create("Fusion"));
     // increase font size for better reading
-    QString fontPath1=":/fonts/Helvetica.ttf";
+    QString fontPath1=":/fonts/Roboto.ttf";
     QString fontPath2=":/fonts/Courier.ttf";
     int fontId = QFontDatabase::addApplicationFont(fontPath1);
     QFontDatabase::addApplicationFont(fontPath2);
     //if (fontId != -1)
     //{
-        QFont font("Helvetica");
-        font.setPointSize(font.pointSize()-1);
+        QFont font("Roboto");
+        font.setPointSize(font.pointSize()-2);
         app.setFont(font);
     //}
     /*QFont defaultFont = QApplication::font();

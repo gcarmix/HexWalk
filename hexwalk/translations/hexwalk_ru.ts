@@ -260,7 +260,7 @@
     </message>
     <message>
         <location filename="../optionsdialog.ui" line="33"/>
-        <source>Higlighting</source>
+        <source>Highlighting</source>
         <translation>Подсвечивание</translation>
     </message>
     <message>
