@@ -19,7 +19,7 @@ HEADERS = \
     bytemapdialog.h \
     converterwidget.h \
     diffdialog.h \
-    disasmdialog.h \
+    disasmwidget.h \
     edittagdialog.h \
     entropychart.h \
     entropydialog.h \
@@ -46,7 +46,7 @@ SOURCES = \
     bytemapdialog.cpp \
     converterwidget.cpp \
     diffdialog.cpp \
-    disasmdialog.cpp \
+    disasmwidget.cpp \
     edittagdialog.cpp \
     entropychart.cpp \
     entropydialog.cpp \
@@ -71,7 +71,7 @@ FORMS += \
     bytemapdialog.ui \
     converterwidget.ui \
     diffdialog.ui \
-    disasmdialog.ui \
+    disasmwidget.ui \
     edittagdialog.ui \
     entropydialog.ui \
     hashdialog.ui \

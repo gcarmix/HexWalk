@@ -66,7 +66,7 @@ void HexWalkMain::init()
 {
     setAttribute(Qt::WA_DeleteOnClose);
     appSettings = new QSettings("hexwalk","hexwalk");
-    appSettings->clear();
+    //appSettings->clear();
     isUntitled = true;
 
     hexEdit = ui->widget;
@@ -83,7 +83,8 @@ void HexWalkMain::init()
     tagsDialog = new TagsDialog(hexEdit,this);
     stringsDialog = new StringsDialog(hexEdit,this);
     byteMapDialog = new ByteMapDialog(hexEdit,this);
-    disasmDialog = new DisasmDialog(hexEdit,this);
+    //disasmDialog = new DisasmDialog(hexEdit,this);
+    disasmWidget = new DisasmWidget(hexEdit,this);
     converterWidget = new ConverterWidget(this);
 
     createActions();
@@ -649,8 +650,10 @@ void HexWalkMain::updateInfo()
     {
         ui->asciiTextEdit->setText(binToStr(hexEdit->selectedDataBa()));
         ui->hexTextedit->setText(hexEdit->selectedData().toUpper());
+
         if(selSize <= 8)
         {
+            converterWidget->update(hexEdit->selectedData().toUpper());
             if(selSize == 4 || selSize == 8)
             {
 
@@ -911,11 +914,11 @@ void HexWalkMain::readSettings()
         appSettings->setValue("AddressArea",true);
         appSettings->setValue("AsciiArea",true);
         appSettings->setValue("Highlighting",true);
-        appSettings->setValue("OverwriteMode",false);
+        appSettings->setValue("OverwriteMode",true);
         appSettings->setValue("ReadOnly",false);
         appSettings->setValue("HighlightingColor",QColor("#540c00"));
         appSettings->setValue("AddressAreaColor",QColor("#545454"));
-        appSettings->setValue("SelectionColor",QColor("#547c00"));
+        appSettings->setValue("SelectionColor",QColor("#0998c7"));
         appSettings->setValue("WidgetFont",QFont("Courier",12));
         appSettings->setValue("AddressFontColor",QColor("#f0f0f0"));
         appSettings->setValue("AsciiAreaColor",QColor("#424242"));
@@ -930,7 +933,10 @@ void HexWalkMain::readSettings()
         appSettings->setValue("HexFontColor",QColor("#00ff5e"));
 
 
-
+        appSettings->setValue("pos", pos());
+        appSettings->setValue("size", size());
+        appSettings->setValue("mainWindowGeometry", saveGeometry());
+        appSettings->setValue("mainWindowState", saveState());
         appSettings->sync();
 
 
@@ -957,7 +963,6 @@ void HexWalkMain::readSettings()
         move(pos);
         resize(size);
     }
-    qInfo()<<"Main ADDRESS: "<<appSettings->value("AddressAreaWidth").toInt()<<endl;
     hexEdit->setAddressArea(appSettings->value("AddressArea").toBool());
     hexEdit->setAsciiArea(appSettings->value("AsciiArea").toBool());
     hexEdit->setHighlighting(appSettings->value("Highlighting").toBool());
@@ -1020,5 +1025,5 @@ void HexWalkMain::showByteMap()
 
 void HexWalkMain::showDisasm()
 {
-    disasmDialog->show();
+    disasmWidget->show();
 }

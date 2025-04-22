@@ -13,6 +13,7 @@ class ConverterWidget : public QDockWidget
 
 public:
     explicit ConverterWidget(QWidget *parent = nullptr);
+    void update(QString hexString);
     ~ConverterWidget();
 
 private slots:
@@ -21,6 +22,7 @@ private slots:
     void on_hexTextEdit_textChanged(const QString &arg1);
     void on_binTextEdit_textChanged(const QString &arg1);
     void on_checkBox_be_stateChanged(int arg1);
+    //void update(QByteArray ba);
 
 private:
     Ui::ConverterWidget *ui;

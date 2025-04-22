@@ -11,8 +11,7 @@ OptionsDialog::OptionsDialog(QSettings * appSettings,QWidget *parent) :
 {
     ui->setupUi(this);
     this->appSettings = appSettings;
-    //readSettings();
-    //writeSettings();
+
 }
 
 OptionsDialog::~OptionsDialog()
@@ -36,7 +35,6 @@ void OptionsDialog::accept()
 void OptionsDialog::readSettings()
 {
 
-    qInfo()<<"Options ADDRESS: "<<appSettings->value("AddressAreaWidth").toInt()<<endl;
     ui->cbAddressArea->setChecked(appSettings->value("AddressArea").toBool());
     ui->cbAsciiArea->setChecked(appSettings->value("AsciiArea").toBool());
     ui->cbHighlighting->setChecked(appSettings->value("Highlighting").toBool());
@@ -106,7 +104,7 @@ void OptionsDialog::on_pbAddressAreaColor_clicked()
 
 void OptionsDialog::on_pbAddressFontColor_clicked()
 {
-    QColor color = QColorDialog::getColor(ui->lbAddressFontColor->palette().color(QPalette::WindowText), this);
+    QColor color = QColorDialog::getColor(ui->lbAddressFontColor->palette().color(QPalette::Background), this);
     if (color.isValid())
         setColor(ui->lbAddressFontColor, color);
 }
@@ -120,14 +118,14 @@ void OptionsDialog::on_pbAsciiAreaColor_clicked()
 
 void OptionsDialog::on_pbAsciiFontColor_clicked()
 {
-    QColor color = QColorDialog::getColor(ui->lbAsciiFontColor->palette().color(QPalette::WindowText), this);
+    QColor color = QColorDialog::getColor(ui->lbAsciiFontColor->palette().color(QPalette::Background), this);
     if (color.isValid())
         setColor(ui->lbAsciiFontColor, color);
 }
 
 void OptionsDialog::on_pbHexFontColor_clicked()
 {
-    QColor color = QColorDialog::getColor(ui->lbHexFontColor->palette().color(QPalette::WindowText), this);
+    QColor color = QColorDialog::getColor(ui->lbHexFontColor->palette().color(QPalette::Background), this);
     if (color.isValid())
         setColor(ui->lbHexFontColor, color);
 }

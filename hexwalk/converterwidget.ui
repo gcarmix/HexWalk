@@ -26,7 +26,7 @@
    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
   </property>
   <property name="windowTitle">
-   <string>Converter</string>
+   <string>CONVERTER</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <widget class="QLineEdit" name="hexTextEdit">

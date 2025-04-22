@@ -15,7 +15,7 @@
 #include "edittagdialog.h"
 #include "stringsdialog.h"
 #include "bytemapdialog.h"
-#include "disasmdialog.h"
+#include "disasmwidget.h"
 #include "converterwidget.h"
 #include "optionsdialog.h"
 
@@ -157,7 +157,7 @@ private:
     TagsDialog *tagsDialog;
     DiffDialog *diffDialog;
     StringsDialog *stringsDialog;
-    DisasmDialog * disasmDialog;
+    DisasmWidget * disasmWidget;
     ConverterWidget * converterWidget;
     QLabel *lbAddress, *lbAddressName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
