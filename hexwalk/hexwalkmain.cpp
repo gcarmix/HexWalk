@@ -65,7 +65,8 @@ QString HexWalkMain::binToStr(QByteArray bin)
 void HexWalkMain::init()
 {
     setAttribute(Qt::WA_DeleteOnClose);
-
+    appSettings = new QSettings("hexwalk","hexwalk");
+    //appSettings->clear();
     isUntitled = true;
 
     hexEdit = ui->widget;
@@ -73,6 +74,8 @@ void HexWalkMain::init()
     connect(hexEdit, SIGNAL(dataChanged()), this, SLOT(dataChanged()));
     searchDialog = new SearchDialog(hexEdit, this);
     advancedSearchDialog = new AdvancedSearchDialog(hexEdit,this);
+    optionsDialog = new OptionsDialog(appSettings,this);
+    connect(optionsDialog,SIGNAL(accepted()),this,SLOT(updateOptions()));
     entropyDialog = new EntropyDialog(hexEdit,this);
     analysisDialog = new binanalysisdialog(hexEdit,this);
     hashDialog = new HashDialog(this);
@@ -80,7 +83,8 @@ void HexWalkMain::init()
     tagsDialog = new TagsDialog(hexEdit,this);
     stringsDialog = new StringsDialog(hexEdit,this);
     byteMapDialog = new ByteMapDialog(hexEdit,this);
-    disasmDialog = new DisasmDialog(hexEdit,this);
+    //disasmDialog = new DisasmDialog(hexEdit,this);
+    disasmWidget = new DisasmWidget(hexEdit,this);
     converterWidget = new ConverterWidget(this);
 
     createActions();
@@ -128,6 +132,8 @@ void HexWalkMain::createMenus()
     editMenu->addAction(advancedFindAct);
     editMenu->addAction(findAct);
     editMenu->addAction(overwriteAct);
+    editMenu->addAction(optionsAct);
+
 
 
 
@@ -255,6 +261,10 @@ void HexWalkMain::createActions()
     overwriteAct->setStatusTip(tr("Toggle overwrite/insert mode"));
     connect(overwriteAct, SIGNAL(triggered()), this, SLOT(toggleOverwriteMode()));
 
+    optionsAct = new QAction(tr("&Options"), this);
+    optionsAct->setStatusTip(tr("Options"));
+    connect(optionsAct, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
+
     findNextAct = new QAction(tr("Find &next"), this);
     findNextAct->setShortcuts(QKeySequence::FindNext);
     findNextAct->setStatusTip(tr("Find next occurrence of the searched pattern"));
@@ -328,13 +338,16 @@ void HexWalkMain::openRecent(){
 void HexWalkMain::createToolBars()
 {
     fileToolBar = addToolBar(tr("File"));
+    fileToolBar->setObjectName("file");
     fileToolBar->addAction(openAct);
     fileToolBar->addAction(saveAct);
     editToolBar = addToolBar(tr("Edit"));
+    editToolBar->setObjectName("edit");
     editToolBar->addAction(undoAct);
     editToolBar->addAction(redoAct);
     editToolBar->addAction(advancedFindAct);
     analysisToolBar = addToolBar(tr("Analysis"));
+    analysisToolBar->setObjectName("analysis");
     analysisToolBar->addAction(entropyAct);
     analysisToolBar->addAction(binaryAct);
     analysisToolBar->addAction(diffAct);
@@ -438,26 +451,30 @@ void HexWalkMain::dataChanged()
     setWindowModified(hexEdit->isModified());
 }
 
+void HexWalkMain::updateOptions()
+{
+    readSettings();
+}
+
 void HexWalkMain::adjustForCurrentFile(const QString &filePath){
     currentFilePath = filePath;
     setWindowFilePath(currentFilePath);
 
-    QSettings settings;
     QStringList recentFilePaths =
-        settings.value("recentFiles").toStringList();
+        appSettings->value("recentFiles").toStringList();
     recentFilePaths.removeAll(filePath);
     recentFilePaths.prepend(filePath);
     while (recentFilePaths.size() > 5)
         recentFilePaths.removeLast();
-    settings.setValue("recentFiles", recentFilePaths);
+    appSettings->setValue("recentFiles", recentFilePaths);
 
     // see note
     updateRecentActionList();
 }
 void HexWalkMain::updateRecentActionList(){
-    QSettings settings;
+
     QStringList recentFilePaths =
-        settings.value("recentFiles").toStringList();
+        appSettings->value("recentFiles").toStringList();
 
     auto itEnd = 0u;
     if(recentFilePaths.size() <= 5)
@@ -477,7 +494,6 @@ void HexWalkMain::updateRecentActionList(){
 }
 void HexWalkMain::open()
 {
-    QSettings settings;
     QString fileName = QFileDialog::getOpenFileName(this);
     if (!fileName.isEmpty()) {
         adjustForCurrentFile(fileName);
@@ -494,11 +510,10 @@ void HexWalkMain::close()
 
 void HexWalkMain::writeSettings()
 {
-    QSettings settings;
-    settings.setValue("pos", pos());
-    settings.setValue("size", size());
-    settings.setValue("mainWindowGeometry", saveGeometry());
-    settings.setValue("mainWindowState", saveState());
+    appSettings->setValue("pos", pos());
+    appSettings->setValue("size", size());
+    appSettings->setValue("mainWindowGeometry", saveGeometry());
+    appSettings->setValue("mainWindowState", saveState());
 }
 
 void HexWalkMain::findNext()
@@ -635,8 +650,10 @@ void HexWalkMain::updateInfo()
     {
         ui->asciiTextEdit->setText(binToStr(hexEdit->selectedDataBa()));
         ui->hexTextedit->setText(hexEdit->selectedData().toUpper());
+
         if(selSize <= 8)
         {
+            converterWidget->update(hexEdit->selectedData().toUpper());
             if(selSize == 4 || selSize == 8)
             {
 
@@ -732,8 +749,7 @@ void HexWalkMain::setAddress(qint64 address)
 
 void HexWalkMain::setOverwriteMode(bool mode)
 {
-    QSettings settings;
-    settings.setValue("OverwriteMode", mode);
+    appSettings->setValue("OverwriteMode", mode);
     if (mode)
         lbOverwriteMode->setText(tr("Overwrite"));
     else
@@ -753,6 +769,11 @@ void HexWalkMain::showSearchDialog()
 void HexWalkMain::showAdvancedSearchDialog()
 {
     advancedSearchDialog->show();
+}
+
+void HexWalkMain::showOptionsDialog()
+{
+    optionsDialog->show();
 }
 
 void HexWalkMain::showDiffDialog()
@@ -834,8 +855,8 @@ void HexWalkMain::setWidth()
         value = 64;
         widthText->setText(QString("%1").arg(value));
     }
-    QSettings settings;
-    settings.setValue("BytesPerLine",value);
+
+    appSettings->setValue("BytesPerLine",value);
     hexEdit->setBytesPerLine(value);
 }
 void HexWalkMain::showHashDialog()
@@ -888,57 +909,79 @@ void HexWalkMain::showStringsDialog()
 
 void HexWalkMain::readSettings()
 {
-    QSettings settings;
-
-    hexEdit->setAddressWidth(8);
-    hexEdit->setBytesPerLine(16);
-    hexEdit->setHexCaps(true);
-    hexEdit->setAddressAreaColor(QColor("#545454"));
-    hexEdit->setAddressFontColor(QColor("#f0f0f0"));
-    hexEdit->setAsciiFontColor(QColor("#00ff5e"));
-    hexEdit->setHexFontColor(QColor("#00ff5e"));
-    hexEdit->setHighlightingColor(QColor("#540c00"));
-    hexEdit->setFont(QFont("Courier",12));
-    hexEdit->setHighlighting(true);
-    hexEdit->setOverwriteMode(false);
-    restoreGeometry(settings.value("mainWindowGeometry").toByteArray());
-    restoreState(settings.value("mainWindowState").toByteArray());
-    int bytesperline = settings.value("BytesPerLine").toInt();
-    if( bytesperline > 0 && bytesperline < 64 )
+    if(appSettings->value("BytesPerLine").toInt()<=0)
     {
-        hexEdit->setBytesPerLine(bytesperline);
-        widthText->setText(QString("%1").arg(bytesperline));
+        appSettings->setValue("AddressArea",true);
+        appSettings->setValue("AsciiArea",true);
+        appSettings->setValue("Highlighting",true);
+        appSettings->setValue("OverwriteMode",true);
+        appSettings->setValue("ReadOnly",false);
+        appSettings->setValue("HighlightingColor",QColor("#540c00"));
+        appSettings->setValue("AddressAreaColor",QColor("#545454"));
+        appSettings->setValue("SelectionColor",QColor("#0998c7"));
+        appSettings->setValue("WidgetFont",QFont("Courier",12));
+        appSettings->setValue("AddressFontColor",QColor("#f0f0f0"));
+        appSettings->setValue("AsciiAreaColor",QColor("#424242"));
+        appSettings->setValue("AsciiFontColor",QColor("#00ff5e"));
+        appSettings->setValue("HexFontColor",QColor("#00ff5e"));
+        appSettings->setValue("AddressAreaWidth",6);
+        appSettings->setValue("BytesPerLine",16);
+        appSettings->setValue("HexCaps",true);
+
+
+
+        appSettings->setValue("HexFontColor",QColor("#00ff5e"));
+
+
+        appSettings->setValue("pos", pos());
+        appSettings->setValue("size", size());
+        appSettings->setValue("mainWindowGeometry", saveGeometry());
+        appSettings->setValue("mainWindowState", saveState());
+        appSettings->sync();
+
+
     }
-    else{
-        bytesperline = 16;
-        hexEdit->setBytesPerLine(bytesperline);
-        widthText->setText(QString("%1").arg(bytesperline));
+    else
+    {
+
+        restoreGeometry(appSettings->value("mainWindowGeometry").toByteArray());
+        restoreState(appSettings->value("mainWindowState").toByteArray());
+        int bytesperline = appSettings->value("BytesPerLine").toInt();
+        if( bytesperline > 0 && bytesperline < 64 )
+        {
+            hexEdit->setBytesPerLine(bytesperline);
+            widthText->setText(QString("%1").arg(bytesperline));
+        }
+        else{
+            bytesperline = 16;
+            hexEdit->setBytesPerLine(bytesperline);
+            widthText->setText(QString("%1").arg(bytesperline));
+        }
+
+        QPoint pos = appSettings->value("pos", QPoint(200, 200)).toPoint();
+        QSize size = appSettings->value("size", QSize(610, 460)).toSize();
+        move(pos);
+        resize(size);
     }
-    /*
-    QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
-    QSize size = settings.value("size", QSize(610, 460)).toSize();
-    move(pos);
-    resize(size);
+    hexEdit->setAddressArea(appSettings->value("AddressArea").toBool());
+    hexEdit->setAsciiArea(appSettings->value("AsciiArea").toBool());
+    hexEdit->setHighlighting(appSettings->value("Highlighting").toBool());
+    hexEdit->setOverwriteMode(appSettings->value("OverwriteMode").toBool());
+    hexEdit->setReadOnly(appSettings->value("ReadOnly").toBool());
 
-    hexEdit->setAddressArea(settings.value("AddressArea").toBool());
-    hexEdit->setAsciiArea(settings.value("AsciiArea").toBool());
-    hexEdit->setHighlighting(settings.value("Highlighting").toBool());
-    hexEdit->setOverwriteMode(settings.value("OverwriteMode").toBool());
-    hexEdit->setReadOnly(settings.value("ReadOnly").toBool());
+    hexEdit->setHighlightingColor(appSettings->value("HighlightingColor").value<QColor>());
+    hexEdit->setAddressAreaColor(appSettings->value("AddressAreaColor").value<QColor>());
+    hexEdit->setSelectionColor(appSettings->value("SelectionColor").value<QColor>());
+    hexEdit->setFont(appSettings->value("WidgetFont").value<QFont>());
+    hexEdit->setAddressFontColor(appSettings->value("AddressFontColor").value<QColor>());
+    hexEdit->setAsciiAreaColor(appSettings->value("AsciiAreaColor").value<QColor>());
+    hexEdit->setAsciiFontColor(appSettings->value("AsciiFontColor").value<QColor>());
+    hexEdit->setHexFontColor(appSettings->value("HexFontColor").value<QColor>());
 
-    hexEdit->setHighlightingColor(settings.value("HighlightingColor").value<QColor>());
-    hexEdit->setAddressAreaColor(settings.value("AddressAreaColor").value<QColor>());
-    hexEdit->setSelectionColor(settings.value("SelectionColor").value<QColor>());
-    hexEdit->setFont(settings.value("WidgetFont").value<QFont>());
-    hexEdit->setAddressFontColor(settings.value("AddressFontColor").value<QColor>());
-    hexEdit->setAsciiAreaColor(settings.value("AsciiAreaColor").value<QColor>());
-    hexEdit->setAsciiFontColor(settings.value("AsciiFontColor").value<QColor>());
-    hexEdit->setHexFontColor(settings.value("HexFontColor").value<QColor>());
+    hexEdit->setAddressWidth(appSettings->value("AddressAreaWidth").toInt());
+    hexEdit->setBytesPerLine(appSettings->value("BytesPerLine").toInt());
+    hexEdit->setHexCaps(appSettings->value("HexCaps", true).toBool());
 
-    hexEdit->setAddressWidth(settings.value("AddressAreaWidth").toInt());
-    hexEdit->setBytesPerLine(settings.value("BytesPerLine").toInt());
-    hexEdit->setHexCaps(settings.value("HexCaps", true).toBool());
-*/
 }
 
 
@@ -982,5 +1025,5 @@ void HexWalkMain::showByteMap()
 
 void HexWalkMain::showDisasm()
 {
-    disasmDialog->show();
+    disasmWidget->show();
 }

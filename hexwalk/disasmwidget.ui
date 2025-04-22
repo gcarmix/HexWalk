@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DisasmWidget</class>
+ <widget class="QDockWidget" name="DisasmWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>360</width>
+    <height>550</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>360</width>
+    <height>550</height>
+   </size>
+  </property>
+  <property name="floating">
+   <bool>true</bool>
+  </property>
+  <property name="allowedAreas">
+   <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+  </property>
+  <property name="windowTitle">
+   <string>DISASM</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QLabel" name="labelArch">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>131</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Arch:</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboEndian">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>70</y>
+      <width>111</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Little Endian</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Big Endian</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLineEdit" name="edtSelected">
+    <property name="geometry">
+     <rect>
+      <x>148</x>
+      <y>38</y>
+      <width>201</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblSelected">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>36</y>
+      <width>131</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Selected:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="edtBaseAddr">
+    <property name="geometry">
+     <rect>
+      <x>148</x>
+      <y>2</y>
+      <width>201</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QListWidget" name="lstDisasm">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>341</width>
+      <height>371</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>100</y>
+      <width>111</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>x86/64</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>x86/32</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>ARM32</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>ARM32/THUMB</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>ARM64</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>MIPS</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QPushButton" name="btnDisasm">
+    <property name="geometry">
+     <rect>
+      <x>270</x>
+      <y>70</y>
+      <width>81</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Disasm</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="labelEndian">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>70</y>
+      <width>131</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Endian:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lblBaseAddr">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>131</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Base Address:</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

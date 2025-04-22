@@ -1,11 +1,7 @@
-#include "disasmdialog.h"
-#include "ui_disasmdialog.h"
-
-
+#include "disasmwidget.h"
+#include "ui_disasmwidget.h"
 #include <capstone/capstone.h>
-#include <QDebug>
-
-void DisasmDialog::capst(void)
+void DisasmWidget::capst(void)
 {
     csh handle;
     cs_insn *insn;
@@ -59,8 +55,12 @@ void DisasmDialog::capst(void)
         mode_int = CS_MODE_MIPS32;
     }
     mode = (cs_mode) (mode_int | endianness);
-    if (cs_open(arch, mode , &handle) != CS_ERR_OK)
+    if (cs_err ret = cs_open(arch, mode , &handle))
+    {
+        message.sprintf("Invalid mode (e.g. x86 can't be Big Endian)");
+        ui->lstDisasm->addItem(message);
         return;
+    }
     count = cs_disasm(handle, (const uint8_t*)selectedHex.data(), selectedHex.size(), addrBase, 0, &insn);
     if (count > 0) {
         size_t j;
@@ -81,31 +81,29 @@ void DisasmDialog::capst(void)
     cs_close(&handle);
 
 }
-DisasmDialog::DisasmDialog(QHexEdit * hexedit,QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::DisasmDialog)
+DisasmWidget::DisasmWidget(QHexEdit * hexedit,QWidget *parent) :
+    QDockWidget(parent),
+    ui(new Ui::DisasmWidget)
 {
     ui->setupUi(this);
     _hexedit = hexedit;
+    hide();
 }
 
-DisasmDialog::~DisasmDialog()
+DisasmWidget::~DisasmWidget()
 {
     delete ui;
 }
 
-void DisasmDialog::on_btnClose_clicked()
-{
-    hide();
-}
 
 
-void DisasmDialog::on_btnDisasm_clicked()
+
+void DisasmWidget::on_btnDisasm_clicked()
 {
     capst();
 }
 
-void DisasmDialog::refresh()
+void DisasmWidget::refresh()
 {
     capst();
 

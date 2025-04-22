@@ -37,7 +37,7 @@
       <item row="2" column="0">
        <widget class="QCheckBox" name="cbHighlighting">
         <property name="text">
-         <string>Higlighting</string>
+         <string>Highlighting</string>
         </property>
        </widget>
       </item>

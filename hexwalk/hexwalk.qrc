@@ -8,12 +8,12 @@
         <file>images/binary.png</file>
         <file>images/entropy.png</file>
         <file>images/open.png</file>
-        <file>fonts/Helvetica.ttf</file>
-        <file>fonts/Courier.ttf</file>
         <file>images/diff.png</file>
         <file>images/tags.png</file>
         <file>images/strings.png</file>
         <file>images/bytemap.png</file>
         <file>images/disasm.png</file>
+        <file>fonts/Courier.ttf</file>
+        <file>fonts/Roboto.ttf</file>
     </qresource>
 </RCC>

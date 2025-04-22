@@ -32,7 +32,10 @@ void ConverterWidget::on_hexTextEdit_textChanged(const QString &arg1)
     }
 
 }
-
+void ConverterWidget::update(QString hexString)
+{
+    ui->hexTextEdit->setText(hexString);
+}
 
 void ConverterWidget::on_binTextEdit_textChanged(const QString &arg1)
 {

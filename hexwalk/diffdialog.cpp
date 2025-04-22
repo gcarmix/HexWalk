@@ -27,38 +27,50 @@ void DiffDialog::trackCursor2(qint64 pos)
 }
 void DiffDialog::setFiles(QString file1str, QString file2str)
 {
+    QSettings settings;
 
-    ui->hexEdit1->setAddressWidth(8);
-    ui->hexEdit1->setBytesPerLine(8);
-    ui->hexEdit1->setHexCaps(true);
-    ui->hexEdit1->setAddressAreaColor(QColor("#545454"));
-    ui->hexEdit1->setAddressFontColor(QColor("#f0f0f0"));
-    ui->hexEdit1->setAsciiFontColor(QColor("#00ff5e"));
-    ui->hexEdit1->setHexFontColor(QColor("#00ff5e"));
-    ui->hexEdit1->setHighlightingColor(QColor("#540c00"));
-    ui->hexEdit1->setFont(QFont("Courier",12));
-    ui->hexEdit1->setHighlighting(true);
-    ui->hexEdit1->setOverwriteMode(true);
-    ui->hexEdit2->setAddressWidth(8);
-    ui->hexEdit2->setBytesPerLine(8);
-    ui->hexEdit2->setHexCaps(true);
-    ui->hexEdit2->setAddressAreaColor(QColor("#545454"));
-    ui->hexEdit2->setAddressFontColor(QColor("#f0f0f0"));
-    ui->hexEdit2->setAsciiFontColor(QColor("#00ff5e"));
-    ui->hexEdit2->setHexFontColor(QColor("#00ff5e"));
-    ui->hexEdit2->setHighlightingColor(QColor("#540c00"));
-    ui->hexEdit2->setFont(QFont("Courier",12));
-    ui->hexEdit2->setHighlighting(true);
-    ui->hexEdit2->setOverwriteMode(true);
-    ui->hexEdit1->setReadOnly(true);
-    ui->hexEdit2->setReadOnly(true);
+    ui->hexEdit1->setAddressArea(settings.value("AddressArea").toBool());
+    ui->hexEdit1->setAsciiArea(settings.value("AsciiArea").toBool());
+    ui->hexEdit1->setHighlighting(settings.value("Highlighting").toBool());
+    ui->hexEdit1->setOverwriteMode(settings.value("OverwriteMode").toBool());
+    ui->hexEdit1->setReadOnly(settings.value("ReadOnly").toBool());
+
+    ui->hexEdit1->setHighlightingColor(settings.value("HighlightingColor").value<QColor>());
+    ui->hexEdit1->setAddressAreaColor(settings.value("AddressAreaColor").value<QColor>());
+    ui->hexEdit1->setSelectionColor(settings.value("SelectionColor").value<QColor>());
+    ui->hexEdit1->setFont(settings.value("WidgetFont").value<QFont>());
+    ui->hexEdit1->setAddressFontColor(settings.value("AddressFontColor").value<QColor>());
+    ui->hexEdit1->setAsciiAreaColor(settings.value("AsciiAreaColor").value<QColor>());
+    ui->hexEdit1->setAsciiFontColor(settings.value("AsciiFontColor").value<QColor>());
+    ui->hexEdit1->setHexFontColor(settings.value("HexFontColor").value<QColor>());
+
+    ui->hexEdit1->setAddressWidth(settings.value("AddressAreaWidth").toInt());
+    ui->hexEdit1->setBytesPerLine(settings.value("BytesPerLine").toInt());
+    ui->hexEdit1->setHexCaps(settings.value("HexCaps", true).toBool());
+
+    ui->hexEdit2->setAddressArea(settings.value("AddressArea").toBool());
+    ui->hexEdit2->setAsciiArea(settings.value("AsciiArea").toBool());
+    ui->hexEdit2->setHighlighting(settings.value("Highlighting").toBool());
+    ui->hexEdit2->setOverwriteMode(settings.value("OverwriteMode").toBool());
+    ui->hexEdit2->setReadOnly(settings.value("ReadOnly").toBool());
+
+    ui->hexEdit2->setHighlightingColor(settings.value("HighlightingColor").value<QColor>());
+    ui->hexEdit2->setAddressAreaColor(settings.value("AddressAreaColor").value<QColor>());
+    ui->hexEdit2->setSelectionColor(settings.value("SelectionColor").value<QColor>());
+    ui->hexEdit2->setFont(settings.value("WidgetFont").value<QFont>());
+    ui->hexEdit2->setAddressFontColor(settings.value("AddressFontColor").value<QColor>());
+    ui->hexEdit2->setAsciiAreaColor(settings.value("AsciiAreaColor").value<QColor>());
+    ui->hexEdit2->setAsciiFontColor(settings.value("AsciiFontColor").value<QColor>());
+    ui->hexEdit2->setHexFontColor(settings.value("HexFontColor").value<QColor>());
+
+    ui->hexEdit2->setAddressWidth(settings.value("AddressAreaWidth").toInt());
+    ui->hexEdit2->setBytesPerLine(settings.value("BytesPerLine").toInt());
+    ui->hexEdit2->setHexCaps(settings.value("HexCaps", true).toBool());
 
 
     file1.setFileName(file1str);
-
     file2.setFileName(file2str);
-    //qInfo()<<file1.fileName();
-    //qInfo()<<file2.fileName();
+
     ui->hexEdit1->setData(file1);
     ui->hexEdit2->setData(file2);
     connect(ui->hexEdit1,SIGNAL(currentAddressChanged(qint64)),this,SLOT(trackCursor1(qint64)));
