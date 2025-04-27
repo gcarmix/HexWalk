@@ -60,7 +60,6 @@ void OptionsDialog::readSettings()
 
 void OptionsDialog::writeSettings()
 {
-    QSettings settings("hexwalk","hexwalk");
     appSettings->setValue("AddressArea", ui->cbAddressArea->isChecked());
     appSettings->setValue("AsciiArea", ui->cbAsciiArea->isChecked());
     appSettings->setValue("Highlighting", ui->cbHighlighting->isChecked());
@@ -144,3 +143,32 @@ void OptionsDialog::on_pbWidgetFont_clicked()
     if (ok)
         ui->leWidgetFont->setFont(font);
 }
+
+void OptionsDialog::on_buttonBox_clicked(QAbstractButton *button)
+{
+    if(button == ui->buttonBox->button(QDialogButtonBox::RestoreDefaults))
+    {
+        ui->cbAddressArea->setChecked(true);
+        ui->cbAsciiArea->setChecked(true);
+        ui->cbHighlighting->setChecked(true);
+        ui->cbOverwriteMode->setChecked(true);
+        ui->cbReadOnly->setChecked(false);
+
+        setColor(ui->lbHighlightingColor, QColor("#540c00"));
+        setColor(ui->lbAddressAreaColor, QColor("#545454"));
+        setColor(ui->lbSelectionColor, QColor("#0998c7"));
+        setColor(ui->lbAddressFontColor, QColor("#f0f0f0"));
+        setColor(ui->lbAsciiAreaColor, QColor("#424242"));
+        setColor(ui->lbAsciiFontColor, QColor("#00ff5e"));
+        setColor(ui->lbHexFontColor, QColor("#00ff5e"));
+    #ifdef Q_OS_WIN32
+        ui->leWidgetFont->setFont(QFont("Courier",12));
+    #else
+        ui->leWidgetFont->setFont(QFont("Monospace",12));
+    #endif
+
+        ui->sbAddressAreaWidth->setValue(6);
+        ui->sbBytesPerLine->setValue(16);
+        }
+}
+

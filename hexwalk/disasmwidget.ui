@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
+    <width>280</width>
     <height>550</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>360</width>
+    <width>280</width>
     <height>550</height>
    </size>
   </property>
@@ -42,7 +42,7 @@
    <widget class="QComboBox" name="comboEndian">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>80</x>
       <y>70</y>
       <width>111</width>
       <height>25</height>
@@ -62,9 +62,9 @@
    <widget class="QLineEdit" name="edtSelected">
     <property name="geometry">
      <rect>
-      <x>148</x>
+      <x>130</x>
       <y>38</y>
-      <width>201</width>
+      <width>141</width>
       <height>25</height>
      </rect>
     </property>
@@ -85,9 +85,9 @@
    <widget class="QLineEdit" name="edtBaseAddr">
     <property name="geometry">
      <rect>
-      <x>148</x>
+      <x>130</x>
       <y>2</y>
-      <width>201</width>
+      <width>141</width>
       <height>25</height>
      </rect>
     </property>
@@ -96,16 +96,27 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>140</y>
-      <width>341</width>
+      <y>130</y>
+      <width>261</width>
       <height>371</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>8</pointsize>
+     </font>
+    </property>
+    <property name="sizeAdjustPolicy">
+     <enum>QAbstractScrollArea::AdjustToContents</enum>
+    </property>
+    <property name="resizeMode">
+     <enum>QListView::Adjust</enum>
     </property>
    </widget>
    <widget class="QComboBox" name="comboBox">
     <property name="geometry">
      <rect>
-      <x>150</x>
+      <x>80</x>
       <y>100</y>
       <width>111</width>
       <height>25</height>
@@ -145,9 +156,9 @@
    <widget class="QPushButton" name="btnDisasm">
     <property name="geometry">
      <rect>
-      <x>270</x>
+      <x>200</x>
       <y>70</y>
-      <width>81</width>
+      <width>71</width>
       <height>51</height>
      </rect>
     </property>
