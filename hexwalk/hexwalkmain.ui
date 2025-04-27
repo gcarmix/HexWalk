@@ -19,14 +19,14 @@
   <property name="minimumSize">
    <size>
     <width>600</width>
-    <height>400</height>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>HexWalk</string>
   </property>
   <property name="dockOptions">
-   <set>QMainWindow::AnimatedDocks</set>
+   <set>QMainWindow::AllowNestedDocks|QMainWindow::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="acceptDrops">
