@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="floating">
-   <bool>false</bool>
+   <bool>true</bool>
   </property>
   <property name="allowedAreas">
    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
@@ -38,12 +38,6 @@
    <string>DISASM</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
    <widget class="QLabel" name="labelArch">
     <property name="geometry">
      <rect>

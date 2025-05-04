@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QtCharts>
 #include <QProgressDialog>
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 #include "entropychart.h"
 
 namespace Ui {

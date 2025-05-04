@@ -450,17 +450,17 @@
 <context>
     <name>UndoStack</name>
     <message>
-        <location filename="../../src/commands.cpp" line="112"/>
+        <location filename="../../qhexedit/commands.cpp" line="112"/>
         <source>Inserting %1 bytes</source>
         <translation type="unfinished">%1 Bytes eingefügt</translation>
     </message>
     <message>
-        <location filename="../../src/commands.cpp" line="134"/>
+        <location filename="../../qhexedit/commands.cpp" line="134"/>
         <source>Delete %1 chars</source>
         <translation type="unfinished">%1 Zeiche(n) gelöscht</translation>
     </message>
     <message>
-        <location filename="../../src/commands.cpp" line="159"/>
+        <location filename="../../qhexedit/commands.cpp" line="159"/>
         <source>Overwrite %1 chars</source>
         <translation type="unfinished">%1 Zeichen überschrieben</translation>
     </message>

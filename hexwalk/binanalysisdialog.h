@@ -5,7 +5,7 @@
 #include <QAbstractTableModel>
 #include <QProgressDialog>
 #include "resultType.h"
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 
 namespace Ui {
 class binanalysisdialog;

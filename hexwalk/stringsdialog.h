@@ -3,7 +3,7 @@
 
 #include <QDialog>
 #include <QProgressDialog>
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 namespace Ui {
 class StringsDialog;
 }

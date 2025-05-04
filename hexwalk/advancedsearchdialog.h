@@ -6,7 +6,7 @@
 #include <QTimer>
 #include <QProgressDialog>
 #include <QAbstractTableModel>
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 #include "resultType.h"
 
 namespace Ui {

@@ -2,8 +2,8 @@
 #define EDITTAGDIALOG_H
 
 #include <QDialog>
-#include "../src/qhexedit.h"
-#include "../src/bytepattern.h"
+#include "../qhexedit/qhexedit.h"
+#include "../qhexedit/bytepattern.h"
 namespace Ui {
 class EditTagDialog;
 }

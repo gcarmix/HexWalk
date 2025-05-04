@@ -414,17 +414,17 @@
 <context>
     <name>UndoStack</name>
     <message>
-        <location filename="../../src/commands.cpp" line="112"/>
+        <location filename="../../qhexedit/commands.cpp" line="112"/>
         <source>Inserting %1 bytes</source>
         <translation>Вставить %1 байт</translation>
     </message>
     <message>
-        <location filename="../../src/commands.cpp" line="134"/>
+        <location filename="../../qhexedit/commands.cpp" line="134"/>
         <source>Delete %1 chars</source>
         <translation>Удалить %1 символов</translation>
     </message>
     <message>
-        <location filename="../../src/commands.cpp" line="159"/>
+        <location filename="../../qhexedit/commands.cpp" line="159"/>
         <source>Overwrite %1 chars</source>
         <translation>Заменить %1 символов</translation>
     </message>

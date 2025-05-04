@@ -2,7 +2,7 @@
 #define HEXWALKMAIN_H
 
 #include <QMainWindow>
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 
 
 #include "searchdialog.h"

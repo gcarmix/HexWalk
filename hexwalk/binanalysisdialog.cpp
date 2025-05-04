@@ -110,7 +110,7 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
             QTextStream stream( &file );
             stream << "import sys" << Qt::endl;
             stream << "import os" << Qt::endl;
-            stream << "sys.path.append(os.path.dirname('binwalk/src/binwalk'))" << Qt::endl;
+            stream << "sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'binwalk', 'src'))" << Qt::endl;
             stream << "import binwalk" << Qt::endl;
             stream << "if len(sys.argv) == 2:" << Qt::endl;
             stream << "    binwalk.scan('--signature', sys.argv[1])" << Qt::endl;
@@ -282,7 +282,7 @@ void binanalysisdialog::on_extractAllBtn_clicked()
 #else
     QDir d = QFileInfo(curFile).absoluteDir();
     QString curDir=d.absolutePath();
-    params << "-e" << curFile<<"-C"<<curDir;
+    params << "-e" << curFile;
     binwalkProcess->start("binwalk",params);
 #endif
 

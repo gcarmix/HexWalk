@@ -2,7 +2,7 @@
 #define DISASMWIDGET_H
 
 #include <QDockWidget>
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 namespace Ui {
 class DisasmWidget;
 }

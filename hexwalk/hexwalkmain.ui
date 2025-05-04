@@ -392,7 +392,7 @@
   <customwidget>
    <class>QHexEdit</class>
    <extends>QWidget</extends>
-   <header>../src/qhexedit.h</header>
+   <header>../qhexedit/qhexedit.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

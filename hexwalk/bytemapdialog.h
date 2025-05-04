@@ -2,7 +2,7 @@
 #define BYTEMAPDIALOG_H
 
 #include <QDialog>
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 #include <QGraphicsScene>
 namespace Ui {
 class ByteMapDialog;

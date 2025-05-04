@@ -6,13 +6,13 @@ win32:QMAKE_LFLAGS += -no-pie -lstdc++ -Bstatic -static-libgcc -static-libstdc++
 #Only for Mac:
 macx:ICON = images/hexwalk.icns
 ###############
-VERSION = "1.9.0"
+VERSION = "1.9.1"
 QMAKE_TARGET_COPYRIGHT = "gcarmix"
 QMAKE_TARGET_PRODUCT = "HexWalk"
 HEADERS = \
-    ../src/bytepattern.h \
-    ../src/colortag.h \
-    ../src/tagparser.hpp \
+    ../qhexedit/bytepattern.h \
+    ../qhexedit/colortag.h \
+    ../qhexedit/tagparser.hpp \
     advancedsearchdialog.h \
     binanalysisdialog.h \
     bytemap.h \
@@ -26,9 +26,9 @@ HEADERS = \
     hashdialog.h \
     hexwalkmain.h \
     optionsdialog.h \
-    ../src/qhexedit.h \
-    ../src/chunks.h \
-    ../src/commands.h \
+    ../qhexedit/qhexedit.h \
+    ../qhexedit/chunks.h \
+    ../qhexedit/commands.h \
     resultType.h \
     searchdialog.h \
     stringsdialog.h \
@@ -37,9 +37,9 @@ HEADERS = \
 
 
 SOURCES = \
-    ../src/bytepattern.cpp \
-    ../src/colortag.cpp \
-    ../src/tagparser.cpp \
+    ../qhexedit/bytepattern.cpp \
+    ../qhexedit/colortag.cpp \
+    ../qhexedit/tagparser.cpp \
     advancedsearchdialog.cpp \
     binanalysisdialog.cpp \
     bytemap.cpp \
@@ -54,9 +54,9 @@ SOURCES = \
     hexwalkmain.cpp \
     main.cpp \
     optionsdialog.cpp \
-    ../src/qhexedit.cpp \
-    ../src/chunks.cpp \
-    ../src/commands.cpp \
+    ../qhexedit/qhexedit.cpp \
+    ../qhexedit/chunks.cpp \
+    ../qhexedit/commands.cpp \
     searchdialog.cpp \
     stringsdialog.cpp \
     tagsdialog.cpp \

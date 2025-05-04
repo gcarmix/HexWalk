@@ -3,12 +3,12 @@
 
 #include <QDialog>
 #include "edittagdialog.h"
-#include "../src/qhexedit.h"
-#include "../src/tagparser.hpp"
+#include "../qhexedit/qhexedit.h"
+#include "../qhexedit/tagparser.hpp"
 #include <iostream>
 #include <stack>
 #include <string>
-#include "../src/bytepattern.h"
+#include "../qhexedit/bytepattern.h"
 namespace Ui {
 class TagsDialog;
 }

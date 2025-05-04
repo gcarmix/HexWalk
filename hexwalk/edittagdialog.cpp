@@ -1,7 +1,7 @@
 #include "edittagdialog.h"
 #include "ui_edittagdialog.h"
 #include <QColorDialog>
-#include "../src/colortag.h"
+#include "../qhexedit/colortag.h"
 #include <QMessageBox>
 EditTagDialog::EditTagDialog(BytePattern * bytePtr,QWidget *parent ) :
     QDialog(parent),

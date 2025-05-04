@@ -3,7 +3,7 @@
 #include <QAbstractScrollArea>
 #include <QPen>
 #include <QBrush>
-#include "../src/qhexedit.h"
+#include "../qhexedit/qhexedit.h"
 
 class ByteMap: public QAbstractScrollArea
 {
