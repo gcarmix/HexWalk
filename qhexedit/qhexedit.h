@@ -250,9 +250,10 @@ public:
      * \param from Point where the search starts
      * \param isRegex regex on off switch
      * \param isCaseSensitive case sensitive on off switch
+     * \param invertMatch If true, checks for a non-match, instead of the default (check for a match).
      * \return pos if found, else -1
      */
-    qint64 indexOf(const QByteArray &ba, qint64 from, bool isRegex, bool isCaseSensitive);
+    qint64 indexOf(const QByteArray &ba, qint64 from, bool isRegex, bool isCaseSensitive, bool invertMatch = false);
 
     /*! Returns if any changes where done on document
      * \return true when document is modified else false
