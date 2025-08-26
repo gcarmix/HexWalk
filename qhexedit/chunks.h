@@ -44,7 +44,7 @@ public:
     bool dataChanged(qint64 pos);
 
     // Search API
-    qint64 indexOf(const QByteArray &ba, qint64 from,bool isRegex,bool isCaseInsensitive);
+    qint64 indexOf(const QByteArray &ba, qint64 from,bool isRegex,bool isCaseInsensitive, bool invertMatch = false);
     qint64 lastIndexOf(const QByteArray &ba, qint64 from);
 
     // Char manipulations
