@@ -82,7 +82,7 @@ void on_pbFindAll_clicked();
     void on_pbCancel_clicked();
 
 void on_cbCase_clicked();
-
+    void on_cbInvertMatch_clicked();
     void on_cbFindFormat_currentIndexChanged(int index);
 
 void on_cbBackwards_clicked();
