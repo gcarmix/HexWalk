@@ -52,7 +52,7 @@ qint64 AdvancedSearchDialog::findNext()
         if (ui->cbBackwards->isChecked())
             idx = _hexEdit->lastIndexOf(_findBa, from);
         else
-            idx = _hexEdit->indexOf(_findBa, from,ui->cbRegex->isChecked(),ui->cbCase->isChecked());
+            idx = _hexEdit->indexOf(_findBa, from,ui->cbRegex->isChecked(),ui->cbCase->isChecked(), ui->cbInvertMatch->isChecked());
     }
     return idx;
 }
@@ -299,7 +299,7 @@ void AdvancedSearchDialog::on_resultsTableView_clicked(const QModelIndex &index)
 {
     //_hexEdit->indexOf("",resultslist.at(index.row()).cursor,ui->cbRegex->isChecked(),ui->cbCase->isChecked(),ui->cbFindFormat->currentIndex()==1);
     _hexEdit->setCursorPosition(resultslist.at(index.row()).cursor);
-    _hexEdit->indexOf(_findBa, resultslist.at(index.row()).cursor - 1,ui->cbRegex->isChecked(),ui->cbCase->isChecked());
+    _hexEdit->indexOf(_findBa, resultslist.at(index.row()).cursor - 1,ui->cbRegex->isChecked(),ui->cbCase->isChecked(), ui->cbInvertMatch->isChecked());
     _hexEdit->update();
 
 }
@@ -328,6 +328,19 @@ void AdvancedSearchDialog::on_cbCase_clicked()
 
 }
 
+void AdvancedSearchDialog::on_cbInvertMatch_clicked()
+{
+    if(ui->cbInvertMatch->isChecked())
+    {
+        ui->cbBackwards->setChecked(false);
+        ui->cbBackwards->setEnabled(false);
+    }
+    else
+    {
+        ui->cbBackwards->setChecked(false);
+        ui->cbBackwards->setEnabled(true);
+    }
+}
 
 void AdvancedSearchDialog::on_cbFindFormat_currentIndexChanged(int index)
 {
@@ -351,10 +364,25 @@ void AdvancedSearchDialog::on_cbBackwards_clicked()
     if(ui->cbBackwards->isChecked())
     {
         ui->cbRegex->setChecked(false);
+        ui->cbRegex->setEnabled(false);
         ui->cbCase->setChecked(false);
+        ui->cbCase->setEnabled(false);
+        ui->cbInvertMatch->setChecked(false);
+        ui->cbInvertMatch->setEnabled(false);
         ui->cbBegin->setChecked(false);
+        ui->cbBegin->setEnabled(false);
     }
-
+    else
+    {
+        ui->cbRegex->setChecked(false);
+        ui->cbRegex->setEnabled(true);
+        ui->cbCase->setChecked(false);
+        ui->cbCase->setEnabled(true);
+        ui->cbInvertMatch->setChecked(false);
+        ui->cbInvertMatch->setEnabled(true);
+        ui->cbBegin->setChecked(false);
+        ui->cbBegin->setEnabled(true);
+    }
 }
 
 
