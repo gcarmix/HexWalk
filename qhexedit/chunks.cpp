@@ -167,8 +167,7 @@ bool Chunks::dataChanged(qint64 pos)
 
 
 // ***************************************** Search API
-
-qint64 Chunks::indexOf(const QByteArray &ba, qint64 from,bool isRegex,bool isCaseInsensitive)
+qint64 Chunks::indexOf(const QByteArray &ba, qint64 from,bool isRegex,bool isCaseInsensitive,bool invertMatch)
 {
     qint64 result = -1;
     QByteArray buffer;
@@ -204,8 +203,30 @@ qint64 Chunks::indexOf(const QByteArray &ba, qint64 from,bool isRegex,bool isCas
             matchSize = ba.size();
         }
 
-        if (findPos >= 0)
-            result = pos + (qint64)findPos;
+        // If invertMatch is true, we want to find the first position that does not match.
+        if (invertMatch) {
+            if (findPos < 0) {
+                // If we found a non-match at the beginning, set the result and break.
+                result = pos;
+            }
+            else if (findPos == 0) {
+                // If we found a match at the beginning, continue searching for non-match byte
+                // by byte.
+                pos += 1;
+                pos -= BUFFER_SIZE;
+            } else {
+                // If we found a match after some bytes, so before that number of bytes
+                // was a non-match.
+                result = pos;
+                matchSize = findPos;
+            }
+        } else {
+            // Normal matching logic.
+            if (findPos >= 0) {
+                result = pos + (qint64)findPos;
+            }
+        }
+
     }
     return result;
 }
