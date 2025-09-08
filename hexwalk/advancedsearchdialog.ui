@@ -94,6 +94,13 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="1">
+         <widget class="QCheckBox" name="cbInvertMatch">
+          <property name="text">
+           <string>Invert Match</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>

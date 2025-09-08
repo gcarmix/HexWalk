@@ -444,10 +444,9 @@ void QHexEdit::ensureVisible()
     viewport()->update();
 }
 
-qint64 QHexEdit::indexOf(const QByteArray &ba, qint64 from, bool isRegex,bool isCaseInsensitive)
+qint64 QHexEdit::indexOf(const QByteArray &ba, qint64 from, bool isRegex,bool isCaseInsensitive, bool invertMatch)
 {
-    qint64 pos = _chunks->indexOf(ba, from,isRegex,isCaseInsensitive);
-    if (pos > -1)
+    qint64 pos = _chunks->indexOf(ba, from,isRegex,isCaseInsensitive, invertMatch);    if (pos > -1)
     {
         qint64 curPos = pos*2;
         setCursorPosition(curPos + _chunks->matchSize*2);
