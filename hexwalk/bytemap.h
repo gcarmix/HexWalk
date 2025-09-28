@@ -33,6 +33,7 @@ public:
     void setCursorPosition(qint64 actpos);
     qint64 getCurrentPosition();
     void setBytesPerLine(int value);
+    void setPixelSize(int value);
     bool colored = false;
 protected:
     void paintEvent(QPaintEvent *event);

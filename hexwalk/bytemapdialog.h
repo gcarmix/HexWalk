@@ -44,6 +44,8 @@ private slots:
 
     void on_colorBox_stateChanged(int arg1);
 
+    void on_spinPixels_valueChanged(int arg1);
+
 private:
     int imageWidth;
     int imageHeight;

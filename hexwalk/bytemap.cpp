@@ -36,6 +36,7 @@ ByteMap::ByteMap(QWidget *parent) : QAbstractScrollArea(parent)
 void ByteMap::loadBytes(QHexEdit * hexedit)
 {
     verticalScrollBar()->setValue(0);
+    horizontalScrollBar()->setValue(0);
     _hexedit = hexedit;
     adjust();
     viewport()->repaint();
@@ -47,6 +48,17 @@ void ByteMap::adjust()
     int lineCount = (int)(_hexedit->getSize() / (qint64)_bytesPerLine) + 1;
     verticalScrollBar()->setRange(0, lineCount - _rowsShown);
     verticalScrollBar()->setPageStep(_rowsShown);
+    horizontalScrollBar()->setRange(0,_bytesPerLine);
+    if(_bytesPerLine< viewport()->width()/_pxWidth)
+    {
+        horizontalScrollBar()->setValue(0);
+        horizontalScrollBar()->hide();
+    }
+    else
+    {
+        horizontalScrollBar()->show();
+    }
+
 }
 
 
@@ -78,14 +90,16 @@ void ByteMap::paintEvent(QPaintEvent *event)
     QColor pixCol;
 
     int value = verticalScrollBar()->value();
+    int hvalue = horizontalScrollBar()->value();
+
     qint64 _bPosFirst = (qint64)value * _bytesPerLine;
     for(int i=0;i<_rowsShown;i++)
     {
 
-        QByteArray rowdata  = _hexedit->dataAt(_bPosFirst+i*_bytesPerLine,_bytesPerLine);
+        QByteArray rowdata  = _hexedit->dataAt(hvalue + _bPosFirst+i*_bytesPerLine,_bytesPerLine-hvalue);
         for(int k=0;k<rowdata.size();k++)
         {
-            if((_bPosFirst + i*_bytesPerLine + k) > _hexedit->getSize() )
+            if((hvalue + _bPosFirst + i*_bytesPerLine + k) > _hexedit->getSize() )
             {
                 break;
             }
@@ -101,7 +115,7 @@ void ByteMap::paintEvent(QPaintEvent *event)
             painter.fillRect(QRect(k*_pxHeight, i*_pxHeight, _pxHeight, _pxHeight), pixCol);
             if(_hexedit->getSelectionEnd() - _hexedit->getSelectionBegin() > 0)
             {
-                qint64 tpos = _bPosFirst+i*_bytesPerLine + k;
+                qint64 tpos = hvalue + _bPosFirst + i*_bytesPerLine + k;
                 if(tpos >= _hexedit->getSelectionBegin() && tpos < _hexedit->getSelectionEnd())
                 {
                     painter.fillRect(QRect(k*_pxHeight, i*_pxHeight, _pxHeight, _pxHeight), QColor(100,100,240,180));
@@ -112,10 +126,16 @@ void ByteMap::paintEvent(QPaintEvent *event)
     }
 
     if(verticalScrollBar()->value()*_bytesPerLine + mPoint.x()/_pxHeight+_bytesPerLine*mPoint.y()/_pxHeight < _hexedit->getSize())
-        painter.fillRect(QRect(mPoint.x(), mPoint.y(), _pxHeight, _pxHeight), QColor(255,255,0));
+    {
+        if(mPoint.x() < _bytesPerLine*_pxWidth)
+        {
+            painter.fillRect(QRect(mPoint.x(), mPoint.y(), _pxHeight, _pxHeight), QColor(255,255,0));
+        }
+    }
+
 }
 qint64 ByteMap::cursorPosition(QPoint pos){
-    qint64 actPos = (qint64)(pos.x()/_pxHeight) + (qint64)(pos.y()/_pxHeight)*_bytesPerLine+(qint64)verticalScrollBar()->value()*_bytesPerLine;
+    qint64 actPos = (qint64)(pos.x()/_pxWidth) + (qint64)horizontalScrollBar()->value() + (qint64)(pos.y()/_pxHeight)*_bytesPerLine+(qint64)verticalScrollBar()->value()*_bytesPerLine;
 
     return actPos;
 }
@@ -129,37 +149,41 @@ qint64 ByteMap::getCurrentPosition(){
 void ByteMap::mouseMoveEvent(QMouseEvent *event){
 
     viewport()->update();
+    adjust();
     mPoint = event->pos();
-    qint64 actPos = cursorPosition(event->pos());
-    if (actPos >= 0)
+    if((horizontalScrollBar()->value() + mPoint.x()/_pxWidth) < _bytesPerLine)
     {
-        setCursorPosition(actPos);
-        emit mouseEvent();
+        qint64 actPos = cursorPosition(event->pos());
+        if (actPos >= 0)
+        {
+            setCursorPosition(actPos);
+            emit mouseEvent();
+        }
     }
+
 }
 
 void ByteMap::mousePressEvent(QMouseEvent *event){
 
     viewport()->update();
-    qint64 actPos = cursorPosition(event->pos());
-    if (actPos >= 0)
+    if((horizontalScrollBar()->value() + event->pos().x()/_pxWidth) < _bytesPerLine)
     {
-        setCursorPosition(actPos);
-        emit mousePress();
+        qint64 actPos = cursorPosition(event->pos());
+        if (actPos >= 0)
+        {
+            setCursorPosition(actPos);
+            emit mousePress();
+        }
     }
-}
 
+}
+void ByteMap::setPixelSize(int value){
+    _pxHeight = value;
+    _pxWidth = value;
+    viewport()->update();
+}
 void ByteMap::setBytesPerLine(int value){
 
     _bytesPerLine = value;
-    if(_bytesPerLine > 512)
-    {
-        _pxHeight = 2;
-    _pxWidth = 2;
-    }
-    else
-    {
-    _pxHeight = 3;
-    _pxWidth = 3;
-    }
+    viewport()->update();
 }

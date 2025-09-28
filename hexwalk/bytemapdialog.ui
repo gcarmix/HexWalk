@@ -18,7 +18,7 @@
     <widget class="ByteMap" name="byteMap" native="true"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,0,0,0,0,0">
      <property name="spacing">
       <number>1</number>
      </property>
@@ -59,6 +59,26 @@
       </spacer>
      </item>
      <item>
+      <widget class="QLabel" name="lblPixels">
+       <property name="text">
+        <string>Px size:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="spinPixels">
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>5</number>
+       </property>
+       <property name="value">
+        <number>3</number>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="lblCol">
        <property name="text">
         <string>Cols: </string>
@@ -83,10 +103,10 @@
         <bool>true</bool>
        </property>
        <property name="minimum">
-        <number>80</number>
+        <number>8</number>
        </property>
        <property name="maximum">
-        <number>940</number>
+        <number>65536</number>
        </property>
        <property name="singleStep">
         <number>1</number>
@@ -120,6 +140,12 @@
       <widget class="QLineEdit" name="edtAddress">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>100</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="acceptDrops">
         <bool>false</bool>
