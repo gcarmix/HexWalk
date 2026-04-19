@@ -919,7 +919,12 @@ void QHexEdit::mousePressEvent(QMouseEvent * event)
     if (cPos >= 0)
     {
         if (event->button() != Qt::RightButton)
-            resetSelection(cPos);
+        {
+            if (event->modifiers() & Qt::ShiftModifier)
+                setSelection(cPos);
+            else
+                resetSelection(cPos);
+        }
         setCursorPosition(cPos);
     }
 }
