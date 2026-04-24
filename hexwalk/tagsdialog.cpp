@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 #include "tagsdialog.h"
+#include "hexwalkmain.h"
 #include "ui_tagsdialog.h"
 #include <QLabel>
 #include <QColorDialog>
@@ -34,8 +35,8 @@ TagsDialog::TagsDialog(QHexEdit * hexedit,QWidget *parent) :
     bytePattern = new BytePattern(hexEdit);
     edittagDialog = new EditTagDialog(bytePattern,this);
     edittagDialog->hide();
-    connect(edittagDialog,SIGNAL(tagReady()),this,SLOT(triggerUpdate()));
-    connect(parent,SIGNAL(fileLoaded()),this,SLOT(triggerUpdate()));
+    connect(edittagDialog, &EditTagDialog::tagReady, this, &TagsDialog::triggerUpdate);
+    connect(static_cast<HexWalkMain*>(parent), &HexWalkMain::fileLoaded, this, &TagsDialog::triggerUpdate);
     ui->tableWidget->setColumnCount(6);
     ui->tableWidget->setHorizontalHeaderItem(0,new QTableWidgetItem("Name"));
     ui->tableWidget->setHorizontalHeaderItem(1,new QTableWidgetItem("Color"));

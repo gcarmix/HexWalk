@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 #include "entropydialog.h"
+#include "hexwalkmain.h"
 #include "ui_entropydialog.h"
 #include <QLineSeries>
 #include <QChart>
@@ -28,7 +29,7 @@ EntropyDialog::EntropyDialog(QHexEdit * hexedit,QWidget *parent) :
 {
     _hexed = hexedit;
     ui->setupUi(this);
-    connect(parent,SIGNAL(fileLoaded()),this,SLOT(refresh()));
+    connect(static_cast<HexWalkMain*>(parent), &HexWalkMain::fileLoaded, this, &EntropyDialog::refresh);
 }
 double EntropyDialog::blockEntropy(QByteArray * data)
 {
@@ -118,9 +119,9 @@ void EntropyDialog::calculate()
        delete item;
     }
     ui->verticalLayout->addWidget(entropyView);*/
-    connect(ui->entropyChart,SIGNAL(mousePressed(qint64)),this,SLOT(mousePressed(qint64)));
-    connect(ui->entropyChart,SIGNAL(mouseMoved(qint64)),this,SLOT(mouseMoved(qint64)));
-    connect(ui->entropyChart,SIGNAL(rubberBandEvent()),this,SLOT(limitZoomOut()));
+    connect(ui->entropyChart, &EntropyChart::mousePressed, this, &EntropyDialog::mousePressed);
+    connect(ui->entropyChart, &EntropyChart::mouseMoved, this, &EntropyDialog::mouseMoved);
+    connect(ui->entropyChart, &EntropyChart::rubberBandEvent, this, &EntropyDialog::limitZoomOut);
 
 }
 
@@ -133,8 +134,8 @@ void EntropyDialog::mouseMoved(qint64 address)
 {
     if(address > 0 && address < _hexed->getSize()){
 
-        ui->AddressEdt->setText(QString::asprintf("%lld",address));
-       ui->ValueEdt->setText(QString::asprintf("%3.2f",findClosestPoint(series,address).y()));
+        ui->AddressEdt->setText(QString::number(address));
+       ui->ValueEdt->setText(QString::number(findClosestPoint(series, address).y(), 'f', 2));
     }
 }
 

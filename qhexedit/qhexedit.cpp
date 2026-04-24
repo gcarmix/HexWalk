@@ -41,10 +41,10 @@ QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
     setAsciiFontColor(QPalette::WindowText);
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QAbstractScrollArea::customContextMenuRequested, this, &QHexEdit::showContextMenu);
-    connect(&_cursorTimer, SIGNAL(timeout()), this, SLOT(updateCursor()));
-    connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
-    connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
-    connect(_undoStack, SIGNAL(indexChanged(int)), this, SLOT(dataChangedPrivate(int)));
+    connect(&_cursorTimer, &QTimer::timeout, this, &QHexEdit::updateCursor);
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &QHexEdit::adjust);
+    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &QHexEdit::adjust);
+    connect(_undoStack, &QUndoStack::indexChanged, this, &QHexEdit::dataChangedPrivate);
 
     _cursorTimer.setInterval(500);
     _cursorTimer.start();
@@ -507,11 +507,7 @@ void QHexEdit::setFont(const QFont &font)
     theFont.setStyleHint(QFont::Monospace);
     QWidget::setFont(theFont);
     QFontMetrics metrics = fontMetrics();
-#if QT_VERSION > QT_VERSION_CHECK(5, 11, 0)
     _pxCharWidth = metrics.horizontalAdvance(QLatin1Char('A'))+1;
-#else
-    _pxCharWidth = metrics.width(QLatin1Char('A'))+1;
-#endif
     _pxCharHeight = metrics.height();
     _pxGapAdr = _pxCharWidth / 2;
     _pxGapAdrHex = _pxCharWidth;
@@ -903,7 +899,11 @@ void QHexEdit::mouseMoveEvent(QMouseEvent * event)
 {
     _blink = false;
     viewport()->update();
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    qint64 actPos = cursorPosition(event->position().toPoint());
+#else
     qint64 actPos = cursorPosition(event->pos());
+#endif
     if (actPos >= 0)
     {
         setCursorPosition(actPos);
@@ -915,7 +915,11 @@ void QHexEdit::mousePressEvent(QMouseEvent * event)
 {
     _blink = false;
     viewport()->update();
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    qint64 cPos = cursorPosition(event->position().toPoint());
+#else
     qint64 cPos = cursorPosition(event->pos());
+#endif
     if (cPos >= 0)
     {
         if (event->button() != Qt::RightButton)

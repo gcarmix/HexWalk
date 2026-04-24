@@ -91,8 +91,8 @@ void DiffDialog::setFiles(QString file1str, QString file2str)
 
     ui->hexEdit1->setData(file1);
     ui->hexEdit2->setData(file2);
-    connect(ui->hexEdit1,SIGNAL(currentAddressChanged(qint64)),this,SLOT(trackCursor1(qint64)));
-    connect(ui->hexEdit2,SIGNAL(currentAddressChanged(qint64)),this,SLOT(trackCursor2(qint64)));
+    connect(ui->hexEdit1, &QHexEdit::currentAddressChanged, this, &DiffDialog::trackCursor1);
+    connect(ui->hexEdit2, &QHexEdit::currentAddressChanged, this, &DiffDialog::trackCursor2);
 
 }
 

@@ -88,12 +88,12 @@ void HexWalkMain::init()
     isUntitled = true;
 
     hexEdit = ui->widget;
-    connect(hexEdit, SIGNAL(overwriteModeChanged(bool)), this, SLOT(setOverwriteMode(bool)));
-    connect(hexEdit, SIGNAL(dataChanged()), this, SLOT(dataChanged()));
+    connect(hexEdit, &QHexEdit::overwriteModeChanged, this, &HexWalkMain::setOverwriteMode);
+    connect(hexEdit, &QHexEdit::dataChanged, this, &HexWalkMain::dataChanged);
     searchDialog = new SearchDialog(hexEdit, this);
     advancedSearchDialog = new AdvancedSearchDialog(hexEdit,this);
     optionsDialog = new OptionsDialog(appSettings,this);
-    connect(optionsDialog,SIGNAL(accepted()),this,SLOT(updateOptions()));
+    connect(optionsDialog, &OptionsDialog::accepted, this, &HexWalkMain::updateOptions);
     entropyDialog = new EntropyDialog(hexEdit,this);
     analysisDialog = new binanalysisdialog(hexEdit,this);
     hashDialog = new HashDialog(this);
@@ -185,7 +185,7 @@ void HexWalkMain::createStatusBar()
     lbAddress->setFrameShadow(QFrame::Sunken);
     lbAddress->setMinimumWidth(100);
     statusBar()->addPermanentWidget(lbAddress);
-    connect(hexEdit, SIGNAL(currentAddressChanged(qint64)), this, SLOT(setAddress(qint64)));
+    connect(hexEdit, &QHexEdit::currentAddressChanged, this, &HexWalkMain::setAddress);
 
     // Size Label
     lbSizeName = new QLabel();
@@ -196,7 +196,7 @@ void HexWalkMain::createStatusBar()
     lbSize->setFrameShadow(QFrame::Sunken);
     lbSize->setMinimumWidth(70);
     statusBar()->addPermanentWidget(lbSize);
-    connect(hexEdit, SIGNAL(currentSizeChanged(qint64)), this, SLOT(setSize(qint64)));
+    connect(hexEdit, &QHexEdit::currentSizeChanged, this, &HexWalkMain::setSize);
 
     // Overwrite Mode Label
     lbOverwriteModeName = new QLabel();
@@ -217,124 +217,124 @@ void HexWalkMain::createActions()
     openAct = new QAction(QIcon(":/images/open.png"), tr("&Open..."), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open an existing file"));
-    connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
+    connect(openAct, &QAction::triggered, this, &HexWalkMain::open);
 
     closeAct = new QAction(tr("&Close..."), this);
     closeAct->setShortcuts(QKeySequence::Close);
     closeAct->setStatusTip(tr("Close current file"));
-    connect(closeAct, SIGNAL(triggered()), this, SLOT(close()));
+    connect(closeAct, &QAction::triggered, this, &HexWalkMain::close);
 
     saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
     saveAct->setShortcuts(QKeySequence::Save);
     saveAct->setStatusTip(tr("Save the document to disk"));
-    connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+    connect(saveAct, &QAction::triggered, this, &HexWalkMain::save);
 
     saveAsAct = new QAction(tr("Save &As..."), this);
     saveAsAct->setShortcuts(QKeySequence::SaveAs);
     saveAsAct->setStatusTip(tr("Save the document under a new name"));
-    connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+    connect(saveAsAct, &QAction::triggered, this, &HexWalkMain::saveAs);
 
     saveReadable = new QAction(tr("Save &Readable..."), this);
     saveReadable->setStatusTip(tr("Save document in readable form"));
-    connect(saveReadable, SIGNAL(triggered()), this, SLOT(saveToReadableFile()));
+    connect(saveReadable, &QAction::triggered, this, &HexWalkMain::saveToReadableFile);
 
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
-    connect(exitAct, SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
+    connect(exitAct, &QAction::triggered, qApp, &QApplication::closeAllWindows);
 
     undoAct = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), this);
     undoAct->setShortcuts(QKeySequence::Undo);
-    connect(undoAct, SIGNAL(triggered()), hexEdit, SLOT(undo()));
+    connect(undoAct, &QAction::triggered, hexEdit, &QHexEdit::undo);
 
     redoAct = new QAction(QIcon(":/images/redo.png"), tr("&Redo"), this);
     redoAct->setShortcuts(QKeySequence::Redo);
-    connect(redoAct, SIGNAL(triggered()), hexEdit, SLOT(redo()));
+    connect(redoAct, &QAction::triggered, hexEdit, &QHexEdit::redo);
 
     copyAct = new QAction( tr("&Copy"), this);
     copyAct->setShortcuts(QKeySequence::Copy);
-    connect(copyAct, SIGNAL(triggered()), hexEdit, SLOT(copyText()));
+    connect(copyAct, &QAction::triggered, hexEdit, &QHexEdit::copyText);
     pasteAct = new QAction(tr("&Paste"), this);
     pasteAct->setShortcuts(QKeySequence::Paste);
-    connect(pasteAct, SIGNAL(triggered()), hexEdit, SLOT(pasteText()));
+    connect(pasteAct, &QAction::triggered, hexEdit, &QHexEdit::pasteText);
     cutAct = new QAction( tr("&Cut"), this);
     cutAct->setShortcuts(QKeySequence::Cut);
-    connect(cutAct, SIGNAL(triggered()), hexEdit, SLOT(cutText()));
+    connect(cutAct, &QAction::triggered, hexEdit, &QHexEdit::cutText);
 
     saveSelectionReadable = new QAction(tr("&Save Selection Readable..."), this);
     saveSelectionReadable->setStatusTip(tr("Save selection in readable form"));
-    connect(saveSelectionReadable, SIGNAL(triggered()), this, SLOT(saveSelectionToReadableFile()));
+    connect(saveSelectionReadable, &QAction::triggered, this, &HexWalkMain::saveSelectionToReadableFile);
 
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
-    connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+    connect(aboutAct, &QAction::triggered, this, &HexWalkMain::about);
 
     findAct = new QAction(tr("&Find/Replace"), this);
     findAct->setShortcuts(QKeySequence::FindPrevious);
     findAct->setStatusTip(tr("Show the Dialog for finding and replacing"));
-    connect(findAct, SIGNAL(triggered()), this, SLOT(showSearchDialog()));
+    connect(findAct, &QAction::triggered, this, &HexWalkMain::showSearchDialog);
 
     overwriteAct = new QAction(tr("&Overwrite/Insert mode"), this);
     overwriteAct->setShortcut(QKeySequence(Qt::Key_Insert));
     overwriteAct->setStatusTip(tr("Toggle overwrite/insert mode"));
-    connect(overwriteAct, SIGNAL(triggered()), this, SLOT(toggleOverwriteMode()));
+    connect(overwriteAct, &QAction::triggered, this, &HexWalkMain::toggleOverwriteMode);
 
     optionsAct = new QAction(tr("&Options"), this);
     optionsAct->setStatusTip(tr("Options"));
-    connect(optionsAct, SIGNAL(triggered()), this, SLOT(showOptionsDialog()));
+    connect(optionsAct, &QAction::triggered, this, &HexWalkMain::showOptionsDialog);
 
     findNextAct = new QAction(tr("Find &next"), this);
     findNextAct->setShortcuts(QKeySequence::FindNext);
     findNextAct->setStatusTip(tr("Find next occurrence of the searched pattern"));
-    connect(findNextAct, SIGNAL(triggered()), this, SLOT(findNext()));
+    connect(findNextAct, &QAction::triggered, this, &HexWalkMain::findNext);
 
     advancedFindAct = new QAction(QIcon(":/images/find.png"),tr("Advanced Find"), this);
     advancedFindAct->setShortcuts(QKeySequence::Find);
     advancedFindAct->setStatusTip(tr("Advanced find tool"));
-    connect(advancedFindAct, SIGNAL(triggered()), this, SLOT(showAdvancedSearchDialog()));
+    connect(advancedFindAct, &QAction::triggered, this, &HexWalkMain::showAdvancedSearchDialog);
 
     entropyAct = new QAction(QIcon(":/images/entropy.png"),tr("Entropy"), this);
     entropyAct->setShortcut(Qt::CTRL|Qt::Key_E);
     entropyAct->setStatusTip(tr("Calculate entropy of file"));
-    connect(entropyAct, SIGNAL(triggered()), this, SLOT(showEntropyDialog()));
+    connect(entropyAct, &QAction::triggered, this, &HexWalkMain::showEntropyDialog);
 
     diffAct = new QAction(QIcon(":/images/diff.png"),tr("Diff Analysis"), this);
     diffAct->setStatusTip(tr("do diff compare byte to byte"));
-    connect(diffAct, SIGNAL(triggered()), this, SLOT(showDiffDialog()));
+    connect(diffAct, &QAction::triggered, this, &HexWalkMain::showDiffDialog);
 
     binaryAct = new QAction(QIcon(":/images/binary.png"),tr("Binary Analysis"), this);
     binaryAct->setStatusTip(tr("make binary analysis with Binwalk"));
-    connect(binaryAct, SIGNAL(triggered()), this, SLOT(showBinaryDialog()));
+    connect(binaryAct, &QAction::triggered, this, &HexWalkMain::showBinaryDialog);
 
     converterAct = new QAction(tr("Number Converter"), this);
     converterAct->setStatusTip(tr("Useful number converter"));
-    connect(converterAct, SIGNAL(triggered()), this, SLOT(showConverterWidget()));
+    connect(converterAct, &QAction::triggered, this, &HexWalkMain::showConverterWidget);
 
     hashAct = new QAction(tr("Hash Calculator"), this);
     hashAct->setStatusTip(tr("Hash Calculator"));
-    connect(hashAct, SIGNAL(triggered()), this, SLOT(showHashDialog()));
+    connect(hashAct, &QAction::triggered, this, &HexWalkMain::showHashDialog);
 
     tagsAct = new QAction(QIcon(":/images/tags.png"),tr("Byte Patterns"), this);
     tagsAct->setStatusTip(tr("Byte Patterns"));
-    connect(tagsAct, SIGNAL(triggered()), this, SLOT(showTagsDialog()));
+    connect(tagsAct, &QAction::triggered, this, &HexWalkMain::showTagsDialog);
 
     stringsAct = new QAction(QIcon(":/images/strings.png"),tr("Search Strings"), this);
     stringsAct->setStatusTip(tr("Search Strings"));
-    connect(stringsAct, SIGNAL(triggered()), this, SLOT(showStringsDialog()));
+    connect(stringsAct, &QAction::triggered, this, &HexWalkMain::showStringsDialog);
 
     byteMapAct = new QAction(QIcon(":/images/bytemap.png"),tr("ByteMap"), this);
     byteMapAct->setStatusTip(tr("Byte Map"));
-    connect(byteMapAct, SIGNAL(triggered()), this, SLOT(showByteMap()));
+    connect(byteMapAct, &QAction::triggered, this, &HexWalkMain::showByteMap);
 
     disasmAct = new QAction(QIcon(":/images/disasm.png"),tr("Disasm"), this);
     disasmAct->setStatusTip(tr("Disassembler"));
-    connect(disasmAct, SIGNAL(triggered()), this, SLOT(showDisasm()));
+    connect(disasmAct, &QAction::triggered, this, &HexWalkMain::showDisasm);
 
     QAction* recentFileAction = 0;
     for(auto i = 0; i < 5; ++i){
         recentFileAction = new QAction(this);
         recentFileAction->setVisible(false);
-        connect(recentFileAction, SIGNAL(triggered()),this, SLOT(openRecent()));
+        connect(recentFileAction, &QAction::triggered, this, &HexWalkMain::openRecent);
         recentFileActionList.append(recentFileAction);
     }
 }
@@ -383,7 +383,7 @@ void HexWalkMain::createToolBars()
     gotoText->setFixedHeight(25);
     gotoText->setFixedWidth(80);
     gotoText->setText(tr("0"));
-    connect(gotoText,SIGNAL(returnPressed()),SLOT(gotoAddress()));
+    connect(gotoText, &QLineEdit::returnPressed, this, &HexWalkMain::gotoAddress);
     analysisToolBar->addWidget(gotoText);
 
     analysisToolBar->addSeparator();
@@ -395,7 +395,7 @@ void HexWalkMain::createToolBars()
     widthText->setFixedHeight(25);
     widthText->setFixedWidth(40);
     widthText->setText(tr("16"));
-    connect(widthText,SIGNAL(returnPressed()),SLOT(setWidth()));
+    connect(widthText, &QLineEdit::returnPressed, this, &HexWalkMain::setWidth);
     analysisToolBar->addWidget(widthText);
     //infoToolBar = addToolBar(tr("Info"));
 

@@ -54,7 +54,7 @@ void WordItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 }
 
 QSize WordItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    QStyleOptionViewItemV4 options = option;
+    QStyleOptionViewItem options = option;
     initStyleOption(&options, index);
 
     QTextDocument doc;

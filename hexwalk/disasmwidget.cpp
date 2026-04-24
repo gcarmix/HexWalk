@@ -75,7 +75,7 @@ void DisasmWidget::capst(void)
     mode = (cs_mode) (mode_int | endianness);
     if (cs_err ret = cs_open(arch, mode , &handle))
     {
-        message.sprintf("Invalid mode (e.g. x86 can't be Big Endian)");
+        message = QString::asprintf("Invalid mode (e.g. x86 can't be Big Endian)");
         ui->lstDisasm->addItem(message);
         return;
     }
@@ -83,8 +83,7 @@ void DisasmWidget::capst(void)
     if (count > 0) {
         size_t j;
         for (j = 0; j < count; j++) {
-            message.sprintf("0x%llX: %s %s", insn[j].address, insn[j].mnemonic,
-                            insn[j].op_str);
+            message = QString::asprintf("0x%llX: %s %s", insn[j].address, insn[j].mnemonic, insn[j].op_str);
             ui->lstDisasm->addItem(message);
 
         }
@@ -93,7 +92,7 @@ void DisasmWidget::capst(void)
     } else
     {
 
-        message.sprintf("ERROR: Failed to disassemble given code!\n");
+        message = QString::asprintf("ERROR: Failed to disassemble given code!\n");
         ui->lstDisasm->addItem(message);
     }
     cs_close(&handle);

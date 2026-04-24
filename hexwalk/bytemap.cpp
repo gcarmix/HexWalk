@@ -25,8 +25,8 @@
 
 ByteMap::ByteMap(QWidget *parent) : QAbstractScrollArea(parent)
 {
-    connect(verticalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
-    connect(horizontalScrollBar(), SIGNAL(valueChanged(int)), this, SLOT(adjust()));
+    connect(verticalScrollBar(), &QScrollBar::valueChanged, this, &ByteMap::adjust);
+    connect(horizontalScrollBar(), &QScrollBar::valueChanged, this, &ByteMap::adjust);
     _pxHeight = 3;
     _pxWidth = 3;
     _bytesPerLine = 256;
@@ -150,10 +150,18 @@ void ByteMap::mouseMoveEvent(QMouseEvent *event){
 
     viewport()->update();
     adjust();
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    mPoint = event->position().toPoint();
+#else
     mPoint = event->pos();
+#endif
     if((horizontalScrollBar()->value() + mPoint.x()/_pxWidth) < _bytesPerLine)
     {
+        #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        qint64 actPos = cursorPosition(event->position().toPoint());
+#else
         qint64 actPos = cursorPosition(event->pos());
+#endif
         if (actPos >= 0)
         {
             setCursorPosition(actPos);
@@ -166,9 +174,17 @@ void ByteMap::mouseMoveEvent(QMouseEvent *event){
 void ByteMap::mousePressEvent(QMouseEvent *event){
 
     viewport()->update();
+    #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    if((horizontalScrollBar()->value() + event->position().toPoint().x()/_pxWidth) < _bytesPerLine)
+#else
     if((horizontalScrollBar()->value() + event->pos().x()/_pxWidth) < _bytesPerLine)
+#endif
     {
+        #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        qint64 actPos = cursorPosition(event->position().toPoint());
+#else
         qint64 actPos = cursorPosition(event->pos());
+#endif
         if (actPos >= 0)
         {
             setCursorPosition(actPos);

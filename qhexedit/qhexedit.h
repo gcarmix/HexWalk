@@ -289,6 +289,9 @@ public:
 
 
 public slots:
+    void copyText();
+    void pasteText();
+    void cutText();
     /*! Redoes the last operation. If there is no operation to redo, i.e.
       there is no redo step in the undo/redo history, nothing happens.
       */
@@ -405,9 +408,6 @@ private slots:
     void refresh();                             // ensureVisible() and readBuffers()
     void updateCursor();                        // update blinking cursor
     void showContextMenu(const QPoint &pos);
-    void copyText();
-    void pasteText();
-    void cutText();
 
 private:
     // Name convention: pixel positions start with _px

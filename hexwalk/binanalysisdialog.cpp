@@ -115,7 +115,7 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
     progrDialog->setRange(0,0);
     progrDialog->setMinimumDuration(500);
     progrDialog->cancel();
-    connect(progrDialog,SIGNAL(canceled()),this,SLOT(kill_process()));
+    connect(progrDialog, &QProgressDialog::canceled, this, &binanalysisdialog::kill_process);
 
     binwalkProcess = new QProcess();
 
@@ -145,7 +145,7 @@ binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
 
 
 
-    connect(binwalkProcess,SIGNAL(finished(int)),this,SLOT(renderAnalysis(int)));
+    connect(binwalkProcess, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this, [this](int code, QProcess::ExitStatus) { renderAnalysis(code); });
 }
 
 binanalysisdialog::~binanalysisdialog()

@@ -21,7 +21,6 @@
 #include <QtCharts>
 #include <QChartView>
 #include <QRubberBand>
-QT_CHARTS_USE_NAMESPACE
 class EntropyChart : public QChartView
 {
 Q_OBJECT

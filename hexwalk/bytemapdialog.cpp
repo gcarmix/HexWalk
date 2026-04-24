@@ -17,6 +17,7 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  */
 #include "bytemapdialog.h"
+#include "hexwalkmain.h"
 #include "ui_bytemapdialog.h"
 ByteMapDialog::ByteMapDialog(QHexEdit * hexedit,QWidget *parent) :
     QDialog(parent),
@@ -24,9 +25,9 @@ ByteMapDialog::ByteMapDialog(QHexEdit * hexedit,QWidget *parent) :
 {
     ui->setupUi(this);
     _hexedit = hexedit;
-    connect(ui->byteMap,SIGNAL(mouseEvent()),this,SLOT(updatePos()));
-    connect(ui->byteMap,SIGNAL(mousePress()),this,SLOT(gotoAddress()));
-    connect(parent,SIGNAL(fileLoaded()),this,SLOT(refresh()));
+    connect(ui->byteMap, &ByteMap::mouseEvent, this, &ByteMapDialog::updatePos);
+    connect(ui->byteMap, &ByteMap::mousePress, this, &ByteMapDialog::gotoAddress);
+    connect(static_cast<HexWalkMain*>(parent), &HexWalkMain::fileLoaded, this, &ByteMapDialog::refresh);
     ui->byteMap->setBytesPerLine(256);
     ui->spinCols->setValue(256);
     ui->byteMap->colored = ui->colorBox->isChecked();
@@ -56,8 +57,14 @@ void ByteMapDialog::updatePos()
 {
     if(ui->byteMap->getCurrentPosition() < _hexedit->getSize())
     {
-        ui->edtAddress->setText(QString::asprintf("%02llX (%lld)",ui->byteMap->getCurrentPosition(),ui->byteMap->getCurrentPosition()));
-        ui->edtValue->setText(QString::asprintf("%02X (%u)",(unsigned char)(_hexedit->dataAt(ui->byteMap->getCurrentPosition(),1).at(0)),(unsigned char)(_hexedit->dataAt(ui->byteMap->getCurrentPosition(),1).at(0))));
+        {
+        qint64 pos = ui->byteMap->getCurrentPosition();
+        ui->edtAddress->setText(QString("%1 (%2)").arg(pos, 2, 16, QChar('0')).toUpper().arg(pos));
+    }
+        {
+        unsigned char val = (unsigned char)(_hexedit->dataAt(ui->byteMap->getCurrentPosition(), 1).at(0));
+        ui->edtValue->setText(QString("%1 (%2)").arg(val, 2, 16, QChar('0')).toUpper().arg(val));
+    }
     }
 
 }

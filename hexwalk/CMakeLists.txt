@@ -70,6 +70,10 @@ endif()
 target_compile_definitions(hexwalk PRIVATE
     QHEXEDIT_EXPORTS
     APP_VERSION="${PROJECT_VERSION}"
+    # GCC 15 + C++17: std::byte conflicts with the byte typedef in older MinGW Windows SDK
+    # headers (rpcndr.h). WIN32_LEAN_AND_MEAN prevents pulling in the COM subsystem headers
+    # that trigger the conflict. This can be dropped once Qt6 + updated MinGW headers are used.
+    $<$<AND:$<BOOL:${WIN32}>,$<CXX_COMPILER_ID:GNU>>:WIN32_LEAN_AND_MEAN>
 )
 
 target_include_directories(hexwalk PRIVATE
@@ -91,13 +95,30 @@ target_link_libraries(hexwalk PRIVATE
     capstone
 )
 
-# Windows static linking (MinGW only)
+# Windows: static linking of GCC runtime + extra Win32 libs required by static Qt
 if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_link_options(hexwalk PRIVATE
         -no-pie
         -static-libgcc
         -static-libstdc++
         -static
+    )
+    # These system libraries are pulled in implicitly by dynamic Qt but must be
+    # listed explicitly when linking against a static Qt build.
+    if(NOT BUILD_SHARED_LIBS)
+        target_link_libraries(hexwalk PRIVATE
+            dwmapi uxtheme setupapi opengl32 glu32
+            ws2_32 winmm imm32 ole32 oleaut32 uuid
+            version winspool shlwapi
+        )
+    endif()
+endif()
+
+# Qt6 static build: auto-import platform and style plugins via CMake
+if(QT_VERSION_MAJOR GREATER_EQUAL 6)
+    qt_import_plugins(hexwalk
+        INCLUDE Qt6::QWindowsIntegrationPlugin
+                Qt6::QWindowsVistaStylePlugin
     )
 endif()
 
@@ -112,3 +133,16 @@ endif()
 set_target_properties(hexwalk PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
+
+# Release: minimise binary size
+if(CMAKE_BUILD_TYPE STREQUAL "Release" AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(hexwalk PRIVATE
+        -Os                  # optimise for size rather than speed
+        -ffunction-sections  # one ELF section per function → gc-sections can prune each one
+        -fdata-sections      # same for data
+    )
+    target_link_options(hexwalk PRIVATE
+        -Wl,--gc-sections    # discard sections with no references
+        -s                   # strip all symbols and debug info from the output
+    )
+endif()

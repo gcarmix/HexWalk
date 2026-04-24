@@ -65,7 +65,7 @@ void ConverterWidget::on_binTextEdit_textChanged(const QString &arg1)
         if(check.length()){
             for(i=0;i<check.length();i++)
             {
-                if(check.at(i) != 0x30 && check.at(i) != 0x31)
+                if(check.at(i) != QChar('0') && check.at(i) != QChar('1'))
                 {
                     good = false;
                     break;
@@ -99,7 +99,7 @@ void ConverterWidget::updateHex()
     if(check.length()){
         for(i=0;i<check.length();i++)
         {
-            if(check.at(i) < 0x30 || (check.at(i) >0x39 && check.at(i) < 0x41) || (check.at(i)>0x46 && check.at(i) < 0x61) ||(check.at(i)> 0x66))
+            if(check.at(i) < QChar(0x30) || (check.at(i) > QChar(0x39) && check.at(i) < QChar(0x41)) || (check.at(i) > QChar(0x46) && check.at(i) < QChar(0x61)) || (check.at(i) > QChar(0x66)))
             {
                 good = false;
                 break;
@@ -147,7 +147,7 @@ void ConverterWidget::updateDec()
     {
         for(i=0;i<check.length();i++)
         {
-            if(check.at(i) < 0x30 || check.at(i) >0x39)
+            if(check.at(i) < QChar(0x30) || check.at(i) > QChar(0x39))
             {
                 good = false;
                 break;
