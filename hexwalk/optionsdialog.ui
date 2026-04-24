@@ -385,6 +385,32 @@
     </widget>
    </item>
    <item>
+    <widget class="QGroupBox" name="gbAnalyzer">
+     <property name="title">
+      <string>Binary Analyzer</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayoutAnalyzer">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="rbAnalyzerHexdig">
+        <property name="text">
+         <string>HexDig (built-in)</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QRadioButton" name="rbAnalyzerBinwalk">
+        <property name="text">
+         <string>binwalk 3 (external)</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>

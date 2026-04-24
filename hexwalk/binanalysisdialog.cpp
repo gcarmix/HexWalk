@@ -23,11 +23,12 @@
 #include <QDebug>
 #include <QProcess>
 #include <QProcessEnvironment>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
 #include <QProgressDialog>
 #include <QMessageBox>
+#include <QDir>
+#include <QFileInfo>
+
+#include "hexdigworker.h"
 
 
 BinTableModel::BinTableModel(QObject *parent) : QAbstractTableModel(parent)
@@ -37,24 +38,17 @@ BinTableModel::BinTableModel(QObject *parent) : QAbstractTableModel(parent)
 
 void BinTableModel::populateData(const QList<BinwalkResult_S> &resultlist)
 {
-
+    beginResetModel();
+    tm_offset.clear();
     tm_cursor.clear();
     tm_content.clear();
 
-
-    for(int i=0;i<resultlist.count();i++)
-    {
-        QString cursor;
-        cursor = QString("%1").arg(resultlist.at(i).cursor,4,16);
-        tm_cursor.append(cursor);
+    for (int i = 0; i < resultlist.count(); i++) {
+        tm_offset.append(resultlist.at(i).cursor);
+        tm_cursor.append(QString("0x%1").arg(resultlist.at(i).cursor, 0, 16));
         tm_content.append(resultlist.at(i).datastr);
-
     }
-
-
-
-
-    return;
+    endResetModel();
 }
 
 
@@ -72,14 +66,20 @@ int BinTableModel::columnCount(const QModelIndex &parent) const
 
 QVariant BinTableModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || role != Qt::DisplayRole) {
+    if (!index.isValid())
         return QVariant();
+
+    if (role == Qt::UserRole) {
+        return static_cast<qlonglong>(tm_offset.value(index.row(), -1));
     }
-    if (index.column() == 0) {
+
+    if (role != Qt::DisplayRole)
+        return QVariant();
+
+    if (index.column() == 0)
         return tm_cursor[index.row()];
-    } else if (index.column() == 1) {
+    if (index.column() == 1)
         return tm_content[index.row()];
-    }
 
     return QVariant();
 }
@@ -87,11 +87,10 @@ QVariant BinTableModel::data(const QModelIndex &index, int role) const
 QVariant BinTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
-        if (section == 0) {
-            return QString("Cursor");
-        }else if (section == 1) {
-            return QString("Content");
-        }
+        if (section == 0)
+            return QString("Offset");
+        if (section == 1)
+            return QString("Description");
     }
     return QVariant();
 }
@@ -99,176 +98,424 @@ QVariant BinTableModel::headerData(int section, Qt::Orientation orientation, int
 
 void BinTableModel::clearData()
 {
+    beginResetModel();
+    tm_offset.clear();
     tm_cursor.clear();
     tm_content.clear();
+    endResetModel();
 }
 
-binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit,QWidget *parent) :
+qint64 BinTableModel::offsetAtRow(int row) const
+{
+    return tm_offset.value(row, -1);
+}
+
+
+// -------------------- HexdigTableModel --------------------
+
+HexdigTableModel::HexdigTableModel(QObject *parent) : QAbstractTableModel(parent)
+{
+}
+
+void HexdigTableModel::populateRows(const QList<Row> &rows)
+{
+    beginResetModel();
+    m_rows = rows;
+    endResetModel();
+}
+
+void HexdigTableModel::clearData()
+{
+    beginResetModel();
+    m_rows.clear();
+    endResetModel();
+}
+
+int HexdigTableModel::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return m_rows.size();
+}
+
+int HexdigTableModel::columnCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return 4;
+}
+
+QVariant HexdigTableModel::data(const QModelIndex &index, int role) const
+{
+    if (!index.isValid())
+        return QVariant();
+
+    if (role == Qt::UserRole) {
+        return static_cast<qlonglong>(offsetAtRow(index.row()));
+    }
+
+    if (role != Qt::DisplayRole)
+        return QVariant();
+
+    const Row &r = m_rows.at(index.row());
+    switch (index.column()) {
+    case 0: return r.offsetStr;
+    case 1: return r.type;
+    case 2: return r.size;
+    case 3: return r.info;
+    }
+    return QVariant();
+}
+
+QVariant HexdigTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+        switch (section) {
+        case 0: return QString("Offset");
+        case 1: return QString("Type");
+        case 2: return QString("Size");
+        case 3: return QString("Info");
+        }
+    }
+    return QVariant();
+}
+
+qint64 HexdigTableModel::offsetAtRow(int row) const
+{
+    if (row < 0 || row >= m_rows.size())
+        return -1;
+    return m_rows.at(row).offset;
+}
+
+
+// -------------------- binanalysisdialog --------------------
+
+binanalysisdialog::binanalysisdialog(QHexEdit *hexEdit, QSettings *appSettings, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::binanalysisdialog)
 {
     ui->setupUi(this);
     _hexEdit = hexEdit;
+    this->appSettings = appSettings;
+
     progrDialog = new QProgressDialog(this);
     progrDialog->setLabelText("Please wait...");
     progrDialog->setModal(true);
-    progrDialog->setRange(0,0);
+    progrDialog->setRange(0, 0);
     progrDialog->setMinimumDuration(500);
     progrDialog->cancel();
     connect(progrDialog, &QProgressDialog::canceled, this, &binanalysisdialog::kill_process);
 
-    binwalkProcess = new QProcess();
+    binwalkProcess = new QProcess(this);
 
-    #ifdef Q_OS_WIN
-    if(!QFile::exists("binw.py"))
-    {
-        QFile file( "binw.py" );
-        if ( file.open(QIODevice::ReadWrite) )
-        {
-            QTextStream stream( &file );
-            stream << "import sys" << Qt::endl;
-            stream << "import os" << Qt::endl;
-            stream << "sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'binwalk', 'src'))" << Qt::endl;
-            stream << "import binwalk" << Qt::endl;
-            stream << "if len(sys.argv) == 2:" << Qt::endl;
-            stream << "    binwalk.scan('--signature', sys.argv[1])" << Qt::endl;
-            stream << "elif len(sys.argv) == 3 and sys.argv[1] == '-e':" << Qt::endl;
-            stream << "    binwalk.scan('--signature','--extract', sys.argv[2])" << Qt::endl;
-        }
-        file.close();
-    }
-#else
+#ifndef Q_OS_WIN
+    // Make sure the common unix install paths are visible to QProcess when
+    // searching for the binwalk binary.
     QString path = qgetenv("PATH");
     path = path + ":/usr/local/bin:/opt/homebrew/bin:/opt/local/bin";
-    qputenv("PATH",path.toUtf8());
-    #endif
+    qputenv("PATH", path.toUtf8());
+#endif
 
+    connect(binwalkProcess,
+            qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
+            this,
+            [this](int code, QProcess::ExitStatus) {
+                if (processType == 0)
+                    renderBinwalkScan(code);
+                else
+                    renderBinwalkExtract(code);
+            });
 
-
-    connect(binwalkProcess, qOverload<int, QProcess::ExitStatus>(&QProcess::finished), this, [this](int code, QProcess::ExitStatus) { renderAnalysis(code); });
+    connect(ui->resultTableView, &QTableView::clicked,
+            this, &binanalysisdialog::on_resultTableView_clicked);
 }
 
 binanalysisdialog::~binanalysisdialog()
 {
+    if (hexdigWorker) {
+        if (hexdigWorker->isRunning())
+            hexdigWorker->wait();
+    }
     delete ui;
+}
+
+binanalysisdialog::Analyzer binanalysisdialog::currentAnalyzer() const
+{
+    QString choice = appSettings
+        ? appSettings->value("DefaultAnalyzer", "hexdig").toString()
+        : QStringLiteral("hexdig");
+    return choice.compare("binwalk", Qt::CaseInsensitive) == 0
+        ? AnalyzerBinwalk
+        : AnalyzerHexdig;
 }
 
 void binanalysisdialog::kill_process()
 {
-    binwalkProcess->kill();
-}
-
-void binanalysisdialog::renderAnalysis(int status_code)
-{
-    if(processType == 0)
-    {
-        BinwalkResult_S binwalkResult;
-
-        if(status_code != 0)
-        {
-            progrDialog->hide();
-            QMessageBox::warning(this, tr("HexWalk"),
-                                 tr("Could not start binwalk.\r\nError: \r\n%1").arg(QString(binwalkProcess->readAllStandardError())));
-            //qInfo() <<QString(binwalkProcess->readAllStandardError());
-            return;
-        }
-        resultslist.clear();
-        QString p_stdout = binwalkProcess->readAll();
+    if (activeAnalyzer == AnalyzerBinwalk) {
+        binwalkProcess->kill();
+    } else {
+        // Scanner::scan has no cancellation hook — the worker will finish on
+        // its own. Just hide the dialog so the UI isn't blocked.
         progrDialog->hide();
-        QStringList lines = p_stdout.split("\n");
-        if(lines.length() < 3)
-        {
-            return;
-        }
-        lines.removeFirst();
-        lines.removeFirst();
-        lines.removeFirst();
-        QString line;
-        foreach(line,lines)
-        {
-            if(line.length()>0){
-                binwalkResult.cursor = line.section(' ',1,1,QString::SectionSkipEmpty).toLongLong(NULL,16);
-                binwalkResult.datastr = line.section(' ',2,-1,QString::SectionSkipEmpty);
-
-                resultslist.append(binwalkResult);
-            }
-
-
-        }
-
-        if(model)
-        {
-            delete model;
-            model = NULL;
-        }
-        model = new BinTableModel(this);
-
-        model->populateData(resultslist);
-
-        ui->binwalkTableView->setModel(model);
-        ui->binwalkTableView->setColumnWidth(1,750);
-        ui->binwalkTableView->resizeRowsToContents();
-        ui->binwalkTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     }
-    else
-    {
-        progrDialog->hide();
-        if(status_code == 0)
-        {
-            QMessageBox::warning(this, tr("HexWalk"),
-                                 "Extraction complete.");
-
-        }
-        else
-        {
-            progrDialog->hide();
-            QMessageBox::warning(this, tr("HexWalk"),
-                                 tr("Could not start binwalk.\r\nError: \r\n%1").arg(QString(binwalkProcess->readAllStandardError())));
-            //qInfo() <<QString(binwalkProcess->readAllStandardError());
-            return;
-        }
-    }
-
 }
 
 void binanalysisdialog::analyze(QString filename)
 {
-    //QCoreApplication::processEvents();
-    processType = 0;
     curFile = filename;
-    if(model)
-    {
-        delete model;
-        model = NULL;
-    }
+    activeAnalyzer = currentAnalyzer();
+
+    ui->lblAnalyzer->setText(
+        activeAnalyzer == AnalyzerBinwalk
+            ? tr("Analyzer: binwalk")
+            : tr("Analyzer: HexDig"));
+
+    if (binwalkModel) { delete binwalkModel; binwalkModel = nullptr; }
+    if (hexdigModel) { delete hexdigModel; hexdigModel = nullptr; }
+    ui->resultTableView->setModel(nullptr);
+
     progrDialog->show();
 
-    QStringList params;
-#ifdef Q_OS_WIN
-    params << "binw.py" << filename;
-    binwalkProcess->start("py",params);
-#else
-    params << filename;
-    binwalkProcess->start("binwalk",params);
-#endif
-    binwalkProcess->waitForStarted(2000);
-    if(binwalkProcess->state() != QProcess::Running)
-    {
-        binwalkProcess->close();
-#ifdef Q_OS_WIN
-        QMessageBox::warning(this, tr("HexWalk"),tr("Could not start binwalk.\r\nError: \r\n%1").arg("Python executable not found"));
-#else
-        QMessageBox::warning(this, tr("HexWalk"),tr("Could not start binwalk.\r\nError: \r\n%1").arg("Binwalk executable not found"));
-#endif
-        progrDialog->hide();
-    }
-
+    if (activeAnalyzer == AnalyzerBinwalk)
+        startBinwalkScan(filename);
+    else
+        startHexdigScan(filename);
 }
 
-void binanalysisdialog::on_binwalkTableView_clicked(const QModelIndex &index)
+// -------------------- Binwalk path (binwalk 3 on PATH) --------------------
+
+void binanalysisdialog::startBinwalkScan(const QString &filename)
 {
-    _hexEdit->indexOf("",resultslist.at(index.row()).cursor,false,false);
-    _hexEdit->setCursorPosition(resultslist.at(index.row()).cursor*2);
+    processType = 0;
+    QStringList params;
+    params << filename;
+    binwalkProcess->start("binwalk", params);
+    binwalkProcess->waitForStarted(2000);
+    if (binwalkProcess->state() != QProcess::Running) {
+        binwalkProcess->close();
+        QMessageBox::warning(this, tr("HexWalk"),
+            tr("Could not start binwalk.\r\nError: \r\n%1")
+                .arg(tr("binwalk executable not found on PATH (requires binwalk 3).")));
+        progrDialog->hide();
+    }
+}
+
+void binanalysisdialog::renderBinwalkScan(int status_code)
+{
+    if (status_code != 0) {
+        progrDialog->hide();
+        QMessageBox::warning(this, tr("HexWalk"),
+            tr("Could not start binwalk.\r\nError: \r\n%1")
+                .arg(QString(binwalkProcess->readAllStandardError())));
+        return;
+    }
+
+    binwalkResults.clear();
+    QString p_stdout = binwalkProcess->readAll();
+    progrDialog->hide();
+
+    QStringList lines = p_stdout.split("\n");
+
+    // Binwalk 3's preamble is longer and variable than binwalk 2's. Find the
+    // '---' rule that separates the header from the data rows and start parsing
+    // after it; if absent, fall back to accepting any line that starts with a
+    // decimal integer.
+    int startIdx = -1;
+    for (int i = 0; i < lines.size(); ++i) {
+        if (lines.at(i).trimmed().startsWith("---")) {
+            startIdx = i + 1;
+            break;
+        }
+    }
+    if (startIdx < 0)
+        startIdx = 0;
+
+    for (int i = startIdx; i < lines.size(); ++i) {
+        QString line = lines.at(i);
+        if (line.trimmed().isEmpty())
+            continue;
+
+        // Expected columns: <decimal> <hex> <description...>
+        QString hexStr = line.section(' ', 1, 1, QString::SectionSkipEmpty);
+        if (hexStr.startsWith("0x") || hexStr.startsWith("0X"))
+            hexStr = hexStr.mid(2);
+
+        bool ok = false;
+        qint64 offset = hexStr.toLongLong(&ok, 16);
+        if (!ok)
+            continue;
+
+        BinwalkResult_S r;
+        r.cursor = offset;
+        r.datastr = line.section(' ', 2, -1, QString::SectionSkipEmpty);
+        binwalkResults.append(r);
+    }
+
+    if (binwalkModel) {
+        delete binwalkModel;
+        binwalkModel = nullptr;
+    }
+    binwalkModel = new BinTableModel(this);
+    binwalkModel->populateData(binwalkResults);
+
+    ui->resultTableView->setModel(binwalkModel);
+    ui->resultTableView->setColumnWidth(0, 100);
+    ui->resultTableView->setColumnWidth(1, 750);
+    ui->resultTableView->resizeRowsToContents();
+    ui->resultTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+}
+
+void binanalysisdialog::renderBinwalkExtract(int status_code)
+{
+    progrDialog->hide();
+    if (status_code == 0) {
+        QMessageBox::information(this, tr("HexWalk"), tr("Extraction complete."));
+    } else {
+        QMessageBox::warning(this, tr("HexWalk"),
+            tr("Could not start binwalk.\r\nError: \r\n%1")
+                .arg(QString(binwalkProcess->readAllStandardError())));
+    }
+}
+
+// -------------------- HexDig path (in-process library) --------------------
+
+QString binanalysisdialog::hexdigExtractionDir() const
+{
+    QDir d = QFileInfo(curFile).absoluteDir();
+    return d.absolutePath() + "/extracted";
+}
+
+void binanalysisdialog::startHexdigScan(const QString &filename)
+{
+    if (hexdigWorker) {
+        if (hexdigWorker->isRunning())
+            hexdigWorker->wait();
+        hexdigWorker->deleteLater();
+        hexdigWorker = nullptr;
+    }
+
+    hexdigExtractMode = false;
+    hexdigWorker = new HexdigWorker(filename,
+                                    /*enableExtraction*/ false,
+                                    /*recursionDepth*/ 0,
+                                    /*extractionPath*/ QString(),
+                                    /*verbose*/ true,
+                                    this);
+    connect(hexdigWorker, &HexdigWorker::scanFinished,
+            this, &binanalysisdialog::onHexdigFinished);
+    connect(hexdigWorker, &HexdigWorker::scanFailed,
+            this, &binanalysisdialog::onHexdigFailed);
+    hexdigWorker->start();
+}
+
+void binanalysisdialog::startHexdigExtraction()
+{
+    if (hexdigWorker) {
+        if (hexdigWorker->isRunning())
+            hexdigWorker->wait();
+        hexdigWorker->deleteLater();
+        hexdigWorker = nullptr;
+    }
+
+    hexdigExtractMode = true;
+    progrDialog->show();
+    hexdigWorker = new HexdigWorker(curFile,
+                                    /*enableExtraction*/ true,
+                                    /*recursionDepth*/ 8,
+                                    /*extractionPath*/ hexdigExtractionDir(),
+                                    /*verbose*/ false,
+                                    this);
+    connect(hexdigWorker, &HexdigWorker::scanFinished,
+            this, &binanalysisdialog::onHexdigFinished);
+    connect(hexdigWorker, &HexdigWorker::scanFailed,
+            this, &binanalysisdialog::onHexdigFailed);
+    hexdigWorker->start();
+}
+
+// Flatten a ScanResult tree into table rows in DFS order, preserving the
+// top-level offset so row clicks can still navigate the hex view.
+static void flattenHexdigResults(const std::vector<ScanResult> &results,
+                                 int depth,
+                                 qint64 rootOffset,
+                                 bool isRoot,
+                                 QList<HexdigTableModel::Row> &out)
+{
+    for (const auto &res : results) {
+        HexdigTableModel::Row row;
+        row.offset = isRoot ? static_cast<qint64>(res.offset) : rootOffset;
+        QString indent = QString(depth * 2, QChar(' '));
+        row.offsetStr = indent + QString("0x%1").arg(
+            static_cast<qlonglong>(res.offset), 0, 16);
+        row.type = QString::fromStdString(res.type);
+        row.size = QString::number(static_cast<qulonglong>(res.length));
+        row.info = QString::fromStdString(res.info);
+        out.append(row);
+
+        if (!res.children.empty()) {
+            flattenHexdigResults(res.children,
+                                 depth + 1,
+                                 row.offset,
+                                 /*isRoot*/ false,
+                                 out);
+        }
+    }
+}
+
+void binanalysisdialog::onHexdigFinished()
+{
+    progrDialog->hide();
+
+    if (hexdigExtractMode) {
+        QMessageBox::information(this, tr("HexWalk"),
+            tr("Extraction complete. Output: %1").arg(hexdigExtractionDir()));
+    }
+
+    if (!hexdigWorker)
+        return;
+
+    QList<HexdigTableModel::Row> rows;
+    flattenHexdigResults(hexdigWorker->results, 0, 0, true, rows);
+
+    if (hexdigModel) {
+        delete hexdigModel;
+        hexdigModel = nullptr;
+    }
+    hexdigModel = new HexdigTableModel(this);
+    hexdigModel->populateRows(rows);
+
+    ui->resultTableView->setModel(hexdigModel);
+    ui->resultTableView->setColumnWidth(0, 120);
+    ui->resultTableView->setColumnWidth(1, 120);
+    ui->resultTableView->setColumnWidth(2, 100);
+    ui->resultTableView->setColumnWidth(3, 520);
+    ui->resultTableView->resizeRowsToContents();
+    ui->resultTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+}
+
+void binanalysisdialog::onHexdigFailed(const QString &message)
+{
+    progrDialog->hide();
+    QMessageBox::warning(this, tr("HexWalk"),
+        tr("HexDig analysis failed.\r\nError: \r\n%1").arg(message));
+}
+
+// -------------------- UI slots --------------------
+
+void binanalysisdialog::on_resultTableView_clicked(const QModelIndex &index)
+{
+    if (!index.isValid())
+        return;
+
+    QAbstractItemModel *m = ui->resultTableView->model();
+    if (!m)
+        return;
+
+    QVariant v = m->data(m->index(index.row(), 0), Qt::UserRole);
+    bool ok = false;
+    qint64 offset = v.toLongLong(&ok);
+    if (!ok || offset < 0)
+        return;
+
+    _hexEdit->indexOf("", offset, false, false);
+    _hexEdit->setCursorPosition(offset * 2);
     _hexEdit->update();
 }
 
@@ -281,29 +528,24 @@ void binanalysisdialog::on_closeBtn_clicked()
 
 void binanalysisdialog::on_extractAllBtn_clicked()
 {
-    processType = 1;
+    if (activeAnalyzer == AnalyzerBinwalk) {
+        processType = 1;
+        progrDialog->show();
 
-    progrDialog->show();
-
-    QStringList params;
-
-#ifdef Q_OS_WIN
-    params << "binw.py"<<"-e" << curFile;
-    binwalkProcess->start("py",params);
-    if(binwalkProcess->state() != QProcess::Running)
-    {
-        binwalkProcess->close();
-        QMessageBox::warning(this, tr("HexWalk"),
-                             tr("Could not start binwalk.\r\nError: \r\n%1").arg("Python executable not found"));
-        progrDialog->hide();
+        QStringList params;
+        QDir d = QFileInfo(curFile).absoluteDir();
+        QString curDir = d.absolutePath() + "/extracted";
+        params << "-e" << curFile << "-C" << curDir;
+        binwalkProcess->start("binwalk", params);
+        binwalkProcess->waitForStarted(2000);
+        if (binwalkProcess->state() != QProcess::Running) {
+            binwalkProcess->close();
+            QMessageBox::warning(this, tr("HexWalk"),
+                tr("Could not start binwalk.\r\nError: \r\n%1")
+                    .arg(tr("binwalk executable not found on PATH (requires binwalk 3).")));
+            progrDialog->hide();
+        }
+    } else {
+        startHexdigExtraction();
     }
-#else
-    QDir d = QFileInfo(curFile).absoluteDir();
-    QString curDir=d.absolutePath();
-    curDir=curDir+"/extracted";
-    params << "-e" << curFile << "-C"<<curDir;
-    binwalkProcess->start("binwalk",params);
-#endif
-
 }
-

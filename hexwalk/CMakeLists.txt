@@ -9,6 +9,7 @@ set(SOURCES
     # application
     advancedsearchdialog.cpp
     binanalysisdialog.cpp
+    hexdigworker.cpp
     bytemap.cpp
     bytemapdialog.cpp
     converterwidget.cpp
@@ -93,6 +94,7 @@ target_link_libraries(hexwalk PRIVATE
     Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Charts
     capstone
+    hexdig_lib
 )
 
 # Windows: static linking of GCC runtime + extra Win32 libs required by static Qt

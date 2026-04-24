@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(HexWalk
-    VERSION 1.10.0
+    VERSION 2.0.0
     DESCRIPTION "Hex Editor/Viewer/Analyzer"
     LANGUAGES CXX
 )
@@ -22,4 +22,5 @@ set(CAPSTONE_BUILD_TESTS    OFF CACHE BOOL "" FORCE)
 set(CAPSTONE_BUILD_CSTOOL   OFF CACHE BOOL "" FORCE)
 
 add_subdirectory(capstone)
+add_subdirectory(hexdig)
 add_subdirectory(hexwalk)

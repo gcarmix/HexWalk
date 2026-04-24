@@ -74,6 +74,12 @@ void OptionsDialog::readSettings()
 
     ui->sbAddressAreaWidth->setValue(appSettings->value("AddressAreaWidth").toInt());
     ui->sbBytesPerLine->setValue(appSettings->value("BytesPerLine").toInt());
+
+    QString analyzer = appSettings->value("DefaultAnalyzer", "hexdig").toString();
+    if (analyzer.compare("binwalk", Qt::CaseInsensitive) == 0)
+        ui->rbAnalyzerBinwalk->setChecked(true);
+    else
+        ui->rbAnalyzerHexdig->setChecked(true);
 }
 
 void OptionsDialog::writeSettings()
@@ -95,6 +101,9 @@ void OptionsDialog::writeSettings()
 
     appSettings->setValue("AddressAreaWidth", ui->sbAddressAreaWidth->value());
     appSettings->setValue("BytesPerLine", ui->sbBytesPerLine->value());
+
+    appSettings->setValue("DefaultAnalyzer",
+        ui->rbAnalyzerBinwalk->isChecked() ? "binwalk" : "hexdig");
 }
 
 void OptionsDialog::setColor(QWidget *widget, QColor color)
@@ -187,6 +196,8 @@ void OptionsDialog::on_buttonBox_clicked(QAbstractButton *button)
 
         ui->sbAddressAreaWidth->setValue(6);
         ui->sbBytesPerLine->setValue(16);
+
+        ui->rbAnalyzerHexdig->setChecked(true);
         }
 }
 

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1024</width>
-    <height>378</height>
+    <height>420</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -25,13 +25,26 @@
   <property name="windowTitle">
    <string>HexWalk - Binary Analysis</string>
   </property>
-  <widget class="QTableView" name="binwalkTableView">
+  <widget class="QLabel" name="lblAnalyzer">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>881</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Analyzer: </string>
+   </property>
+  </widget>
+  <widget class="QTableView" name="resultTableView">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>10</y>
+     <y>40</y>
      <width>881</width>
-     <height>361</height>
+     <height>370</height>
     </rect>
    </property>
   </widget>
@@ -39,7 +52,7 @@
    <property name="geometry">
     <rect>
      <x>910</x>
-     <y>10</y>
+     <y>40</y>
      <width>93</width>
      <height>29</height>
     </rect>
@@ -52,7 +65,7 @@
    <property name="geometry">
     <rect>
      <x>910</x>
-     <y>50</y>
+     <y>80</y>
      <width>93</width>
      <height>29</height>
     </rect>

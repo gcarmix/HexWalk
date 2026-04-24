@@ -22,12 +22,16 @@
 #include <QDialog>
 #include <QAbstractTableModel>
 #include <QProgressDialog>
+#include <QProcess>
+#include <QSettings>
 #include "resultType.h"
 #include "../qhexedit/qhexedit.h"
 
 namespace Ui {
 class binanalysisdialog;
 }
+
+class HexdigWorker;
 
 class BinTableModel : public QAbstractTableModel
 {
@@ -45,10 +49,41 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
 
+    qint64 offsetAtRow(int row) const;
+
 private:
+    QList<qint64> tm_offset;
     QList<QString> tm_cursor;
     QList<QString> tm_content;
+};
 
+class HexdigTableModel : public QAbstractTableModel
+{
+    Q_OBJECT
+
+public:
+    HexdigTableModel(QObject *parent = nullptr);
+
+    struct Row {
+        qint64 offset;
+        QString offsetStr;
+        QString type;
+        QString size;
+        QString info;
+    };
+
+    void populateRows(const QList<Row> &rows);
+    void clearData();
+
+    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+
+    qint64 offsetAtRow(int row) const;
+
+private:
+    QList<Row> m_rows;
 };
 
 
@@ -57,28 +92,49 @@ class binanalysisdialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit binanalysisdialog(QHexEdit *hexEdit,QWidget *parent = nullptr);
+    explicit binanalysisdialog(QHexEdit *hexEdit, QSettings *appSettings, QWidget *parent = nullptr);
     ~binanalysisdialog();
     void analyze(QString filename);
 
      QHexEdit *_hexEdit;
 
 private slots:
-    void on_binwalkTableView_clicked(const QModelIndex &index);
+    void on_resultTableView_clicked(const QModelIndex &index);
 
     void on_closeBtn_clicked();
     void kill_process();
-    void renderAnalysis(int status_code);
+    void renderBinwalkScan(int status_code);
+    void renderBinwalkExtract(int status_code);
+    void onHexdigFinished();
+    void onHexdigFailed(const QString &message);
     void on_extractAllBtn_clicked();
 
 private:
+    enum Analyzer { AnalyzerBinwalk, AnalyzerHexdig };
+    Analyzer currentAnalyzer() const;
+    void startBinwalkScan(const QString &filename);
+    void startHexdigScan(const QString &filename);
+    void startHexdigExtraction();
+    QString hexdigExtractionDir() const;
+
     Ui::binanalysisdialog *ui;
-    QList<BinwalkResult_S> resultslist;
-    BinTableModel *model = NULL;
-    QString curFile;
-    QProgressDialog * progrDialog;
-    QProcess * binwalkProcess;
+
+    QSettings *appSettings = nullptr;
+    Analyzer activeAnalyzer = AnalyzerHexdig;
+
+    // Binwalk
+    QList<BinwalkResult_S> binwalkResults;
+    BinTableModel *binwalkModel = nullptr;
+    QProcess *binwalkProcess = nullptr;
     int processType = 0;
+
+    // HexDig
+    HexdigTableModel *hexdigModel = nullptr;
+    HexdigWorker *hexdigWorker = nullptr;
+    bool hexdigExtractMode = false;
+
+    QString curFile;
+    QProgressDialog *progrDialog;
 };
 
 #endif // BINANALYSISDIALOG_H

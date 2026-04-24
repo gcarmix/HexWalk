@@ -1,3 +1,6 @@
 [submodule "capstone"]
 	path = capstone
 	url = https://github.com/capstone-engine/capstone
+[submodule "hexdig"]
+	path = hexdig
+	url = https://github.com/gcarmix/hexdig

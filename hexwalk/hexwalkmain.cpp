@@ -95,7 +95,7 @@ void HexWalkMain::init()
     optionsDialog = new OptionsDialog(appSettings,this);
     connect(optionsDialog, &OptionsDialog::accepted, this, &HexWalkMain::updateOptions);
     entropyDialog = new EntropyDialog(hexEdit,this);
-    analysisDialog = new binanalysisdialog(hexEdit,this);
+    analysisDialog = new binanalysisdialog(hexEdit,appSettings,this);
     hashDialog = new HashDialog(this);
     diffDialog = new DiffDialog(this);
     tagsDialog = new TagsDialog(hexEdit,this);
@@ -945,6 +945,7 @@ void HexWalkMain::readSettings()
         appSettings->setValue("AddressAreaWidth",6);
         appSettings->setValue("BytesPerLine",16);
         appSettings->setValue("HexCaps",true);
+        appSettings->setValue("DefaultAnalyzer","hexdig");
 
 
 
