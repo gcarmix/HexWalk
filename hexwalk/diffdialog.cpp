@@ -45,7 +45,7 @@ void DiffDialog::trackCursor2()
 }
 void DiffDialog::setFiles(QString file1str, QString file2str)
 {
-    QSettings settings;
+    QSettings settings("hexwalk","hexwalk");
 
     ui->hexEdit1->setAddressArea(settings.value("AddressArea").toBool());
     ui->hexEdit1->setAsciiArea(settings.value("AsciiArea").toBool());
