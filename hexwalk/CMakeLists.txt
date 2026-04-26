@@ -136,6 +136,52 @@ set_target_properties(hexwalk PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/bin"
 )
 
+# Bundle a portable 7-Zip distribution alongside the executable. Required for
+# extractors that delegate to 7-Zip (sevenzip, deb, squashfs, ...). Drop the
+# appropriate files into vendor/7z/ (download from https://www.7-zip.org/):
+#   Windows full:    7z.exe + 7z.dll  → SquashFS, ext, ISO, archives, ...
+#   Windows minimal: 7za.exe (archives only) or 7zr.exe (.7z only)
+#   Linux:           7zz   (statically linked binary from 7-zip.org)
+#   macOS:           7zz   (placed inside the .app bundle's MacOS directory)
+set(_7Z_VENDOR_DIR "${CMAKE_SOURCE_DIR}/vendor/7z")
+if(WIN32)
+    set(_7Z_NAMES 7z.exe 7za.exe 7zr.exe)
+    # 7z.exe loads format/codec code from 7z.dll at runtime — copy it alongside.
+    set(_7Z_COMPANIONS 7z.dll)
+else()
+    set(_7Z_NAMES 7zz 7z)
+    set(_7Z_COMPANIONS)
+endif()
+
+if(APPLE)
+    set(_7Z_DEST_DIR "$<TARGET_BUNDLE_CONTENT_DIR:hexwalk>/MacOS")
+else()
+    set(_7Z_DEST_DIR "$<TARGET_FILE_DIR:hexwalk>")
+endif()
+
+foreach(_name IN LISTS _7Z_NAMES)
+    if(EXISTS "${_7Z_VENDOR_DIR}/${_name}")
+        add_custom_command(TARGET hexwalk POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                "${_7Z_VENDOR_DIR}/${_name}"
+                "${_7Z_DEST_DIR}/${_name}"
+        )
+        message(STATUS "Bundling ${_name} from ${_7Z_VENDOR_DIR}")
+
+        foreach(_extra IN LISTS _7Z_COMPANIONS)
+            if(EXISTS "${_7Z_VENDOR_DIR}/${_extra}")
+                add_custom_command(TARGET hexwalk POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                        "${_7Z_VENDOR_DIR}/${_extra}"
+                        "${_7Z_DEST_DIR}/${_extra}"
+                )
+                message(STATUS "Bundling ${_extra} from ${_7Z_VENDOR_DIR}")
+            endif()
+        endforeach()
+        break()
+    endif()
+endforeach()
+
 # Release: minimise binary size
 if(CMAKE_BUILD_TYPE STREQUAL "Release" AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     target_compile_options(hexwalk PRIVATE

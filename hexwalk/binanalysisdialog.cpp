@@ -27,8 +27,11 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QFileInfo>
+#include <QDesktopServices>
+#include <QUrl>
 
 #include "hexdigworker.h"
+#include "helpers.hpp"
 
 
 BinTableModel::BinTableModel(QObject *parent) : QAbstractTableModel(parent)
@@ -367,7 +370,10 @@ void binanalysisdialog::renderBinwalkExtract(int status_code)
 {
     progrDialog->hide();
     if (status_code == 0) {
-        QMessageBox::information(this, tr("HexWalk"), tr("Extraction complete."));
+        const QString outDir = hexdigExtractionDir();
+        QMessageBox::information(this, tr("HexWalk"),
+            tr("Extraction complete. Output: %1").arg(outDir));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(outDir));
     } else {
         QMessageBox::warning(this, tr("HexWalk"),
             tr("Could not start binwalk.\r\nError: \r\n%1")
@@ -464,8 +470,10 @@ void binanalysisdialog::onHexdigFinished()
     progrDialog->hide();
 
     if (hexdigExtractMode) {
+        const QString outDir = hexdigExtractionDir();
         QMessageBox::information(this, tr("HexWalk"),
-            tr("Extraction complete. Output: %1").arg(hexdigExtractionDir()));
+            tr("Extraction complete. Output: %1").arg(outDir));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(outDir));
     }
 
     if (!hexdigWorker)
@@ -546,6 +554,15 @@ void binanalysisdialog::on_extractAllBtn_clicked()
             progrDialog->hide();
         }
     } else {
+        if (!is_7z_available()) {
+            QMessageBox::warning(this, tr("HexWalk"),
+                tr("7-Zip was not found.\n\n"
+                   "Some hexdig extractors (7z, deb, ...) need the 7z command-line "
+                   "tool to unpack archived data. Without it, those formats will be "
+                   "skipped during extraction.\n\n"
+                   "Install 7-Zip from https://www.7-zip.org/ and make sure it is on "
+                   "your PATH, or place 7zr.exe / 7zz next to hexwalk."));
+        }
         startHexdigExtraction();
     }
 }
