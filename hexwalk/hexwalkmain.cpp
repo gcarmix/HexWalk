@@ -48,7 +48,7 @@ HexWalkMain::HexWalkMain(QWidget *parent) :
     ui->floatTextedit_be->setFont(font);
     ui->hexTextedit->setFont(font);
     ui->intleTextedit->setFont(font);
-    ui->selTextedit->setFont(font);
+
 }
 
 QString HexWalkMain::binToStr(QByteArray bin)
@@ -176,6 +176,16 @@ void HexWalkMain::createMenus()
 
 void HexWalkMain::createStatusBar()
 {
+    // Selected Label
+    lbSelectedName = new QLabel();
+    lbSelectedName->setText(tr("Selected:"));
+    statusBar()->addPermanentWidget(lbSelectedName);
+    lbSelected = new QLabel();
+    lbSelected->setFrameShape(QFrame::Panel);
+    lbSelected->setFrameShadow(QFrame::Sunken);
+    lbSelected->setMinimumWidth(100);
+    statusBar()->addPermanentWidget(lbSelected);
+
     // Address Label
     lbAddressName = new QLabel();
     lbAddressName->setText(tr("Address:"));
@@ -662,8 +672,8 @@ void HexWalkMain::saveToReadableFile()
 void HexWalkMain::updateInfo()
 {
     int selSize = hexEdit->selectedDataBa().size();
+    lbSelected->setText(QString::number(selSize,10));
 
-    ui->selTextedit->setText(QString::number(selSize,10));
     if(selSize > 0)
     {
         ui->asciiTextEdit->setText(binToStr(hexEdit->selectedDataBa()));

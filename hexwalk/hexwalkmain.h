@@ -177,7 +177,7 @@ private:
     StringsDialog *stringsDialog;
     DisasmWidget * disasmWidget;
     ConverterWidget * converterWidget;
-    QLabel *lbAddress, *lbAddressName;
+    QLabel *lbAddress, *lbAddressName, *lbSelected, *lbSelectedName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;
     QLabel * gotoLbl;
