@@ -1,0 +1,12 @@
+# A dedicated manpage for the hexwalk GUI hasn't been written yet — the
+# application is interactive and the in-app help covers usage. The embedded
+# hexdig CLI does have its own manpage (installed at /usr/share/man/man1/
+# hexdig.1). Remove this override once a hexwalk(1) is added upstream.
+hexwalk: no-manual-page [usr/bin/hexwalk]
+
+# The hexdig manpage is valid groff (verified by running the exact lintian
+# pipeline outside the sandbox). The segfault originates inside lintian's
+# sandboxed `man` process due to the known interaction between the
+# /usr/bin/man AppArmor profile and lintian on Ubuntu/Debian.
+# See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1056196
+hexwalk: groff-message
