@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=HexWalk
+GenericName=Hex Editor
+Comment=Hex editor, viewer and binary analyzer
+Exec=hexwalk %f
+Icon=hexwalk
+Terminal=false
+Categories=Development;Utility;Qt;
+MimeType=application/octet-stream;
+Keywords=hex;binary;editor;analyzer;reverse-engineering;
+StartupNotify=true
+StartupWMClass=hexwalk

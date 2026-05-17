@@ -194,3 +194,30 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release" AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         -s                   # strip all symbols and debug info from the output
     )
 endif()
+
+# ---- Linux install rules (also used by the AppImage build script) ---------
+# `cmake --install` and `make install DESTDIR=AppDir` both consume these.
+# Layout follows freedesktop.org / GNU coding standards.
+if(UNIX AND NOT APPLE)
+    include(GNUInstallDirs)
+
+    install(TARGETS hexwalk RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/hexwalk.desktop"
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/applications)
+
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/images/hexwalk256.png"
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/256x256/apps
+        RENAME hexwalk.png)
+
+    # If a bundled 7-Zip binary was staged under vendor/7z, install it next
+    # to hexwalk so the runtime locator (find_7z in hexdig_lib) picks it up
+    # the same way the POST_BUILD copy does for plain `cmake --build`.
+    foreach(_n IN LISTS _7Z_NAMES)
+        if(EXISTS "${_7Z_VENDOR_DIR}/${_n}")
+            install(PROGRAMS "${_7Z_VENDOR_DIR}/${_n}"
+                DESTINATION ${CMAKE_INSTALL_BINDIR})
+            break()
+        endif()
+    endforeach()
+endif()

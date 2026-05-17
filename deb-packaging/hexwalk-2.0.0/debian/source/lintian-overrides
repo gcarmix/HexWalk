@@ -1,0 +1,7 @@
+# hexwalk ships in-tree copies of Capstone and qhexedit2 for build-time
+# simplicity. Both are statically linked into the binary; no shared library
+# is installed under /usr/lib. The next maintainer effort should switch to
+# the system libraries (libcapstone-dev / libqhexedit2-dev).
+hexwalk source: source-contains-prebuilt-binary [capstone/*]
+hexwalk source: embedded-library *capstone*
+hexwalk source: embedded-library *qhexedit*

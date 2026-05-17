@@ -1,0 +1,17 @@
+#!/usr/bin/make -f
+export DH_VERBOSE = 1
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+%:
+	dh $@ --buildsystem=cmake
+
+# Force Qt 6 selection in case both Qt 5 and Qt 6 dev headers are present;
+# the upstream find_package(QT NAMES Qt6 Qt5 ...) call would otherwise pick
+# whichever appears first on disk.
+override_dh_auto_configure:
+	dh_auto_configure -- -DQT_VERSION_MAJOR=6
+
+# Upstream wires a Python regression suite into ctest only when hexdig is
+# the top-level project, so the test target is empty at this scope. Keep
+# the override to make that explicit and to avoid surprises if it changes.
+override_dh_auto_test:

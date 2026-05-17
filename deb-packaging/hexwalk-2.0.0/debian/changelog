@@ -1,0 +1,28 @@
+hexwalk (2.0.0-1) unstable; urgency=medium
+
+  * New upstream release.
+    - Build system migrated from qmake to CMake.
+    - Qt 6 is now required (Core, Gui, Widgets, Charts).
+    - Bundled HexDig signature scanner and extractor with support for
+      EXT/SquashFS/CRAMFS/JFFS2/UBI/CPIO/TAR/DTB/UImage/Mach-O and a
+      number of compressed-stream formats.
+    - Disassembly view powered by Capstone (embedded, see d/copyright).
+    - Improved entropy and byte-map visualisations; new diff dialog.
+  * debian/control:
+    - Switch Build-Depends to Qt 6 (qt6-base-dev, libqt6charts6-dev).
+    - Add cmake and pkg-config to Build-Depends.
+    - Recommends: 7zip | p7zip-full for HexDig's archive extraction.
+  * debian/rules: use `dh $@ --buildsystem=cmake`; drop QT_SELECT.
+  * debian/hexwalk.install, debian/dirs, debian/menu: removed — install
+    paths are now declared by upstream's CMake install() rules and the
+    Debian menu system has been deprecated by .desktop files.
+  * debian/copyright: refresh years; add Files paragraphs for the
+    embedded Capstone, qhexedit2 and HexDig sources.
+
+ -- Carmix <carmixdev@gmail.com>  Mon, 04 May 2026 10:00:00 +0200
+
+hexwalk (1.7.1-1) unstable; urgency=medium
+
+  * Initial release (Closes: #1063579)
+
+ -- Carmix <carmixdev@gmail.com>  Sun, 3 Mar 2024 13:56:50 +0100

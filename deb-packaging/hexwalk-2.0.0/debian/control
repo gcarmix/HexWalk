@@ -1,0 +1,32 @@
+Source: hexwalk
+Section: editors
+Priority: optional
+Maintainer: Carmix <carmixdev@gmail.com>
+Build-Depends: debhelper-compat (= 13),
+               cmake,
+               pkg-config,
+               qt6-base-dev,
+               libqt6charts6-dev
+Standards-Version: 4.7.0
+Rules-Requires-Root: no
+Homepage: https://www.hexwalk.com
+Vcs-Git: https://github.com/gcarmix/hexwalk.git
+Vcs-Browser: https://github.com/gcarmix/hexwalk
+
+Package: hexwalk
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Recommends: 7zip | p7zip-full
+Description: hex editor, viewer and binary analyzer
+ HexWalk is a Qt-based hex editor, viewer and binary analyzer aimed at
+ reverse engineering and firmware analysis. Features include:
+  * Advanced search across HEX, UTF-8, UTF-16 and regular expressions
+  * Built-in binary signature scanner and extractor (HexDig)
+  * Disassembler view powered by Capstone
+  * Entropy chart and byte map visualisations
+  * Hash calculator and bin/dec/hex converter
+  * Diff view between two files
+  * Byte-pattern tagging for parsing custom headers
+ .
+ The 7zip (or legacy p7zip-full) package is recommended to enable the
+ archive extraction features of the embedded HexDig scanner.
