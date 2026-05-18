@@ -13,6 +13,31 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
+# Windows + MinGW: prefer static archives (.a) over import libraries (.dll.a)
+# when CMake resolves library names. Without this, Qt6's WrapZSTD / WrapBLAKE2 /
+# OpenMP find_library calls pick up the .dll.a first and the resulting .exe
+# carries runtime dependencies on libzstd.dll, libb2-1.dll, libgomp-1.dll, etc.
+# Must be set BEFORE find_package(Qt...) because Qt creates imported targets
+# from these results that cannot be redirected later.
+if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_FIND_LIBRARY_SUFFIXES .a .lib)
+
+    # WrapZSTD goes through find_package(zstd CONFIG), which creates both
+    # zstd::libzstd_shared and zstd::libzstd_static targets, and Qt's wrapper
+    # then picks the _shared one. Pre-create WrapZSTD::WrapZSTD pointing at
+    # the static archive so Qt's "if(NOT TARGET WrapZSTD::WrapZSTD)" guard
+    # leaves it intact.
+    find_library(_ZSTD_STATIC NAMES libzstd.a zstd_static)
+    find_path(_ZSTD_INCLUDE_DIR zstd.h)
+    if(_ZSTD_STATIC AND _ZSTD_INCLUDE_DIR)
+        add_library(WrapZSTD::WrapZSTD INTERFACE IMPORTED)
+        set_target_properties(WrapZSTD::WrapZSTD PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES "${_ZSTD_INCLUDE_DIR}"
+            INTERFACE_LINK_LIBRARIES "${_ZSTD_STATIC}")
+        set(WrapZSTD_FOUND TRUE)
+    endif()
+endif()
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets Charts)
 
