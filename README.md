@@ -3,8 +3,8 @@
  
 HexWalk is an Hex editor, viewer, analyzer.
 
-Built on qhexedit2, Capstone and Qt, with a built-in signature scanner
-(HexDig) inspired by binwalk.
+Built on qhexedit2, Capstone and Qt, with a built-in signature scanner,
+[HexDig](https://www.github.com/gcarmix/hexdig), inspired by binwalk.
 
 It is cross platform and has plenty of features:
 
