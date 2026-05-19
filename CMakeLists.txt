@@ -36,6 +36,20 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             INTERFACE_LINK_LIBRARIES "${_ZSTD_STATIC}")
         set(WrapZSTD_FOUND TRUE)
     endif()
+
+    # Same pattern for libb2 (BLAKE2): Qt's FindLibb2 routes through
+    # pkg_check_modules first and pkg-config's import library wins. The
+    # FindLibb2.cmake short-circuits with `if(TARGET Libb2::Libb2) return()`,
+    # so pre-creating the target keeps the build static.
+    find_library(_LIBB2_STATIC NAMES libb2.a b2)
+    find_path(_LIBB2_INCLUDE_DIR NAMES blake2.h)
+    if(_LIBB2_STATIC AND _LIBB2_INCLUDE_DIR)
+        add_library(Libb2::Libb2 UNKNOWN IMPORTED)
+        set_target_properties(Libb2::Libb2 PROPERTIES
+            IMPORTED_LOCATION "${_LIBB2_STATIC}"
+            INTERFACE_INCLUDE_DIRECTORIES "${_LIBB2_INCLUDE_DIR}")
+        set(Libb2_FOUND TRUE)
+    endif()
 endif()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core)
