@@ -61,11 +61,24 @@
     <string>Extract All</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="closeBtn">
+  <widget class="QPushButton" name="exportCsvBtn">
    <property name="geometry">
     <rect>
      <x>910</x>
      <y>80</y>
+     <width>93</width>
+     <height>29</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Export CSV</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="closeBtn">
+   <property name="geometry">
+    <rect>
+     <x>910</x>
+     <y>120</y>
      <width>93</width>
      <height>29</height>
     </rect>

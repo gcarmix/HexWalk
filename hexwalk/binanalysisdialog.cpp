@@ -29,6 +29,8 @@
 #include <QFileInfo>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QFileDialog>
+#include <QAbstractItemModel>
 
 #include "hexdigworker.h"
 #include "helpers.hpp"
@@ -531,6 +533,77 @@ void binanalysisdialog::on_resultTableView_clicked(const QModelIndex &index)
 void binanalysisdialog::on_closeBtn_clicked()
 {
     this->close();
+}
+
+
+// Quote a CSV field per RFC 4180: wrap in double quotes when it contains a
+// comma, quote or newline, and double any embedded quotes.
+static QString csvEscape(const QString &field)
+{
+    QString f = field;
+    if (f.contains(',') || f.contains('"') || f.contains('\n') || f.contains('\r')) {
+        f.replace('"', "\"\"");
+        f = '"' + f + '"';
+    }
+    return f;
+}
+
+void binanalysisdialog::on_exportCsvBtn_clicked()
+{
+    QAbstractItemModel *model = ui->resultTableView->model();
+    if (!model || model->rowCount() == 0) {
+        QMessageBox::information(this, tr("HexWalk"),
+            tr("There is nothing to export. Run an analysis first."));
+        return;
+    }
+
+    // Suggest "<file>_analysis.csv" next to the analysed file.
+    QString suggested = QStringLiteral("analysis.csv");
+    if (!curFile.isEmpty()) {
+        QFileInfo fi(curFile);
+        suggested = fi.absoluteDir().absolutePath() + "/"
+                  + fi.completeBaseName() + "_analysis.csv";
+    }
+
+    QString fileName = QFileDialog::getSaveFileName(this,
+        tr("Export Analysis to CSV"), suggested,
+        tr("CSV files (*.csv);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, tr("HexWalk"),
+            tr("Could not open file for writing:\r\n%1").arg(fileName));
+        return;
+    }
+
+    QTextStream out(&file);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+    out.setCodec("UTF-8");
+#endif
+
+    const int cols = model->columnCount();
+    const int rows = model->rowCount();
+
+    // Header row from the model's horizontal header.
+    QStringList header;
+    for (int c = 0; c < cols; ++c)
+        header << csvEscape(model->headerData(c, Qt::Horizontal, Qt::DisplayRole).toString());
+    out << header.join(',') << "\r\n";
+
+    // Data rows, using the same displayed text the table shows.
+    for (int r = 0; r < rows; ++r) {
+        QStringList cells;
+        for (int c = 0; c < cols; ++c)
+            cells << csvEscape(model->index(r, c).data(Qt::DisplayRole).toString());
+        out << cells.join(',') << "\r\n";
+    }
+
+    file.close();
+
+    QMessageBox::information(this, tr("HexWalk"),
+        tr("Exported %1 rows to:\r\n%2").arg(rows).arg(fileName));
 }
 
 

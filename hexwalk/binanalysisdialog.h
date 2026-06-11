@@ -108,6 +108,7 @@ private slots:
     void onHexdigFinished();
     void onHexdigFailed(const QString &message);
     void on_extractAllBtn_clicked();
+    void on_exportCsvBtn_clicked();
 
 private:
     enum Analyzer { AnalyzerBinwalk, AnalyzerHexdig };
