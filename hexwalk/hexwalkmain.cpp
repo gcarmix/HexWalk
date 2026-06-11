@@ -31,6 +31,7 @@
 
 #include "hexwalkmain.h"
 #include "ui_hexwalkmain.h"
+#include "theme.h"
 
 HexWalkMain::HexWalkMain(QWidget *parent) :
     QMainWindow(parent),
@@ -347,6 +348,28 @@ void HexWalkMain::createActions()
         connect(recentFileAction, &QAction::triggered, this, &HexWalkMain::openRecent);
         recentFileActionList.append(recentFileAction);
     }
+
+    applyThemeIcons(appSettings->value("Theme", Theme::kDark).toString());
+}
+
+// (Re)load every toolbar/menu icon for the given theme. Monochrome glyphs are
+// re-tinted dark on the light theme so they don't look disabled; colourful
+// icons (open/save) are left as-is. Called at startup and whenever the theme
+// changes via the Options dialog.
+void HexWalkMain::applyThemeIcons(const QString &theme)
+{
+    openAct->setIcon(Theme::themedIcon(":/images/open.png", theme, /*monochrome*/ false));
+    saveAct->setIcon(Theme::themedIcon(":/images/save.png", theme, /*monochrome*/ false));
+    undoAct->setIcon(Theme::themedIcon(":/images/undo.png", theme));
+    redoAct->setIcon(Theme::themedIcon(":/images/redo.png", theme));
+    advancedFindAct->setIcon(Theme::themedIcon(":/images/find.png", theme));
+    entropyAct->setIcon(Theme::themedIcon(":/images/entropy.png", theme));
+    diffAct->setIcon(Theme::themedIcon(":/images/diff.png", theme));
+    binaryAct->setIcon(Theme::themedIcon(":/images/binary.png", theme));
+    tagsAct->setIcon(Theme::themedIcon(":/images/tags.png", theme));
+    stringsAct->setIcon(Theme::themedIcon(":/images/strings.png", theme));
+    byteMapAct->setIcon(Theme::themedIcon(":/images/bytemap.png", theme));
+    disasmAct->setIcon(Theme::themedIcon(":/images/disasm.png", theme));
 }
 void HexWalkMain::toggleOverwriteMode(){
     if(hexEdit->overwriteMode() == true)
@@ -939,6 +962,7 @@ void HexWalkMain::readSettings()
 {
     if(appSettings->value("BytesPerLine").toInt()<=0)
     {
+        appSettings->setValue("Theme",Theme::kDark);
         appSettings->setValue("AddressArea",true);
         appSettings->setValue("AsciiArea",true);
         appSettings->setValue("Highlighting",true);
@@ -1010,6 +1034,12 @@ void HexWalkMain::readSettings()
     hexEdit->setAddressWidth(appSettings->value("AddressAreaWidth").toInt());
     hexEdit->setBytesPerLine(appSettings->value("BytesPerLine").toInt());
     hexEdit->setHexCaps(appSettings->value("HexCaps", true).toBool());
+
+    // Apply the application-wide palette for the selected theme so the whole
+    // UI (menus, dialogs, toolbars) re-themes live when Options are accepted.
+    QString theme = appSettings->value("Theme", Theme::kDark).toString();
+    qApp->setPalette(Theme::paletteFor(theme));
+    applyThemeIcons(theme);
 
 }
 

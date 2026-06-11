@@ -48,6 +48,7 @@ private slots:
     void on_pbHexFontColor_clicked();
     void on_pbSelectionColor_clicked();
     void on_pbWidgetFont_clicked();
+    void on_cbTheme_currentIndexChanged(int index);
 
     void on_buttonBox_clicked(QAbstractButton *button);
 
@@ -55,6 +56,7 @@ private:
     void readSettings();
     void writeSettings();
     void setColor(QWidget *widget, QColor color);
+    void applyThemeColors(const QString &theme);
     QSettings * appSettings;
 };
 

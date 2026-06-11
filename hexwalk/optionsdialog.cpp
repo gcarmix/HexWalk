@@ -22,6 +22,7 @@
 
 #include "optionsdialog.h"
 #include "ui_optionsdialog.h"
+#include "theme.h"
 
 OptionsDialog::OptionsDialog(QSettings * appSettings,QWidget *parent) :
     QDialog(parent),
@@ -52,6 +53,12 @@ void OptionsDialog::accept()
 
 void OptionsDialog::readSettings()
 {
+    // Set the theme combo without triggering on_cbTheme_currentIndexChanged,
+    // otherwise it would overwrite the user's saved colours with theme defaults.
+    QString theme = appSettings->value("Theme", Theme::kDark).toString();
+    ui->cbTheme->blockSignals(true);
+    ui->cbTheme->setCurrentIndex(theme.compare(Theme::kLight, Qt::CaseInsensitive) == 0 ? 1 : 0);
+    ui->cbTheme->blockSignals(false);
 
     ui->cbAddressArea->setChecked(appSettings->value("AddressArea").toBool());
     ui->cbAsciiArea->setChecked(appSettings->value("AsciiArea").toBool());
@@ -84,6 +91,9 @@ void OptionsDialog::readSettings()
 
 void OptionsDialog::writeSettings()
 {
+    appSettings->setValue("Theme",
+        ui->cbTheme->currentIndex() == 1 ? Theme::kLight : Theme::kDark);
+
     appSettings->setValue("AddressArea", ui->cbAddressArea->isChecked());
     appSettings->setValue("AsciiArea", ui->cbAsciiArea->isChecked());
     appSettings->setValue("Highlighting", ui->cbHighlighting->isChecked());
@@ -112,6 +122,24 @@ void OptionsDialog::setColor(QWidget *widget, QColor color)
     palette.setColor(QPalette::Window, color);
     widget->setPalette(palette);
     widget->setAutoFillBackground(true);
+}
+
+void OptionsDialog::applyThemeColors(const QString &theme)
+{
+    Theme::HexColors c = Theme::hexDefaultsFor(theme);
+    setColor(ui->lbHighlightingColor, c.highlighting);
+    setColor(ui->lbAddressAreaColor, c.addressArea);
+    setColor(ui->lbSelectionColor, c.selection);
+    setColor(ui->lbAddressFontColor, c.addressFont);
+    setColor(ui->lbAsciiAreaColor, c.asciiArea);
+    setColor(ui->lbAsciiFontColor, c.asciiFont);
+    setColor(ui->lbHexFontColor, c.hexFont);
+}
+
+void OptionsDialog::on_cbTheme_currentIndexChanged(int index)
+{
+    // Switching theme resets the hex-editor colours to that theme's defaults.
+    applyThemeColors(index == 1 ? Theme::kLight : Theme::kDark);
 }
 
 void OptionsDialog::on_pbHighlightingColor_clicked()
@@ -175,6 +203,10 @@ void OptionsDialog::on_buttonBox_clicked(QAbstractButton *button)
 {
     if(button == ui->buttonBox->button(QDialogButtonBox::RestoreDefaults))
     {
+        ui->cbTheme->blockSignals(true);
+        ui->cbTheme->setCurrentIndex(0); // dark
+        ui->cbTheme->blockSignals(false);
+
         ui->cbAddressArea->setChecked(true);
         ui->cbAsciiArea->setChecked(true);
         ui->cbHighlighting->setChecked(true);

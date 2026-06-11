@@ -154,6 +154,7 @@ private:
     QAction *entropyAct;
     QAction *converterAct;
     void createActions();
+    void applyThemeIcons(const QString &theme);
     void createMenus();
     void createStatusBar();
     void createToolBars();

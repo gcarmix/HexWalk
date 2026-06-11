@@ -22,6 +22,7 @@ set(SOURCES
     hexwalkmain.cpp
     main.cpp
     optionsdialog.cpp
+    theme.cpp
     searchdialog.cpp
     stringsdialog.cpp
     tagsdialog.cpp
