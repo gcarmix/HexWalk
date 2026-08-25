@@ -8,6 +8,90 @@
 #include "qhexedit.h"
 #include <algorithm>
 
+// ********************************************************************** Text area decoding
+
+// Decodes the UTF-8 sequence starting at in (avail bytes readable). Returns the
+// length of the sequence and sets cp to the decoded codepoint. On a malformed or
+// truncated sequence 1 is returned and cp is set to 0, so decoding resyncs on
+// the next byte instead of swallowing valid data behind a bad byte.
+static int decodeUtf8(const uchar *in, int avail, uint &cp)
+{
+    uchar b0 = in[0];
+    int len;
+    uint min;
+
+    if (b0 < 0x80)                  { cp = b0; return 1; }
+    else if ((b0 & 0xE0) == 0xC0)   { len = 2; cp = b0 & 0x1F; min = 0x80; }
+    else if ((b0 & 0xF0) == 0xE0)   { len = 3; cp = b0 & 0x0F; min = 0x800; }
+    else if ((b0 & 0xF8) == 0xF0)   { len = 4; cp = b0 & 0x07; min = 0x10000; }
+    else                            { cp = 0; return 1; }   // continuation or invalid lead
+
+    if (avail < len)                { cp = 0; return 1; }
+    for (int i = 1; i < len; i++)
+    {
+        if ((in[i] & 0xC0) != 0x80) { cp = 0; return 1; }   // missing continuation
+        cp = (cp << 6) | (in[i] & 0x3F);
+    }
+    // reject overlong encodings, surrogates and out of range values
+    if (cp < min || cp > 0x10FFFF || QChar::isSurrogate(cp))
+                                    { cp = 0; return 1; }
+    return len;
+}
+
+// Decodes the UTF-16 sequence starting at in (avail bytes readable). Works like
+// decodeUtf8(): returns the length in bytes and sets cp, or sets cp to 0 for an
+// unpaired surrogate or a code unit truncated by the end of the data. Unlike
+// UTF-8 this encoding does not resynchronize by itself, the caller has to keep
+// the decoding anchored on even file offsets.
+static int decodeUtf16(const uchar *in, int avail, bool bigEndian, uint &cp)
+{
+    if (avail < 2)                  { cp = 0; return 1; }
+    uint u1 = bigEndian ? (in[0] << 8 | in[1]) : (in[1] << 8 | in[0]);
+
+    if (u1 < 0xD800 || u1 > 0xDFFF) { cp = u1; return 2; }   // plain BMP code unit
+    if (u1 > 0xDBFF)                { cp = 0; return 2; }    // low surrogate without a high one
+    if (avail < 4)                  { cp = 0; return 2; }    // high surrogate, pair truncated
+
+    uint u2 = bigEndian ? (in[2] << 8 | in[3]) : (in[3] << 8 | in[2]);
+    if (u2 < 0xDC00 || u2 > 0xDFFF) { cp = 0; return 2; }    // high surrogate not followed by a low one
+
+    cp = 0x10000 + ((u1 - 0xD800) << 10) + (u2 - 0xDC00);
+    return 4;
+}
+
+// A codepoint is only drawn when it occupies its own cell. Control characters,
+// unassigned and format codepoints have no glyph, combining marks would be
+// painted onto the neighbouring cell - all of them are shown as a dot instead.
+static bool isRenderable(uint cp)
+{
+    if (cp < 0x20 || cp == 0x7f)
+        return false;                                       // C0 and DEL
+    if (cp >= 0x80 && cp <= 0x9f)
+        return false;                                       // C1
+    switch (QChar::category(cp))
+    {
+        case QChar::Other_Control:
+        case QChar::Other_Format:
+        case QChar::Other_Surrogate:
+        case QChar::Other_PrivateUse:
+        case QChar::Other_NotAssigned:
+        case QChar::Mark_NonSpacing:
+        case QChar::Mark_SpacingCombining:
+        case QChar::Mark_Enclosing:
+            return false;
+        default:
+            return true;
+    }
+}
+
+// QString::fromUcs4() takes a const uint* on Qt5 and a const char32_t* on Qt6,
+// so build the string by hand to stay portable between both.
+static QString cpToString(uint cp)
+{
+    if (QChar::requiresSurrogates(cp))
+        return QString(QChar(QChar::highSurrogate(cp))) + QChar(QChar::lowSurrogate(cp));
+    return QString(QChar((ushort)cp));
+}
 
 // ********************************************************************** Constructor, destructor
 
@@ -15,6 +99,7 @@ QHexEdit::QHexEdit(QWidget *parent) : QAbstractScrollArea(parent)
     , _addressArea(true)
     , _addressWidth(4)
     , _asciiArea(true)
+    , _charEncoding(EncodingAscii)
     , _bytesPerLine(16)
     , _hexCharsInLine(47)
     , _highlighting(true)
@@ -159,6 +244,15 @@ qint64 QHexEdit::getSize()
 {
     return _chunks->size();
 }
+
+int QHexEdit::contentWidth()
+{
+    // same width adjust() feeds to the horizontal scrollbar
+    int width = _pxPosAsciiX;
+    if (_asciiArea)
+        width += _bytesPerLine * _pxCharWidth;
+    return width;
+}
 int QHexEdit::addressWidth()
 {
     qint64 size = _chunks->size();
@@ -187,6 +281,32 @@ void QHexEdit::setAsciiArea(bool asciiArea)
 bool QHexEdit::asciiArea()
 {
     return _asciiArea;
+}
+
+void QHexEdit::setCharEncoding(CharEncoding encoding)
+{
+    if (_charEncoding == encoding)
+        return;
+    _charEncoding = encoding;
+    buildCharMap();
+    viewport()->update();
+}
+
+QHexEdit::CharEncoding QHexEdit::charEncoding()
+{
+    return _charEncoding;
+}
+
+QHexEdit::CharEncoding QHexEdit::charEncodingFromInt(int value)
+{
+    switch (value)
+    {
+        case EncodingUtf8:      return EncodingUtf8;
+        case EncodingLatin1:    return EncodingLatin1;
+        case EncodingUtf16LE:   return EncodingUtf16LE;
+        case EncodingUtf16BE:   return EncodingUtf16BE;
+        default:                return EncodingAscii;
+    }
 }
 
 void QHexEdit::setBytesPerLine(int count)
@@ -1037,13 +1157,21 @@ void QHexEdit::paintEvent(QPaintEvent *event)
                 {
                     if (c == viewport()->palette().color(QPalette::Base))
                         c = _asciiAreaColor;
-                    int ch = (uchar)_dataShown.at(bPosLine + colIdx);
-                    if ( ch < ' ' || ch > '~' )
-                        ch = '.';
                     r.setRect(pxPosAsciiX2, pxPosY - _pxCharHeight + _pxSelectionSub, _pxCharWidth, _pxCharHeight);
-                    painter.fillRect(r, c);
-                    painter.setPen(QPen(_asciiFontColor));
-                    painter.drawText(pxPosAsciiX2, pxPosY, QChar(ch));
+                    painter.fillRect(r, c);     // one fill per byte, selection stays byte exact
+                    uint cp = _cpShown.at(bPosLine + colIdx);
+                    if (cp)
+                    {
+                        // a multi byte character may use the cells of its
+                        // continuation bytes, but never leave the current row
+                        int span = qMin((int)_spanShown.at(bPosLine + colIdx), _bytesPerLine - colIdx);
+                        painter.save();
+                        painter.setClipRect(pxPosAsciiX2, pxPosY - _pxCharHeight + _pxSelectionSub,
+                                            span * _pxCharWidth, _pxCharHeight);
+                        painter.setPen(QPen(_asciiFontColor));
+                        painter.drawText(pxPosAsciiX2, pxPosY, cpToString(cp));
+                        painter.restore();
+                    }
                     pxPosAsciiX2 += _pxCharWidth;
                 }
             }
@@ -1077,14 +1205,12 @@ void QHexEdit::paintEvent(QPaintEvent *event)
             {
                 // every 2 hex there is 1 ascii
                 int asciiPositionInShowData = hexPositionInShowData / 2;
-                if(asciiPositionInShowData <_dataShown.size())
+                if(asciiPositionInShowData < _cpShown.size())
                 {
-                    int ch = (uchar)_dataShown.at(asciiPositionInShowData);
-
-                    if (ch < ' ' || ch > '~')
-                        ch = '.';
-
-                    painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, QChar(ch));
+                    // no glyph on the continuation byte of a multi byte character
+                    uint cp = _cpShown.at(asciiPositionInShowData);
+                    if (cp)
+                        painter.drawText(_pxCursorX - pxOfsX, _pxCursorY, cpToString(cp));
                 }
             }
             else
@@ -1254,10 +1380,151 @@ void QHexEdit::refresh()
     readBuffers();
 }
 
+void QHexEdit::buildCharMap()
+{
+    const int size = _dataShown.size();
+    _cpShown.resize(size);
+    _spanShown.resize(size);
+
+    // Single byte encodings: every byte is a character on its own.
+    if (_charEncoding == EncodingAscii || _charEncoding == EncodingLatin1)
+    {
+        const bool latin1 = (_charEncoding == EncodingLatin1);
+        for (int i = 0; i < size; i++)
+        {
+            uchar ch = (uchar)_dataShown.at(i);
+            // Latin-1 maps every byte onto the codepoint of the same value
+            bool ok = latin1 ? isRenderable(ch) : (ch >= ' ' && ch <= '~');
+            _cpShown[i] = ok ? (uint)ch : (uint)'.';
+            _spanShown[i] = 1;
+        }
+        return;
+    }
+
+    const bool isUtf16 = (_charEncoding == EncodingUtf16LE || _charEncoding == EncodingUtf16BE);
+
+    // A sequence may start just above the first visible byte, so read back a few
+    // bytes and decode from there: the top row then decodes like all others.
+    // UTF-8 resynchronizes on its own, three bytes are enough. UTF-16 does not,
+    // so the decoding is anchored on even file offsets and has to start at least
+    // one code unit earlier to catch a surrogate pair crossing the top edge.
+    int lookBehind;
+    if (isUtf16)
+        lookBehind = 2 + (int)(_bPosFirst % 2);
+    else
+        lookBehind = 3;
+    lookBehind = (int)qMin<qint64>(lookBehind, _bPosFirst);
+
+    QByteArray buf;
+    if (lookBehind > 0)
+        buf = _chunks->data(_bPosFirst - lookBehind, lookBehind);
+    buf.append(_dataShown);
+
+    const uchar *p = (const uchar *)buf.constData();
+    int i = 0;
+    while (i < buf.size())
+    {
+        uint cp = 0;
+        int len;
+        if (isUtf16)
+            len = decodeUtf16(p + i, buf.size() - i, _charEncoding == EncodingUtf16BE, cp);
+        else
+            len = decodeUtf8(p + i, buf.size() - i, cp);
+        int idx = i - lookBehind;                           // index into _dataShown
+
+        // the glyph is drawn in the cell of the first byte of the sequence
+        if (idx >= 0 && idx < size)
+        {
+            _cpShown[idx] = isRenderable(cp) ? cp : (uint)'.';
+            _spanShown[idx] = (quint8)len;
+        }
+        // continuation bytes keep their hex cell but show no glyph
+        for (int j = 1; j < len; j++)
+        {
+            int c = idx + j;
+            if (c >= 0 && c < size)
+            {
+                _cpShown[c] = 0;
+                _spanShown[c] = 0;
+            }
+        }
+        i += len;
+    }
+}
+
+QString QHexEdit::toEncodedString(const QByteArray &ba)
+{
+    QString result;
+    const uchar *p = (const uchar *)ba.constData();
+    const int size = ba.size();
+
+    if (_charEncoding == EncodingAscii || _charEncoding == EncodingLatin1)
+    {
+        const bool latin1 = (_charEncoding == EncodingLatin1);
+        for (int i = 0; i < size; i++)
+        {
+            uchar ch = p[i];
+            bool ok = latin1 ? isRenderable(ch) : (ch >= ' ' && ch <= '~');
+            result += ok ? cpToString(ch) : QString(QChar('.'));
+        }
+        return result;
+    }
+
+    const bool isUtf16 = (_charEncoding == EncodingUtf16LE || _charEncoding == EncodingUtf16BE);
+    int i = 0;
+    while (i < size)
+    {
+        uint cp = 0;
+        int len = isUtf16
+            ? decodeUtf16(p + i, size - i, _charEncoding == EncodingUtf16BE, cp)
+            : decodeUtf8(p + i, size - i, cp);
+        result += isRenderable(cp) ? cpToString(cp) : QString(QChar('.'));
+        i += len;
+    }
+    return result;
+}
+
+QString QHexEdit::charAt(qint64 pos)
+{
+    if (pos < 0 || pos >= _chunks->size())
+        return QString();
+
+    if (_charEncoding == EncodingAscii || _charEncoding == EncodingLatin1)
+    {
+        uchar ch = (uchar)_chunks->data(pos, 1).at(0);
+        bool ok = (_charEncoding == EncodingLatin1) ? isRenderable(ch)
+                                                    : (ch >= ' ' && ch <= '~');
+        return ok ? cpToString(ch) : QString(QChar('.'));
+    }
+
+    // Start early enough to pick up a sequence that begins before pos. UTF-16
+    // has to stay anchored on even file offsets, exactly as buildCharMap() does.
+    const bool isUtf16 = (_charEncoding == EncodingUtf16LE || _charEncoding == EncodingUtf16BE);
+    int back = isUtf16 ? (int)qMin<qint64>(2 + (pos % 2), pos)
+                       : (int)qMin<qint64>(3, pos);
+    qint64 start = pos - back;
+    QByteArray buf = _chunks->data(start, back + 4);
+    const uchar *p = (const uchar *)buf.constData();
+
+    int i = 0;
+    while (i < buf.size())
+    {
+        uint cp = 0;
+        int len = isUtf16
+            ? decodeUtf16(p + i, buf.size() - i, _charEncoding == EncodingUtf16BE, cp)
+            : decodeUtf8(p + i, buf.size() - i, cp);
+        if (start + i + len > pos)              // this sequence is the one covering pos
+            return isRenderable(cp) ? cpToString(cp) : QString(QChar('.'));
+        i += len;
+    }
+    return QString(QChar('.'));
+}
+
 void QHexEdit::readBuffers()
 {
     _dataShown = _chunks->data(_bPosFirst, _bPosLast - _bPosFirst + _bytesPerLine + 1, &_markedShown);
     _hexDataShown = QByteArray(_dataShown.toHex());
+    buildCharMap();
 }
 
 QString QHexEdit::toReadable(const QByteArray &ba)

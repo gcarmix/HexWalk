@@ -263,7 +263,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>ASCII:</string>
+        <string>Text:</string>
        </property>
       </widget>
       <widget class="QLabel" name="asciiTextEdit">

@@ -4,6 +4,7 @@
 #include <QAbstractScrollArea>
 #include <QPen>
 #include <QBrush>
+#include <QVector>
 
 #include "chunks.h"
 #include "commands.h"
@@ -61,6 +62,28 @@ class QHEXEDIT_API QHexEdit : public QAbstractScrollArea
 {
     Q_OBJECT
 
+public:
+    /*! Encoding used to render the text (right hand) area. In the multi byte
+    encodings a decoded character is drawn in the column of the first byte of
+    its sequence, the remaining bytes are left blank. This keeps every byte
+    aligned with its hex value. The values are stored in the settings, so they
+    must stay stable.
+    */
+    enum CharEncoding {
+        EncodingAscii = 0,
+        EncodingUtf8 = 1,
+        EncodingLatin1 = 2,
+        EncodingUtf16LE = 3,
+        EncodingUtf16BE = 4
+    };
+    Q_ENUM(CharEncoding)
+
+    /*! Returns the encoding matching value, or EncodingAscii when the value is
+    not a valid CharEncoding. Useful to read the property from settings.
+    */
+    static CharEncoding charEncodingFromInt(int value);
+
+private:
     /*! Property address area switch the address area on or off. Set addressArea true
     (show it), false (hide it).
     */
@@ -105,6 +128,11 @@ class QHEXEDIT_API QHexEdit : public QAbstractScrollArea
     /*! Switch the ascii area on (true, show it) or off (false, hide it).
     */
     Q_PROPERTY(bool asciiArea READ asciiArea WRITE setAsciiArea)
+
+    /*! Property charEncoding selects how the text area decodes the data,
+    see CharEncoding. Default is EncodingAscii.
+    */
+    Q_PROPERTY(CharEncoding charEncoding READ charEncoding WRITE setCharEncoding)
 
     /*! Set and get bytes number per line.*/
     Q_PROPERTY(int bytesPerLine READ bytesPerLine WRITE setBytesPerLine)
@@ -245,6 +273,10 @@ public:
     /*! Get current file size
      */
     qint64 getSize();
+    /*! Width in pixels the viewport needs to show the address, hex and text
+     * areas without horizontal scrolling.
+     */
+    int contentWidth();
     /*! Find first occurrence of ba in QHexEdit data
      * \param ba Data to find
      * \param from Point where the search starts
@@ -285,6 +317,20 @@ public:
     /*! Gives back a formatted image of the content of QHexEdit
     */
     QString toReadableString();
+
+    /*! Renders ba as text using the current charEncoding(), with the same rules
+    the text area applies: non printable characters and malformed sequences
+    become a dot. Unlike the text area the result is compact, a multi byte
+    character yields one character instead of one per byte.
+    */
+    QString toEncodedString(const QByteArray &ba);
+
+    /*! The character the byte at pos belongs to, decoded with the current
+    charEncoding(). The bytes around pos are taken into account, so any byte of
+    a multi byte sequence gives back the whole character. Returns an empty
+    string when pos is outside the data.
+    */
+    QString charAt(qint64 pos);
     QList<ColorTag> *colorTag = NULL;
 
 
@@ -349,6 +395,9 @@ public:
     bool asciiArea();
     void setAsciiArea(bool asciiArea);
 
+    CharEncoding charEncoding();
+    void setCharEncoding(CharEncoding encoding);
+
     int bytesPerLine();
     void setBytesPerLine(int count);
 
@@ -400,6 +449,7 @@ private:
     // Private utility functions
     void init();
     void readBuffers();
+    void buildCharMap();                        // fill _cpShown / _spanShown from _dataShown
     QString toReadable(const QByteArray &ba);
 
 private slots:
@@ -441,6 +491,7 @@ private:
     QColor _hexFontColor;
     int _addressWidth;
     bool _asciiArea;
+    CharEncoding _charEncoding;                 // encoding of the text area
     qint64 _addressOffset;
     int _bytesPerLine;
     int _hexCharsInLine;
@@ -467,6 +518,8 @@ private:
     QByteArray _data;                           // QHexEdit's data, when setup with QByteArray
     QByteArray _dataShown;                      // data in the current View
     QByteArray _hexDataShown;                   // data in view, transformed to hex
+    QVector<uint> _cpShown;                     // per byte: codepoint to draw, 0 = draw nothing
+    QVector<quint8> _spanShown;                 // per byte: cells the glyph may span, 0 = none
     qint64 _lastEventSize;                      // size, which was emitted last time
     QByteArray _markedShown;                    // marked data in view
     bool _modified;                             // Is any data in editor modified?

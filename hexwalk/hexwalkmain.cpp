@@ -22,6 +22,7 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QAction>
+#include <QActionGroup>
 #include <QMenuBar>
 #include <QToolBar>
 #include <QColorDialog>
@@ -44,6 +45,7 @@ HexWalkMain::HexWalkMain(QWidget *parent) :
     QFont font("Courier",10);
     ui->binTextedit->setFont(font);
     ui->asciiTextEdit->setFont(font);
+    ui->asciiTextEdit->setTextFormat(Qt::PlainText);
     ui->decTextedit->setFont(font);
     ui->floatTextedit_le->setFont(font);
     ui->floatTextedit_be->setFont(font);
@@ -52,38 +54,10 @@ HexWalkMain::HexWalkMain(QWidget *parent) :
 
 }
 
-QString HexWalkMain::binToStr(QByteArray bin)
-{
-    QString outString;
-    for(int i=0;i<bin.length();i++)
-    {
-        if(bin.at(i)<32 || uchar(bin.at(i))>=127)
-        {
-            outString += QString(".");
-        }
-        else if(bin.at(i) == '<')
-        {
-            outString += QString("&lt;");
-        }
-        else if(bin.at(i) == '>')
-        {
-            outString += QString("&gt;");
-        }
-        else if(bin.at(i) == '&')
-        {
-            outString += QString("&amp;");
-        }
-        else
-        {
-            outString += QString(bin.at(i));
-        }
-    }
-    return outString;
-}
-
 void HexWalkMain::init()
 {
     setAttribute(Qt::WA_DeleteOnClose);
+    lbTextEncoding = nullptr;                   // only valid after createStatusBar()
     appSettings = new QSettings("hexwalk","hexwalk");
     //appSettings->clear();
     isUntitled = true;
@@ -151,6 +125,16 @@ void HexWalkMain::createMenus()
     editMenu->addAction(advancedFindAct);
     editMenu->addAction(findAct);
     editMenu->addAction(overwriteAct);
+
+    encodingMenu = editMenu->addMenu(tr("Text &Encoding"));
+    QActionGroup *encodingGroup = new QActionGroup(this);
+    encodingGroup->setExclusive(true);
+    for (QAction *act : encodingActionList)
+    {
+        encodingGroup->addAction(act);
+        encodingMenu->addAction(act);
+    }
+
     editMenu->addAction(optionsAct);
 
 
@@ -219,6 +203,17 @@ void HexWalkMain::createStatusBar()
     lbOverwriteMode->setMinimumWidth(70);
     statusBar()->addPermanentWidget(lbOverwriteMode);
     setOverwriteMode(hexEdit->overwriteMode());
+
+    // Text Encoding Label
+    lbTextEncodingName = new QLabel();
+    lbTextEncodingName->setText(tr("Encoding:"));
+    statusBar()->addPermanentWidget(lbTextEncodingName);
+    lbTextEncoding = new QLabel();
+    lbTextEncoding->setFrameShape(QFrame::Panel);
+    lbTextEncoding->setFrameShadow(QFrame::Sunken);
+    lbTextEncoding->setMinimumWidth(80);
+    lbTextEncoding->setToolTip(tr("Encoding of the text area, change it under Edit / Text Encoding"));
+    statusBar()->addPermanentWidget(lbTextEncoding);
 
     statusBar()->showMessage(tr("Ready"), 2000);
 }
@@ -289,6 +284,25 @@ void HexWalkMain::createActions()
     overwriteAct->setShortcut(QKeySequence(Qt::Key_Insert));
     overwriteAct->setStatusTip(tr("Toggle overwrite/insert mode"));
     connect(overwriteAct, &QAction::triggered, this, &HexWalkMain::toggleOverwriteMode);
+
+    // Text area encodings, kept in sync with the Options dialog. The list is
+    // indexed by QHexEdit::CharEncoding, each action carries its value as data.
+    struct { QHexEdit::CharEncoding enc; const char *name; const char *tip; } encodings[] = {
+        { QHexEdit::EncodingAscii,   QT_TR_NOOP("&ASCII"),     QT_TR_NOOP("Show the text area as ASCII") },
+        { QHexEdit::EncodingUtf8,    QT_TR_NOOP("&UTF-8"),     QT_TR_NOOP("Decode the text area as UTF-8") },
+        { QHexEdit::EncodingLatin1,  QT_TR_NOOP("&Latin-1"),   QT_TR_NOOP("Decode the text area as Latin-1 (ISO 8859-1)") },
+        { QHexEdit::EncodingUtf16LE, QT_TR_NOOP("UTF-16 L&E"), QT_TR_NOOP("Decode the text area as little endian UTF-16") },
+        { QHexEdit::EncodingUtf16BE, QT_TR_NOOP("UTF-16 &BE"), QT_TR_NOOP("Decode the text area as big endian UTF-16") },
+    };
+    for (const auto &e : encodings)
+    {
+        QAction *act = new QAction(tr(e.name), this);
+        act->setCheckable(true);
+        act->setStatusTip(tr(e.tip));
+        act->setData((int)e.enc);
+        connect(act, &QAction::triggered, this, &HexWalkMain::selectCharEncoding);
+        encodingActionList.append(act);
+    }
 
     optionsAct = new QAction(tr("&Options"), this);
     optionsAct->setStatusTip(tr("Options"));
@@ -381,6 +395,38 @@ void HexWalkMain::toggleOverwriteMode(){
         hexEdit->setOverwriteMode(true);
     }
 }
+// Applies the text area encoding to the editor, keeps the View menu in sync and
+// persists it, so the menu and the Options dialog always agree.
+// The stored encoding is the default, applied every time a file is opened.
+QHexEdit::CharEncoding HexWalkMain::defaultCharEncoding()
+{
+    return QHexEdit::charEncodingFromInt(
+        appSettings->value("CharEncoding", QHexEdit::EncodingAscii).toInt());
+}
+
+// Applies an encoding to the current view and ticks the matching menu entry.
+// The stored default is left alone, so picking an encoding from the Edit menu
+// only affects the file at hand.
+void HexWalkMain::applyCharEncoding(QHexEdit::CharEncoding encoding)
+{
+    hexEdit->setCharEncoding(encoding);
+    for (QAction *act : encodingActionList)
+    {
+        bool isCurrent = (act->data().toInt() == (int)encoding);
+        act->setChecked(isCurrent);
+        // the menu entries are the single source of the encoding names
+        if (isCurrent && lbTextEncoding)
+            lbTextEncoding->setText(act->text().remove('&'));
+    }
+    updateInfo();                               // re-decode the Text inspector field
+}
+
+void HexWalkMain::selectCharEncoding(){
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+        applyCharEncoding(QHexEdit::charEncodingFromInt(action->data().toInt()));
+}
+
 void HexWalkMain::openRecent(){
     QAction *action = qobject_cast<QAction *>(sender());
     if (action)
@@ -473,6 +519,9 @@ void HexWalkMain::loadFile(const QString &fileName)
                                  .arg(file.errorString()));
         return;
     }
+    // a freshly opened file always starts from the configured default encoding,
+    // discarding any per-view choice made for the previous file
+    applyCharEncoding(defaultCharEncoding());
     setCurrentFile(fileName);
     statusBar()->showMessage(tr("File loaded"), 2000);
     emit fileLoaded();
@@ -699,8 +748,13 @@ void HexWalkMain::updateInfo()
 
     if(selSize > 0)
     {
-        ui->asciiTextEdit->setText(binToStr(hexEdit->selectedDataBa()));
-        ui->hexTextedit->setText(hexEdit->selectedData().toUpper());
+        // hex and text stay meaningful for a selection of any length, unlike the
+        // numeric fields below, but a huge one is capped: the labels are small
+        const int previewMax = 256;
+        QByteArray preview = hexEdit->selectedDataBa().left(previewMax);
+        QString ellipsis = selSize > previewMax ? QStringLiteral("...") : QString();
+        ui->asciiTextEdit->setText(hexEdit->toEncodedString(preview) + ellipsis);
+        ui->hexTextedit->setText(QString(preview.toHex()).toUpper() + ellipsis);
 
         if(selSize <= 8)
         {
@@ -762,14 +816,13 @@ void HexWalkMain::updateInfo()
         }
         else
         {
+            // only the numeric interpretations are meaningless here,
+            // hex and text keep the values set above
             ui->decTextedit->setText("-");
             ui->floatTextedit_le->setText("-");
+            ui->floatTextedit_be->setText("-");
             ui->intleTextedit->setText("-");
             ui->binTextedit->setText("-");
-            ui->hexTextedit->setText("-");
-            ui->asciiTextEdit->setText("-");
-
-
         }
     }
 }
@@ -787,10 +840,18 @@ void HexWalkMain::setAddress(qint64 address)
             }
             else
             {
-                ui->hexTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),2,16,QLatin1Char('0')).toUpper());
-                ui->decTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
-                ui->intleTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),3,10));
-                ui->binTextedit->setText(QString("%1").arg(uchar(hexEdit->dataAt(address,1).at(0)),8,2,QLatin1Char('0')));
+                // no selection: report the single byte under the cursor
+                uchar byte = uchar(hexEdit->dataAt(address,1).at(0));
+                ui->hexTextedit->setText(QString("%1").arg(byte,2,16,QLatin1Char('0')).toUpper());
+                ui->decTextedit->setText(QString("%1").arg(byte,3,10));
+                ui->intleTextedit->setText(QString("%1").arg(byte,3,10));
+                ui->binTextedit->setText(QString("%1").arg(byte,8,2,QLatin1Char('0')));
+                // the character this byte belongs to, which in a multi byte
+                // encoding may start a few bytes earlier
+                ui->asciiTextEdit->setText(hexEdit->charAt(address));
+                // a single byte has no float reading, do not leave a stale one
+                ui->floatTextedit_le->setText("-");
+                ui->floatTextedit_be->setText("-");
             }
 
         }
@@ -979,6 +1040,7 @@ void HexWalkMain::readSettings()
         appSettings->setValue("AddressAreaWidth",6);
         appSettings->setValue("BytesPerLine",16);
         appSettings->setValue("HexCaps",true);
+        appSettings->setValue("CharEncoding",(int)QHexEdit::EncodingAscii);
         appSettings->setValue("DefaultAnalyzer","hexdig");
 
 
@@ -1034,6 +1096,7 @@ void HexWalkMain::readSettings()
     hexEdit->setAddressWidth(appSettings->value("AddressAreaWidth").toInt());
     hexEdit->setBytesPerLine(appSettings->value("BytesPerLine").toInt());
     hexEdit->setHexCaps(appSettings->value("HexCaps", true).toBool());
+    applyCharEncoding(defaultCharEncoding());
 
     // Apply the application-wide palette for the selected theme so the whole
     // UI (menus, dialogs, toolbars) re-themes live when Options are accepted.

@@ -20,6 +20,10 @@
 #include "ui_diffdialog.h"
 #include <QScrollBar>
 #include <QProgressDialog>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QLayout>
+#include "../qhexedit/qhexedit.h"
 
 DiffDialog::DiffDialog(QWidget *parent) :
     QDialog(parent),
@@ -46,6 +50,8 @@ void DiffDialog::trackCursor2()
 void DiffDialog::setFiles(QString file1str, QString file2str)
 {
     QSettings settings("hexwalk","hexwalk");
+    QHexEdit::CharEncoding encoding = QHexEdit::charEncodingFromInt(
+        settings.value("CharEncoding", QHexEdit::EncodingAscii).toInt());
 
     ui->hexEdit1->setAddressArea(settings.value("AddressArea").toBool());
     ui->hexEdit1->setAsciiArea(settings.value("AsciiArea").toBool());
@@ -65,6 +71,7 @@ void DiffDialog::setFiles(QString file1str, QString file2str)
     ui->hexEdit1->setAddressWidth(settings.value("AddressAreaWidth").toInt());
     ui->hexEdit1->setBytesPerLine(settings.value("BytesPerLine").toInt());
     ui->hexEdit1->setHexCaps(settings.value("HexCaps", true).toBool());
+    ui->hexEdit1->setCharEncoding(encoding);
 
     ui->hexEdit2->setAddressArea(settings.value("AddressArea").toBool());
     ui->hexEdit2->setAsciiArea(settings.value("AsciiArea").toBool());
@@ -84,7 +91,16 @@ void DiffDialog::setFiles(QString file1str, QString file2str)
     ui->hexEdit2->setAddressWidth(settings.value("AddressAreaWidth").toInt());
     ui->hexEdit2->setBytesPerLine(settings.value("BytesPerLine").toInt());
     ui->hexEdit2->setHexCaps(settings.value("HexCaps", true).toBool());
+    ui->hexEdit2->setCharEncoding(encoding);
 
+
+    // The panes are only useful when the whole text area is visible, so open
+    // wide enough for both of them, clamped to what the screen actually offers.
+    int paneWidth = ui->hexEdit1->contentWidth() + ui->hexEdit1->verticalScrollBar()->sizeHint().width();
+    QMargins m = layout()->contentsMargins();
+    int wanted = 2 * paneWidth + m.left() + m.right() + layout()->spacing() + 8;
+    QRect avail = QGuiApplication::primaryScreen()->availableGeometry();
+    resize(qMin(wanted, avail.width()), qMin(height(), avail.height()));
 
     file1.setFileName(file1str);
     file2.setFileName(file2str);

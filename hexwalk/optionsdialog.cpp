@@ -23,6 +23,7 @@
 #include "optionsdialog.h"
 #include "ui_optionsdialog.h"
 #include "theme.h"
+#include "qhexedit.h"
 
 OptionsDialog::OptionsDialog(QSettings * appSettings,QWidget *parent) :
     QDialog(parent),
@@ -65,6 +66,9 @@ void OptionsDialog::readSettings()
     ui->cbHighlighting->setChecked(appSettings->value("Highlighting").toBool());
     ui->cbOverwriteMode->setChecked(appSettings->value("OverwriteMode").toBool());
     ui->cbReadOnly->setChecked(appSettings->value("ReadOnly").toBool());
+    // the combo items are in the same order as the CharEncoding values
+    ui->cbEncoding->setCurrentIndex(
+        QHexEdit::charEncodingFromInt(appSettings->value("CharEncoding", QHexEdit::EncodingAscii).toInt()));
 
     setColor(ui->lbHighlightingColor, appSettings->value("HighlightingColor").value<QColor>());
     setColor(ui->lbAddressAreaColor, appSettings->value("AddressAreaColor").value<QColor>());
@@ -99,6 +103,8 @@ void OptionsDialog::writeSettings()
     appSettings->setValue("Highlighting", ui->cbHighlighting->isChecked());
     appSettings->setValue("OverwriteMode", ui->cbOverwriteMode->isChecked());
     appSettings->setValue("ReadOnly", ui->cbReadOnly->isChecked());
+    appSettings->setValue("CharEncoding",
+        (int)QHexEdit::charEncodingFromInt(ui->cbEncoding->currentIndex()));
 
     appSettings->setValue("HighlightingColor", ui->lbHighlightingColor->palette().color(QPalette::Window));
     appSettings->setValue("AddressAreaColor", ui->lbAddressAreaColor->palette().color(QPalette::Window));
@@ -212,6 +218,7 @@ void OptionsDialog::on_buttonBox_clicked(QAbstractButton *button)
         ui->cbHighlighting->setChecked(true);
         ui->cbOverwriteMode->setChecked(true);
         ui->cbReadOnly->setChecked(false);
+        ui->cbEncoding->setCurrentIndex(0); // ascii
 
         setColor(ui->lbHighlightingColor, QColor("#540c00"));
         setColor(ui->lbAddressAreaColor, QColor("#545454"));

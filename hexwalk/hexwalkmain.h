@@ -92,6 +92,7 @@ private slots:
     void showByteMap();
     void showDisasm();
     void toggleOverwriteMode();
+    void selectCharEncoding();
     void gotoAddress();
     void setWidth();
     void updateOptions();
@@ -112,6 +113,7 @@ private:
     bool isUntitled;
     QMenu *fileMenu;
     QMenu *editMenu;
+    QMenu *encodingMenu;
     QMenu *helpMenu;
     QMenu *analysisMenu;
     QMenu *toolsMenu;
@@ -121,7 +123,6 @@ private:
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
     QToolBar *analysisToolBar;
-    QString binToStr(QByteArray bin);
 
     QAction *openAct;
     QAction *saveAct;
@@ -132,6 +133,7 @@ private:
     QAction *binaryAct;
     QAction *optionsAct;
     QAction *overwriteAct;
+    QList<QAction*> encodingActionList;          // one per QHexEdit::CharEncoding
     QAction *hashAct;
     QAction *diffAct;
     QAction *tagsAct;
@@ -154,6 +156,8 @@ private:
     QAction *entropyAct;
     QAction *converterAct;
     void createActions();
+    QHexEdit::CharEncoding defaultCharEncoding();
+    void applyCharEncoding(QHexEdit::CharEncoding encoding);
     void applyThemeIcons(const QString &theme);
     void createMenus();
     void createStatusBar();
@@ -181,6 +185,7 @@ private:
     QLabel *lbAddress, *lbAddressName, *lbSelected, *lbSelectedName;
     QLabel *lbOverwriteMode, *lbOverwriteModeName;
     QLabel *lbSize, *lbSizeName;
+    QLabel *lbTextEncoding, *lbTextEncodingName;
     QLabel * gotoLbl;
     QLineEdit * gotoText;
     QLabel * widthLbl;

@@ -47,7 +47,7 @@
       <item row="2" column="1">
        <widget class="QCheckBox" name="cbAsciiArea">
         <property name="text">
-         <string>Ascii Area</string>
+         <string>Text Area</string>
         </property>
        </widget>
       </item>
@@ -56,6 +56,54 @@
         <property name="text">
          <string>ReadOnly</string>
         </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="gbTextArea">
+     <property name="title">
+      <string>Text Encoding</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayoutTextArea">
+      <item row="0" column="0">
+       <widget class="QLabel" name="lbEncoding">
+        <property name="text">
+         <string>Default Encoding</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="cbEncoding">
+        <property name="toolTip">
+         <string>Encoding applied to the text area every time a file is opened. In the multi byte encodings a decoded character is shown in the column of the first byte of its sequence. Use Edit / Text Encoding to change the encoding of the file currently open.</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>ASCII</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>UTF-8</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Latin-1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>UTF-16 LE</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>UTF-16 BE</string>
+         </property>
+        </item>
        </widget>
       </item>
      </layout>
@@ -234,7 +282,7 @@
       <item row="4" column="0">
        <widget class="QPushButton" name="pbAsciiAreaColor">
         <property name="text">
-         <string>ASCII Area Color</string>
+         <string>Text Area Color</string>
         </property>
        </widget>
       </item>
@@ -266,7 +314,7 @@
       <item row="5" column="0">
        <widget class="QPushButton" name="pbAsciiFontColor">
         <property name="text">
-         <string>ASCII Font Color</string>
+         <string>Text Font Color</string>
         </property>
        </widget>
       </item>
