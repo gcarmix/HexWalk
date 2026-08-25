@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 project(HexWalk
-    VERSION 2.1.0
+    VERSION 2.2.0
     DESCRIPTION "Hex Editor/Viewer/Analyzer"
     LANGUAGES CXX
 )
