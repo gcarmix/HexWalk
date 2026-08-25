@@ -20,11 +20,36 @@
 #include <QIcon>
 #include <QSettings>
 #include <QStyleFactory>
+#include <cstdio>
 
 #include "hexwalkmain.h"
 #include "theme.h"
+
+// Showing a file as text regularly turns up codepoints belonging to scripts no
+// installed font covers. Qt then logs one "OpenType support missing for ..."
+// line per font family, dozens at a time, which floods the output and tells
+// nobody anything actionable. Those lines are dropped, everything else is
+// passed through untouched. Set HEXWALK_LOG_FONT_NOISE=1 to get them back.
+// A plain handler is used rather than a logging rule because Qt emits this
+// message uncategorized on some platforms, where filter rules cannot reach it.
+static QtMessageHandler g_defaultMessageHandler = nullptr;
+
+static void hexwalkMessageHandler(QtMsgType type, const QMessageLogContext &context,
+                                  const QString &msg)
+{
+    if (msg.contains(QLatin1String("OpenType support missing for")))
+        return;
+    if (g_defaultMessageHandler)
+        g_defaultMessageHandler(type, context, msg);
+    else
+        fprintf(stderr, "%s\n", qPrintable(qFormatLogMessage(type, context, msg)));
+}
+
 int main(int argc, char *argv[])
 {
+    if (qEnvironmentVariableIsEmpty("HEXWALK_LOG_FONT_NOISE"))
+        g_defaultMessageHandler = qInstallMessageHandler(hexwalkMessageHandler);
+
     Q_INIT_RESOURCE(hexwalk);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
